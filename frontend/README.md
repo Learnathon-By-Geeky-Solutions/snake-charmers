@@ -20,7 +20,7 @@ This is the frontend part of the LifeRide project, a web-based platform designed
 
 ```sh
 git clone git@github.com:Learnathon-By-Geeky-Solutions/snake-charmers.git
-cd liferide/frontend
+cd snake-charmers/frontend/my-app
 ```
 
 ### 2. Set Environment Variables
