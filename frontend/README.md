@@ -19,7 +19,7 @@ This is the frontend part of the LifeRide project, a web-based platform designed
 ### 1. Clone the Repository
 
 ```sh
-git clone git@github.com:your-username/liferide.git
+git clone git@github.com:Learnathon-By-Geeky-Solutions/snake-charmers.git
 cd liferide/frontend
 ```
 
@@ -56,4 +56,4 @@ docker-compose up --build
 ```
 ## Good Luck!
 
-We wish you all the best on your development journey with the LifeRide project. May your code be bug-free, your builds be swift, and your deployments be smooth. Happy coding!
+Wish you all the best on your development journey with the LifeRide project. May your code be bug-free, your builds be swift, and your deployments be smooth. Happy coding!

@@ -7,9 +7,9 @@ import reactRefresh from 'eslint-plugin-react-refresh';
 export default [
   { ignores: ['dist'] },
   {
-    files: ['**/*.{js,jsx}'],
+    files: ['**/*.js', '**/*.jsx'],
     languageOptions: {
-      ecmaVersion: 2020,
+      ecmaVersion: 2021,
       globals: globals.browser,
       parserOptions: {
         ecmaVersion: 'latest',
@@ -42,6 +42,17 @@ export default [
       'eqeqeq': ['error', 'always'], // Enforce strict equality (=== and !==)
       // 'no-magic-numbers': ['warn', { 'ignore': [0, 1] }], // Warn on magic numbers except 0 and 1
       // 'max-len': ['warn', { 'code': 150 }] // Warn if a line exceeds 80 characters
+      'import/extensions': ['error', 'always', {
+        'js': 'never',
+        'jsx': 'always'
+      }],
     },
+    settings: {
+      'import/resolver': {
+        node: {
+          extensions: ['.js', '.jsx']
+        }
+      }
+    }
   },
 ];
