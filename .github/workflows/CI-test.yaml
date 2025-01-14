@@ -11,33 +11,39 @@ on:
 
 jobs:
   lint_js:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 2
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-      - name: Install dependencies
-        run: npm install
-      - name: Get list of changed JS/JSX files
-        id: changed_js_files
-        run: |
-          git log --oneline
-          git diff --name-only HEAD~1 HEAD > changed_files.txt        
-          cat changed_files.txt
-          grep -E '\.jsx?$' changed_files.txt > lint_js_files.txt || true
-        
-      - name: Run ESLint on changed JS/JSX files
-        run: |
-          if [ -s lint_js_files.txt ]; then
-            npx eslint $(cat lint_js_files.txt)
-          else
-            echo "No JS/JSX files changed."
-          fi
+  runs-on: ubuntu-latest
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Install dependencies
+      run: |
+        cd frontend/my-app
+        npm install
+
+    - name: Get list of changed JS/JSX files
+      id: changed_js_files
+      run: |
+        git log --oneline
+        git diff --name-only HEAD~1 HEAD > changed_files.txt        
+        cat changed_files.txt
+        grep -E '\.jsx?$' changed_files.txt > lint_js_files.txt || true
+
+    - name: Run ESLint on changed JS/JSX files
+      run: |
+        cd frontend/my-app
+        if [ -s lint_js_files.txt ]; then
+          npx eslint $(cat ../../lint_js_files.txt)
+        else
+          echo "No JS/JSX files changed."
+        fi
   lint_py:
     runs-on: ubuntu-latest
     steps:

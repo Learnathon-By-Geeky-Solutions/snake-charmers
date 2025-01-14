@@ -8,6 +8,9 @@ export default defineConfig({
   plugins: [react()],
   server: {
     host: true,
+    watch:{
+      usePolling : true,
+    },
     // eslint-disable-next-line no-undef
     port: process.env.VITE_PORT || 3000, // Default to 3000 if VITE_PORT is not defined
   },
