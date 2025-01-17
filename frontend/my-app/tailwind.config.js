@@ -9,7 +9,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        mono: ['Roboto Mono', 'monospace'], // Add Arial as the default sans-serif font
+         sans: ['Inter', 'sans-serif'], // Add Arial as the default sans-serif font
       },
       colors:{
         'light-green-1': '#42D674',

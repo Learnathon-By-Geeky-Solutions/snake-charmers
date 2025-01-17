@@ -3,7 +3,7 @@ import ambulanceImage from "../assets/images/Ambulanceimage.png"; // Correctly i
 
 function Home() {
   return (
-    <div className="flex justify-between items-center px-8">
+    <div className="flex justify-between items-center px-8 mt-20">
       {/* Left side: Text */}
       <div className="w-1/2 text-left">
         <h1 className="text-3xl font-bold text-black mb-4">
