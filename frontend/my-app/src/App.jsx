@@ -15,7 +15,6 @@ function App() {
           <Route path="/contact" element={<div>Contact Page</div>} />
           <Route path="/signup" element={<OverallSignup />} />
           <Route path="/login" element={<UserLogin />} />
-          <Route path="/signup" element={<OverallSignup />} />
         </Routes>
       </div>
     </Router>
