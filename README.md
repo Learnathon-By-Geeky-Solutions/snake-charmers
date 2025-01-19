@@ -1,5 +1,23 @@
 # snake-charmers
 
+## Table of Contents
+- [Team Members](#team-members)
+- [Mentor](#mentor)
+- [Project Description](#project-description)
+- [Features](#features)
+  - [For Users](#for-users)
+  - [For Drivers](#for-drivers)
+- [System Architecture](#system-architecture)
+  - [Services Overview](#services-overview)
+  - [System Flow Diagram](#system-flow-diagram)
+- [ER Diagram](#er-diagram)
+- [API Documentation](#api-documentation)
+- [Technologies Used](#technologies-used)
+- [Getting Started](#getting-started)
+- [Development Guidelines](#development-guidelines)
+- [Resources](#resources)
+
+
 ## Team Members
 - [Imdad-Rakib](https://github.com/Imdad-Rakib) (Team Leader)
 - [SA-K1B](https://github.com/SA-K1B)
@@ -30,24 +48,12 @@ LifeRide is a web-based platform designed to provide quick and efficient ambulan
 
 ## System Architecture
 
-### Core Components
-1. **Location Service**:
-   - Get and update user locations in real-time.
-
-2. **Profile Service**:
-   - Create, retrieve, update, and delete user or driver profiles.
-
-3. **Trip Service**:
-   - Manage trip details including acceptance, start, and completion.
-
-4. **Map Service**:
-   - Calculate ETA using Google Maps API.
-
-5. **Payment Service**:
-   - Generate trip prices and process payments.
-
-6. **Ambulance Finder Service**:
-   - Locate available drivers within a 2km radius.
+### Services Overview
+- **Location Service**: Manage driver locations.
+- **Ambulance Finder Service**: Find nearby ambulances.
+- **Auth Service**: User authentication and token validation.
+- **Trip Service**: Manage trips.
+- **WebSocket Service**: Facilitates client-server communication.
 
 ### System Flow Diagram
 
@@ -73,8 +79,15 @@ Below is an explanation of the system's operational flow:
 6. **Completion and Payment**:
    - Once the trip is completed, payment is processed, and the user can rate the driver.
 
+## ER Diagram
+The Entity-Relationship (ER) diagram provides a visual representation of the database structure, showing the relationships between different entities.
 
----
+![ER Diagram](public/images/ER_Diagram.png)
+
+## API Documentation
+
+Detailed API documentation is available [here](https://app.swaggerhub.com/apis-docs/ImdadRaqib/api_documentation/1.0.0#/).
+
 
 ## Technologies Used
 - **Backend**: WebSocket servers, REST APIs for core services.
@@ -90,10 +103,7 @@ Below is an explanation of the system's operational flow:
 3. Start development
 
 ## Development Guidelines
-1. Create feature branches
-2. Make small, focused commits
-3. Write descriptive commit messages
-4. Create pull requests for review
+   This is a monorepo combining multiple microservice. Refer to the respective service folders to get the detailed development setup.
 
 ## Resources
 - [Project Documentation](docs/)

@@ -1,0 +1,349 @@
+openapi: 3.0.0
+info:
+  title: Service API Documentation
+  version: 1.0.0
+  description: API documentation for various services, including Location, Ambulance Finder, Auth, Trip, and Coordinator WebSocket service.
+
+paths:
+
+  # Endpoints for Location Service
+
+  /location/update:
+    post:
+      tags:
+        - Location Service
+      summary: Update driver location
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                geohash:
+                  type: string
+      responses:
+        '200':
+          description: Location updated successfully
+        '400':
+          description: Invalid input
+        '500':
+          description: Internal server error
+
+  /location/add:
+    post:
+      tags:
+        - Location Service
+      summary: Add driver location
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                socket_id:
+                  type: string
+                geohash:
+                  type: string
+      responses:
+        '201':
+          description: Location added successfully
+        '400':
+          description: Invalid input
+        '500':
+          description: Internal server error
+
+  /location/remove:
+    delete:
+      tags:
+        - Location Service
+      summary: Remove driver location
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Location removed successfully
+        '404':
+          description: Location not found
+        '500':
+          description: Internal server error
+
+  /location/get:
+    get:
+      tags:
+        - Location Service
+      summary: Get driver location
+      parameters:
+        - name: driver_id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Driver location details retrieved successfully
+        '404':
+          description: Driver not found
+        '500':
+          description: Internal server error
+
+  # Endpoints for Ambulance Finder Service
+
+  /ambulance/nearby:
+    get:
+      tags:
+        - Ambulance Finder Service
+      summary: Get nearby ambulances
+      parameters:
+        - name: radius
+          in: query
+          required: true
+          schema:
+            type: number
+        - name: geohash
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of nearby drivers retrieved successfully
+        '400':
+          description: Invalid input
+        '500':
+          description: Internal server error
+
+  # Endpoints for Auth Service
+
+  /auth/signup:
+    post:
+      tags:
+        - Auth Service
+      summary: User signup
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                phone:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '201':
+          description: User registered successfully
+        '400':
+          description: Invalid input
+        '409':
+          description: Email already exists
+        '500':
+          description: Internal server error
+
+  /auth/login:
+    post:
+      tags:
+        - Auth Service
+      summary: User login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                phoneOrEmail:
+                  type: string
+                password:
+                  type: string
+                role:
+                  type: string
+      responses:
+        '200':
+          description: Login successful
+        '401':
+          description: Invalid credentials
+        '500':
+          description: Internal server error
+
+  /auth/token-validator:
+    get:
+      tags:
+        - Auth Service
+      summary: Token validation
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Token is valid
+        '401':
+          description: Token is invalid or expired
+        '500':
+          description: Internal server error
+
+  # Endpoints for Trip Service
+
+  /trip/request/add:
+    post:
+      tags:
+        - Trip Service
+      summary: Add trip request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                rider_id:
+                  type: string
+                pickup_loc:
+                  type: string
+                destination:
+                  type: string
+      responses:
+        '201':
+          description: Trip request added successfully
+        '400':
+          description: Invalid input
+        '500':
+          description: Internal server error
+
+  /trip/request/remove:
+    delete:
+      tags:
+        - Trip Service
+      summary: Remove trip request
+      parameters:
+        - name: req_id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Trip request removed successfully
+        '404':
+          description: Trip request not found
+        '500':
+          description: Internal server error
+
+  /trip/engage:
+    post:
+      tags:
+        - Trip Service
+      summary: Engage driver for a trip
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                driver_id:
+                  type: string
+                trip_id:
+                  type: string
+      responses:
+        '200':
+          description: Driver engaged successfully
+        '404':
+          description: Trip or driver not found
+        '500':
+          description: Internal server error
+
+  /trip/release:
+    post:
+      tags:
+        - Trip Service
+      summary: Release driver from a trip
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                driver_id:
+                  type: string
+      responses:
+        '200':
+          description: Driver released successfully
+        '404':
+          description: Driver not found
+        '500':
+          description: Internal server error
+
+  /trip/add:
+    post:
+      tags:
+        - Trip Service
+      summary: Add a trip
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                rider_id:
+                  type: string
+                driver_id:
+                  type: string
+                pickup_loc:
+                  type: string
+                destination:
+                  type: string
+                fare:
+                  type: number
+                status:
+                  type: string
+      responses:
+        '201':
+          description: Trip added successfully
+        '400':
+          description: Invalid input
+        '500':
+          description: Internal server error
+
+  /trip/status:
+    put:
+      tags:
+        - Trip Service
+      summary: Update trip status
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                trip_id:
+                  type: string
+                status:
+                  type: string
+      responses:
+        '200':
+          description: Trip status updated successfully
+        '404':
+          description: Trip not found
+        '500':
+          description: Internal server error
