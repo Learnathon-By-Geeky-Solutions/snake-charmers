@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: Service API Documentation
   version: 1.0.0
-  description: API documentation for various services, including Location, Ambulance Finder, Auth, Trip, and Coordinator WebSocket service.
+  description: Comprehensive API documentation for Location, Ambulance Finder, Auth, Trip, and Coordinator WebSocket services.
 
 paths:
 
@@ -27,10 +27,32 @@ paths:
       responses:
         '200':
           description: Location updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+              
         '400':
           description: Invalid input
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
         '500':
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
 
   /location/add:
     post:
@@ -53,10 +75,33 @@ paths:
       responses:
         '201':
           description: Location added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
         '400':
           description: Invalid input
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
         '500':
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
 
   /location/remove:
     delete:
@@ -72,29 +117,38 @@ paths:
       responses:
         '200':
           description: Location removed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
         '404':
           description: Location not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
         '500':
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
 
-  /location/get:
-    get:
-      tags:
-        - Location Service
-      summary: Get driver location
-      parameters:
-        - name: driver_id
-          in: query
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Driver location details retrieved successfully
-        '404':
-          description: Driver not found
-        '500':
-          description: Internal server error
 
   # Endpoints for Ambulance Finder Service
 
@@ -109,18 +163,49 @@ paths:
           required: true
           schema:
             type: number
-        - name: geohash
+        - name: patient_geohash
           in: query
           required: true
           schema:
             type: string
       responses:
         '200':
-          description: List of nearby drivers retrieved successfully
+          description: List of nearby ambulances
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+                    ratings:
+                      type: number
+                    ETA:
+                      type: string
+                    socket_id:
+                      type: string
         '400':
           description: Invalid input
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
         '500':
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
 
   # Endpoints for Auth Service
 
@@ -147,12 +232,42 @@ paths:
       responses:
         '201':
           description: User registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
         '400':
           description: Invalid input
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
         '409':
           description: Email already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
         '500':
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
 
   /auth/login:
     post:
@@ -175,10 +290,35 @@ paths:
       responses:
         '200':
           description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  id:
+                    type: string
+                  ratings:
+                    type: number
         '401':
           description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
         '500':
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
 
   /auth/token-validator:
     get:
@@ -194,10 +334,31 @@ paths:
       responses:
         '200':
           description: Token is valid
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  valid:
+                    type: boolean
         '401':
           description: Token is invalid or expired
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
         '500':
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
 
   # Endpoints for Trip Service
 
@@ -222,10 +383,31 @@ paths:
       responses:
         '201':
           description: Trip request added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  trip_id:
+                    type: string
         '400':
           description: Invalid input
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
         '500':
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
 
   /trip/request/remove:
     delete:
@@ -241,10 +423,31 @@ paths:
       responses:
         '200':
           description: Trip request removed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
         '404':
           description: Trip request not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
         '500':
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
 
   /trip/engage:
     post:
@@ -265,10 +468,31 @@ paths:
       responses:
         '200':
           description: Driver engaged successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
         '404':
           description: Trip or driver not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
         '500':
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
 
   /trip/release:
     post:
@@ -287,10 +511,31 @@ paths:
       responses:
         '200':
           description: Driver released successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
         '404':
           description: Driver not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
         '500':
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
 
   /trip/add:
     post:
@@ -319,10 +564,41 @@ paths:
       responses:
         '201':
           description: Trip added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  rider_id:
+                    type: string
+                  driver_id:
+                    type: string
+                  pickup_loc:
+                    type: string
+                  destination:
+                    type: string
+                  fare:
+                    type: number
+                  status:
+                    type: string
         '400':
           description: Invalid input
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
         '500':
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
 
   /trip/status:
     put:
@@ -343,7 +619,30 @@ paths:
       responses:
         '200':
           description: Trip status updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  trip_id:
+                    type: string
+                  status:
+                    type: string
         '404':
           description: Trip not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
         '500':
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
