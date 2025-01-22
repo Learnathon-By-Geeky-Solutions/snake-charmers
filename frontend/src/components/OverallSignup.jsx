@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import { useState } from 'react';
 
 const OverallSignup = () => {
-  const [role, setRole] = useState("User"); // Default role is "User"
+  const [role, setRole] = useState('User'); // Default role is "User"
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center mt-20">
@@ -10,17 +10,17 @@ const OverallSignup = () => {
           {/* Buttons to switch between User and Driver */}
           <button
             className={`px-4 py-2 rounded-lg ${
-              role === "User" ? "bg-blue-500 text-white" : "bg-gray-200"
+              role === 'User' ? 'bg-blue-500 text-white' : 'bg-gray-200'
             }`}
-            onClick={() => setRole("User")}
+            onClick={() => setRole('User')}
           >
             Sign Up as User
           </button>
           <button
             className={`px-4 py-2 rounded-lg ${
-              role === "Driver" ? "bg-green-500 text-white" : "bg-gray-200"
+              role === 'Driver' ? 'bg-green-500 text-white' : 'bg-gray-200'
             }`}
-            onClick={() => setRole("Driver")}
+            onClick={() => setRole('Driver')}
           >
             Sign Up as Driver
           </button>
@@ -100,7 +100,7 @@ const OverallSignup = () => {
           <button
             type="submit"
             className={`w-full py-2 px-4 rounded-lg shadow-md ${
-              role === "User" ? "bg-blue-500 hover:bg-blue-600" : "bg-green-500 hover:bg-green-600"
+              role === 'User' ? 'bg-blue-500 hover:bg-blue-600' : 'bg-green-500 hover:bg-green-600'
             } text-white`}
           >
             Sign Up as {role}

@@ -1,5 +1,5 @@
-import { Link } from "react-router-dom";
-import ambulanceImage from "../assets/images/Ambulanceimage.png"; // Correctly import the image
+import { Link } from 'react-router-dom';
+import ambulanceImage from '../assets/images/Ambulanceimage.png'; // Correctly import the image
 
 function Home() {
   return (

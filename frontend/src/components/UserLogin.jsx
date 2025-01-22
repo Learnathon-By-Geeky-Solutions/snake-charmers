@@ -1,14 +1,14 @@
-import { useState } from "react";
+import { useState } from 'react';
 
 function UserLogin() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
     // Add login logic here
-    console.log("Email:", email);
-    console.log("Password:", password);
+    console.log('Email:', email);
+    console.log('Password:', password);
   };
 
   return (

@@ -3,6 +3,7 @@ import globals from 'globals';
 import react from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
+import importPlugin from 'eslint-plugin-import';
 
 export default [
   { ignores: ['dist'] },
@@ -17,11 +18,19 @@ export default [
         sourceType: 'module',
       },
     },
-    settings: { react: { version: '18.3' } },
+    settings: { 
+      react: { version: '18.3' },
+      'import/resolver': {
+        node: {
+          extensions: ['.js', '.jsx']
+        }
+      }
+    },
     plugins: {
       react,
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
+      'import': importPlugin
     },
     rules: {
       ...js.configs.recommended.rules,
@@ -42,17 +51,10 @@ export default [
       'eqeqeq': ['error', 'always'], // Enforce strict equality (=== and !==)
       // 'no-magic-numbers': ['warn', { 'ignore': [0, 1] }], // Warn on magic numbers except 0 and 1
       // 'max-len': ['warn', { 'code': 150 }] // Warn if a line exceeds 80 characters
-      'import/extensions': ['error', 'always', {
-        'js': 'never',
-        'jsx': 'always'
-      }],
+      // 'import/extensions': ['error', 'always', {
+      //   'js': 'never',
+      //   'jsx': 'always'
+      // }],
     },
-    settings: {
-      'import/resolver': {
-        node: {
-          extensions: ['.js', '.jsx']
-        }
-      }
-    }
   },
 ];

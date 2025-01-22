@@ -1,8 +1,8 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Navbar from "./components/Navbar";
-import OverallSignup from "./components/OverallSignup";
-import Home from "./components/Home";
-import UserLogin from "./components/UserLogin";
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import OverallSignup from './components/OverallSignup';
+import Home from './components/Home';
+import UserLogin from './components/UserLogin';
 
 function App() {
   return (
