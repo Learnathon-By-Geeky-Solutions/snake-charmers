@@ -9,7 +9,7 @@ paths:
   # Endpoints for Location Service
 
   /location/update:
-    post:
+    put:
       tags:
         - Location Service
       summary: Update driver location
@@ -22,8 +22,10 @@ paths:
               properties:
                 id:
                   type: string
-                geohash:
-                  type: string
+                latitude:
+                  type: number
+                longitude:
+                  type: number
       responses:
         '200':
           description: Location updated successfully
@@ -70,8 +72,10 @@ paths:
                   type: string
                 socket_id:
                   type: string
-                geohash:
-                  type: string
+                latitude:
+                  type: number
+                longitude:
+                  type: number
       responses:
         '201':
           description: Location added successfully
@@ -163,11 +167,16 @@ paths:
           required: true
           schema:
             type: number
-        - name: patient_geohash
+        - name: latitude
           in: query
           required: true
           schema:
-            type: string
+            type: number
+        - name: longitude
+          in: query
+          required: true
+          schema:
+            type: number
       responses:
         '200':
           description: List of nearby ambulances
