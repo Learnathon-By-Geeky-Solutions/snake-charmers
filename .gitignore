@@ -23,3 +23,50 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+
+# Python specific ignores
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+.env
+.env.*
+
+# Byte-compiled / optimized / compiled files
+*.egg
+*.egg-info/
+dist/
+build/
+*.so
+
+# Logs and debug files
+*.log
+*.sqlite3
+
+# IDE/Editor specific ignores
+.vscode/
+.idea/
+*.swp
+*.sublime-project
+*.sublime-workspace
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Testing
+*.coverage
+.tox/
+.pytest_cache/
+htmlcov/
+
+# Static files
+/static/
+
+# FastAPI specific
+instance/
+*.db
