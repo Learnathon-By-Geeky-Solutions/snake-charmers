@@ -1,10 +1,9 @@
-# version: '3.8'
-
 services:
   frontend:
     build:
       context: .
       dockerfile: Dockerfile
+    container_name: frontend
     ports:
       - '${VITE_PORT}:${VITE_PORT}'
     env_file:
