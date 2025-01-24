@@ -57,7 +57,7 @@ my-fastapi-project
 To run the FastAPI application using Docker, execute the following command:
 
 ```
-docker compose up --build -d
+docker compose -f docker-compose.dev.yml up --build -d
 ```
 
 Visit `http://127.0.0.1:8000/docs` to access the interactive API documentation.

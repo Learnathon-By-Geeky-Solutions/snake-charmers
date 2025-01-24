@@ -1,9 +1,9 @@
 services:
-  location-service:
+  ambulance-finder-service:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: auth-service
+    container_name: ambulance-finder-service
     ports:
       - "8000:8000"
     env_file:
