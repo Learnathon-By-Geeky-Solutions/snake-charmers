@@ -37,14 +37,13 @@ my-fastapi-project
 1. Clone the repository:
    ```
    git clone <repository-url>
-   cd <service-name>
+   cd my-fastapi-project
    ```
 
 2. Create a virtual environment:
    ```
    python -m venv venv
-   source venv/bin/activate   # linux 
-   venv\Scripts\activate  # Windows
+   source venv/bin/activate  # On Windows use `venv\Scripts\activate`
    ```
 
 3. Install the dependencies:
@@ -54,10 +53,10 @@ my-fastapi-project
 
 ## Running the Application
 
-To run the FastAPI application using Docker, execute the following command:
+To run the FastAPI application, execute the following command:
 
 ```
-docker compose up --build -d
+uvicorn app.main:app --reload
 ```
 
 Visit `http://127.0.0.1:8000/docs` to access the interactive API documentation.
