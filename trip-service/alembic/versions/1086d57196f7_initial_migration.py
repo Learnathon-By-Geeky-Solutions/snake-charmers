@@ -1,17 +1,16 @@
-# filepath: /home/imdad-raqib/Desktop/fastapi/my-fastapi-app/alembic/script.py.mako
-"""Initial migration
+"""Initial Migration
 
-Revision ID: 4b5a3c644a88
+Revision ID: 1086d57196f7
 Revises: 
-Create Date: 2025-01-24 02:28:02.792244
+Create Date: 2025-01-25 13:47:05.981270
 
 """
-import sqlmodel
 from alembic import op
 import sqlalchemy as sa
+import sqlmodel
 
 # revision identifiers, used by Alembic.
-revision = '4b5a3c644a88'
+revision = '1086d57196f7'
 down_revision = None
 branch_labels = None
 depends_on = None
