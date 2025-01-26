@@ -1,17 +1,17 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 from typing import Optional
 
-# Request Models
-class UpdateDriverLocationRequest(BaseModel):
-    id: str
+class BaseDriverLocationRequest(BaseModel):
+    driver_id: int
     latitude: float
     longitude: float
 
-class AddDriverLocationRequest(BaseModel):
-    id: str
+# Request Models
+class UpdateDriverLocationRequest(BaseDriverLocationRequest):
+    pass
+
+class AddDriverLocationRequest(BaseDriverLocationRequest):
     socket_id: str
-    latitude: float
-    longitude: float
 
 
 # Response Models

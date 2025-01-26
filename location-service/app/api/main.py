@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from typing import Optional
@@ -25,7 +25,7 @@ async def update_location(location: UpdateDriverLocationRequest, session: Sessio
     Updates a driver's location based on their ID.
     """
     try:
-        update_driver_location(session, location.id, location.latitude, location.longitude)
+        update_driver_location(session, location.driver_id, location.latitude, location.longitude)
         return {"success": True}
     except HTTPException as e:
         raise e
@@ -42,7 +42,7 @@ async def add_location(location: AddDriverLocationRequest, session: Session = De
     Adds a new driver's location.
     """
     try:
-        add_driver_location(session, location.id, location.socket_id, location.latitude, location.longitude)
+        add_driver_location(session, location.driver_id, location.socket_id, location.latitude, location.longitude)
         return {"success": True, "message": "Location added successfully"}
     except HTTPException as e:
         raise e
@@ -54,12 +54,12 @@ async def add_location(location: AddDriverLocationRequest, session: Session = De
     404: {"model": LocationRemoveResponse},
     500: {"model": ErrorResponse}
 })
-async def remove_location(id: str, session: Session = Depends(get_session)):
+async def remove_location(driver_id: int = Query(..., description="The ID of the driver to delete location"), session: Session = Depends(get_session)):
     """
     Removes a driver's location by ID.
     """
     try:
-        remove_driver_location(session, id)
+        remove_driver_location(session, driver_id)
         return {"success": True, "message": "Location removed successfully"}
     except HTTPException as e:
         raise e
