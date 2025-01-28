@@ -39,3 +39,5 @@ uvicorn==0.34.0
 uvloop==0.21.0
 watchfiles==1.0.4
 websockets==14.2
+passlib == 1.7.4
+bcrypt == 4.2.1
