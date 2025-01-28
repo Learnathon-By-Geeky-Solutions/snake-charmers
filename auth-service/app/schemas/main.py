@@ -1,31 +1,33 @@
 from pydantic import BaseModel, EmailStr
-from typing import Optional
+from typing import Union
 
 
 # Request Models
 class SignupRequest(BaseModel):
-    name: str
-    phone: str
-    email: EmailStr
+    name: str  # Mandatory
+    mobile: str  # Mandatory
+    email: EmailStr  # Now Mandatory
     password: str
-    role: str
+    user_type: str  # Either "driver" or "rider"
 
 
 class LoginRequest(BaseModel):
-    phoneOrEmail: str
+    phone_or_email: Union[str, EmailStr]  # Accepts either phone number or email
     password: str
-    role: str
+    user_type: str  # Either "driver" or "rider"
 
 
 # Response Models
 class SignupResponse(BaseModel):
     success: bool
-    message: Optional[str] = None
+    message: str  # Mandatory
 
 
 class LoginResponse(BaseModel):
     success: bool
-    message: Optional[str] = None
+    name: str
+    id: int
+    user_type: str
 
 
 class ErrorResponse(BaseModel):

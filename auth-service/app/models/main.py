@@ -7,8 +7,8 @@ DRIVER_ID_FK = "driver.driver_id"
 class Driver(SQLModel, table=True):
     driver_id: Optional[int] = Field(default=None, primary_key=True, index=True)
     name: str
-    mobile: str = Field(unique=True)
-    email: Optional[str] = Field(default=None, unique=True)
+    mobile: str = Field(unique=True, nullable=False)
+    email: str = Field(unique=True, nullable=False)  # Mandatory and unique
     password: str
     ratings: Optional[float] = Field(default=None)
 
@@ -24,8 +24,8 @@ class DriverLocation(SQLModel, table=True):
 class Rider(SQLModel, table=True):
     rider_id: Optional[int] = Field(default=None, primary_key=True, index=True)
     name: str
-    mobile: str = Field(unique=True)
-    email: Optional[str] = Field(default=None, unique=True)
+    mobile: str = Field(unique=True, nullable=False)
+    email: str = Field(unique=True, nullable=False)  # Mandatory and unique
     password: str
 
 
