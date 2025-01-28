@@ -42,8 +42,8 @@ async def login(credentials: LoginRequest, session: Session = Depends(get_sessio
     Handles login for drivers or riders.
     """
     try:
-        user = authenticate_user(session, credentials.mobile, credentials.password, credentials.user_type)
-        return {"success": True, "name": user.name, "id": user.id, "user_type": credentials.user_type}
+        user = authenticate_user(session, credentials.phone_or_email, credentials.password, credentials.user_type)
+        return {"success": True, "name": user.name, "id": user.driver_id if credentials.user_type == "driver" else user.rider_id, "user_type": credentials.user_type}
     except HTTPException as e:
         raise e
     except Exception as e:
