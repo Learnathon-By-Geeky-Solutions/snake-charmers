@@ -1,7 +1,4 @@
-"""
-This module handles user authentication and registration for drivers and riders.
-"""
-
+""" This module handles user authentication and registration for drivers and riders. """
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
 from app.models.main import Driver, Rider
@@ -37,27 +34,24 @@ def is_email_or_mobile_taken(session: Session, email: str, mobile: str):
 def create_user(session: Session, user_data: dict):
     """
     Registers a new driver or rider.
-    Ensures that an email and mobile number cannot be used for both driver and rider roles.
+    Ensures that an email and mobile number cannot be used for both 
+    driver and rider roles.
     """
     email_exists, mobile_exists = is_email_or_mobile_taken(
-        session, user_data["email"], user_data["mobile"]
+        session,
+        user_data["email"],
+        user_data["mobile"],
     )
 
     if email_exists:
         raise HTTPException(
             status_code=409,
-            detail=(
-                "This email is already registered. "
-                "Use a different email."
-            ),
+            detail="This email is already registered. Use a different email."
         )
     if mobile_exists:
         raise HTTPException(
             status_code=409,
-            detail=(
-                "This mobile number is already registered. "
-                "Use a different mobile."
-            ),
+            detail="This mobile number is already registered. Use a different mobile."
         )
 
     hashed_password = hash_password(user_data["password"])
@@ -89,7 +83,7 @@ def authenticate_user(
     session: Session,
     phone_or_email: str,
     password: str,
-    user_type: str
+    user_type: str,
 ):
     """
     Authenticates a driver or rider using phone or email.
