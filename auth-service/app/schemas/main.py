@@ -3,7 +3,7 @@ Schema definitions for user authentication and validation.
 """
 
 import re  # ✅ Fixed Import Order
-from pydantic import BaseModel, EmailStr, validator  # ✅ Fixed Import Order
+from pydantic import BaseModel, EmailStr, field_validator  # ✅ Fixed Import Order
 
 
 # Request Models
@@ -19,7 +19,7 @@ class SignupRequest(BaseModel):
     user_type: str
 
     @classmethod
-    @validator("mobile")
+    @field_validator("mobile")
     def validate_mobile(cls, mobile: str) -> str:
         """
         Validates Bangladeshi phone numbers:
@@ -34,7 +34,7 @@ class SignupRequest(BaseModel):
         return mobile
 
     @classmethod
-    @validator("email")
+    @field_validator("email")
     def validate_google_email(cls, email: str) -> str:
         """
         Ensures only Google (Gmail) email addresses are allowed.
@@ -46,7 +46,7 @@ class SignupRequest(BaseModel):
         return email
 
     @classmethod
-    @validator("password")
+    @field_validator("password")
     def validate_password(cls, password: str) -> str:
         """
         Ensures password is at least 6 characters long.
