@@ -5,16 +5,19 @@ from sqlmodel import SQLModel, Field
 DRIVER_ID_FK = "driver.driver_id"
 
 class Driver(SQLModel, table=True):
-    driver_id: Optional[int] = Field(default=None, primary_key=True, index=True)
+    driver_id: Optional[int] = Field(
+        default=None, primary_key=True, index=True
+    )
     name: str
     mobile: str = Field(unique=True)
     email: Optional[str] = Field(default=None, unique=True)
     password: str
     ratings: Optional[float] = Field(default=None)
 
-
 class DriverLocation(SQLModel, table=True):
-    driver_id: int = Field(primary_key=True, foreign_key=DRIVER_ID_FK, index=True)
+    driver_id: int = Field(
+        primary_key=True, foreign_key=DRIVER_ID_FK, index=True
+    )
     socket_id: str = Field(index=True)
     latitude: float
     longitude: float
@@ -46,5 +49,7 @@ class TripRequest(SQLModel, table=True):
     destination: str
 
 class EngagedDriver(SQLModel, table=True):
-    req_id: int = Field(foreign_key="triprequest.req_id", primary_key=True, index=True)
+    req_id: int = Field(
+        foreign_key="triprequest.req_id", primary_key=True, index=True
+    )
     driver_id: int = Field(foreign_key=DRIVER_ID_FK, index=True)
