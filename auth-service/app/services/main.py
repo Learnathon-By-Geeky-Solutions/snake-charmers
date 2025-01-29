@@ -1,5 +1,9 @@
-""" This module handles user authentication and registration for drivers and riders. """
+"""
+This module handles user authentication and registration for drivers and riders.
+"""
+
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import SQLAlchemyError
 from fastapi import HTTPException
 from app.models.main import Driver, Rider
 from app.utils.security import hash_password, verify_password
@@ -73,9 +77,18 @@ def create_user(session: Session, user_data: dict):
     else:
         raise HTTPException(status_code=400, detail="Invalid user type")
 
-    session.add(new_user)
-    session.commit()
-    session.refresh(new_user)
+    # ✅ Wrapped in try-except to handle database errors
+    try:
+        session.add(new_user)
+        session.commit()
+        session.refresh(new_user)
+    except SQLAlchemyError as exc:
+        session.rollback()  # Rollback changes in case of error
+        raise HTTPException(
+            status_code=500,
+            detail="Database error occurred while creating user."
+        ) from exc
+
     return new_user
 
 
