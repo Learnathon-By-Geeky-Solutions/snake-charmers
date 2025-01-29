@@ -13,6 +13,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Ensure full history is available
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -22,11 +24,17 @@ jobs:
       - name: Install Pylint
         run: pip install pylint
 
+      - name: Fetch latest dev branch
+        run: git fetch origin dev
+
       - name: Detect Changes
         id: changed-files
         run: |
-          echo "Checking for changes..."
-          CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+          echo "Checking for changes in PR..."
+
+          # Get the list of changed files in the PR compared to dev
+          CHANGED_FILES=$(git diff --name-only origin/dev...HEAD)
+          
           echo "Changed files:"
           echo "$CHANGED_FILES"
 
