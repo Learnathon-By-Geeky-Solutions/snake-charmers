@@ -79,11 +79,8 @@ async def add_location(
                 "success": True,
                 "message": "Location added successfully"
         }
-    except HTTPException as exc:
-        raise HTTPException(
-            status_code=500,
-            detail=UNEXPECTED_ERROR_MESSAGE
-        ) from exc
+    except HTTPException as e:
+        raise e
     except Exception as exc:
         raise HTTPException(
             status_code=500,
