@@ -15,4 +15,4 @@ output-format=colorized
 reports=no
 
 [FORMAT]
-max-line-length=88
+max-line-length=79

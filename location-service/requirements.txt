@@ -9,6 +9,7 @@ fastapi==0.115.7
 fastapi-cli==0.0.7
 greenlet==3.1.1
 h11==0.14.0
+h3==4.1.2
 httpcore==1.0.7
 httptools==0.6.4
 httpx==0.28.1

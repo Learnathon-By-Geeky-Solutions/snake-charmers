@@ -8,7 +8,7 @@ paths:
 
   # Endpoints for Location Service
 
-  /location/update:
+  /api/location/update:
     put:
       tags:
         - Location Service
@@ -20,7 +20,7 @@ paths:
             schema:
               type: object
               properties:
-                id:
+                driver_id:
                   type: string
                 latitude:
                   type: number
@@ -56,7 +56,7 @@ paths:
                   error:
                     type: string
 
-  /location/add:
+  /api/location/add:
     post:
       tags:
         - Location Service
@@ -68,7 +68,7 @@ paths:
             schema:
               type: object
               properties:
-                id:
+                driver_id:
                   type: string
                 socket_id:
                   type: string
@@ -107,13 +107,13 @@ paths:
                   error:
                     type: string
 
-  /location/remove:
+  /api/location/remove:
     delete:
       tags:
         - Location Service
       summary: Remove driver location
       parameters:
-        - name: id
+        - name: driver_id
           in: query
           required: true
           schema:
@@ -156,7 +156,7 @@ paths:
 
   # Endpoints for Ambulance Finder Service
 
-  /ambulance/nearby:
+  /api/ambulance/nearby:
     get:
       tags:
         - Ambulance Finder Service
@@ -218,7 +218,7 @@ paths:
 
   # Endpoints for Auth Service
 
-  /auth/signup:
+  /api/auth/signup:
     post:
       tags:
         - Auth Service
@@ -278,7 +278,7 @@ paths:
                   error:
                     type: string
 
-  /auth/login:
+  /api/auth/login:
     post:
       tags:
         - Auth Service
@@ -329,7 +329,7 @@ paths:
                   error:
                     type: string
 
-  /auth/token-validator:
+  /api/auth/token-validator:
     get:
       tags:
         - Auth Service
@@ -371,7 +371,7 @@ paths:
 
   # Endpoints for Trip Service
 
-  /trip/request/add:
+  /api/trip/request/add:
     post:
       tags:
         - Trip Service
@@ -418,7 +418,7 @@ paths:
                   error:
                     type: string
 
-  /trip/request/remove:
+  /api/trip/request/remove:
     delete:
       tags:
         - Trip Service
@@ -458,7 +458,7 @@ paths:
                   error:
                     type: string
 
-  /trip/engage:
+  /api/trip/engage:
     post:
       tags:
         - Trip Service
@@ -503,7 +503,7 @@ paths:
                   error:
                     type: string
 
-  /trip/release:
+  /api/trip/release:
     post:
       tags:
         - Trip Service
@@ -546,7 +546,7 @@ paths:
                   error:
                     type: string
 
-  /trip/add:
+  /api/trip/add:
     post:
       tags:
         - Trip Service
@@ -609,7 +609,7 @@ paths:
                   error:
                     type: string
 
-  /trip/status:
+  /api/trip/status:
     put:
       tags:
         - Trip Service
