@@ -76,16 +76,16 @@ jobs:
 
       - name: Run Pylint on auth-service/app/ (if changed)
         if: env.AUTH_CHANGED == 'true'
-        run: pylint --rcfile=auth-service/.pylintrc auth-service/app/**/*.py
+        run: pylint --rcfile=.pylintrc auth-service/app/**/*.py
 
       - name: Run Pylint on location-service/app/ (if changed)
         if: env.LOCATION_CHANGED == 'true'
-        run: pylint --rcfile=location-service/.pylintrc location-service/app/**/*.py
+        run: pylint --rcfile=.pylintrc location-service/app/**/*.py
 
       - name: Run Pylint on ambulance-finder-service/app/ (if changed)
         if: env.AMBULANCE_CHANGED == 'true'
-        run: pylint --rcfile=ambulance-finder-service/.pylintrc ambulance-finder-service/app/**/*.py
+        run: pylint --rcfile=.pylintrc ambulance-finder-service/app/**/*.py
 
       - name: Run Pylint on trip-service/app/ (if changed)
         if: env.TRIP_CHANGED == 'true'
-        run: pylint --rcfile=trip-service/.pylintrc trip-service/app/**/*.py
+        run: pylint --rcfile=.pylintrc trip-service/app/**/*.py
