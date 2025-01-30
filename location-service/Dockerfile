@@ -8,14 +8,14 @@ FROM python:3.10-slim
 WORKDIR /app
 
 # Copy the requirements.txt file into the container
-COPY requirements.txt .
+COPY ./location-service/requirements.txt .
 
 # Install the dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of the application code into the container.
-# We rely on a .dockerignore file to ensure that sensitive files
-COPY . .
+# Copy necessary files into the container
+COPY ./location-service/app ./app
+COPY ./models ./app/models
 
 # Expose the port that the app runs on
 EXPOSE 8000
