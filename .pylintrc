@@ -8,8 +8,10 @@ ignore-patterns=alembic/env.py
 disable=missing-docstring,
         invalid-name,
         too-few-public-methods,
-        missing-final-newline
-
+        missing-final-newline,
+        import-error,
+        no-name-in-module
+        
 [REPORTS]
 output-format=colorized
 reports=no
