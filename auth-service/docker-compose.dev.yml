@@ -1,8 +1,8 @@
 services:
   auth-service:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: ./auth-service/Dockerfile
     container_name: auth-service
     ports:
       - "8000:8000"
@@ -10,4 +10,5 @@ services:
       - .env
     volumes:
       - .:/app
+      - /app/app/models
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload

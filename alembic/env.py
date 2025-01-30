@@ -2,12 +2,12 @@ from logging.config import fileConfig
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 from alembic import context
-from app.core.config import settings
-from app.models.main import SQLModel
+from models.main import SQLModel
+import os
 
 target_metadata = SQLModel.metadata
 
-DATABASE_URL = settings.DATABASE_URL
+DATABASE_URL = os.getenv("DATABASE_URL")
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
