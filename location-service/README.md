@@ -64,7 +64,21 @@ Visit `http://127.0.0.1:8000/docs` to access the interactive API documentation.
 
 ## Environment Variables
 
-Create a `.env` file in the root directory to define your environment variables, such as database connection strings and secret keys.
+Create a `.env` file in your service directory to define your environment variables, such as database connection strings and secret keys.
+
+## Running Migrations
+Migrations are needed to run when you make any change to the models. From this project perspective, the models are defined in the ```snake-charmers/models/main.py``` file. If you make any changes to the file, follow the steps below:
+
+**[The commands are specific to Linux terminal]**
+```
+cd <your-service-name>         # Go inside your service directoy
+source venv/bin/activate   
+cd ..                          # Project root 
+export DATABASE_URL="url"
+export PYTHONPATH=$(pwd)
+alembic revision --autogenerate -m "migration msg"
+alembic upgrade head
+```
 
 ## License
 
