@@ -1,5 +1,6 @@
 from typing import Optional
 from sqlmodel import SQLModel, Field, Column, Integer, ForeignKey
+from geoalchemy2 import Geography
 
 DRIVER_ID_FK = "driver.driver_id"
 
@@ -30,10 +31,13 @@ class DriverLocation(SQLModel, table=True):
         )
     ) 
     # socket_id: str = Field(index=True)
-    latitude: float
-    longitude: float
-    h3_index: str = Field(index=True)
-
+    # latitude: float
+    # longitude: float
+    # h3_index: str = Field(index=True)
+    location: Geography = Field(sa_column=Column(Geography(geometry_type="POINT", srid=4326), nullable=False))
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
 
 class Trip(SQLModel, table=True):
     trip_id: Optional[int] = Field(default=None, primary_key=True, index=True)
