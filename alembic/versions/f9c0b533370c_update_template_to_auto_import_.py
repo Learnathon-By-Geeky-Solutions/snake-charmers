@@ -8,7 +8,7 @@ Create Date: 2025-02-09 00:17:03.343066
 from alembic import op
 import sqlalchemy as sa
 from geoalchemy2 import Geography
-
+from sqlalchemy import text
 # revision identifiers, used by Alembic.
 revision = 'f9c0b533370c'
 down_revision = '810d3cae3574'
@@ -22,7 +22,9 @@ def upgrade():
     'driverlocation',
     sa.Column('location', Geography(geometry_type='POINT', srid=4326), nullable=False))
     op.drop_index('ix_driverlocation_h3_index', table_name='driverlocation')
-    op.create_index('idx_driverlocation_location', 'driverlocation', ['location'], unique=False, postgresql_using='gist')
+    op.execute(
+    text("DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_driverlocation_location') THEN CREATE INDEX idx_driverlocation_location ON driverlocation USING gist (location); END IF; END $$;")
+    )
     op.drop_column('driverlocation', 'h3_index')
     op.drop_column('driverlocation', 'longitude')
     op.drop_column('driverlocation', 'latitude')
