@@ -11,7 +11,7 @@ class TripService:
             db.add(trip_request)
             db.commit()
             db.refresh(trip_request)
-            return {"trip_id": str(trip_request.req_id)}
+            return {"trip_id": (trip_request.req_id)}
 
         except Exception:
             db.rollback()
@@ -33,13 +33,14 @@ class TripService:
             raise HTTPException(status_code=500, detail="Internal server error")
 
     @staticmethod
-    def engage_driver(db: Session, trip_id: int, driver_id: int):
+    def engage_driver(db: Session, req_id: int, driver_id: int):
         try:
-            trip = db.get(Trip, trip_id)
-            if not trip:
-                raise HTTPException(status_code=404, detail="Trip not found")
+            trip = db.get(TripRequest, req_id)
 
-            engagement = EngagedDriver(trip_id=trip_id, driver_id=driver_id)
+            if not trip:
+                raise HTTPException(status_code=404, detail="Trip request not found")
+
+            engagement = EngagedDriver(req_id=req_id, driver_id=driver_id)
             db.add(engagement)
             db.commit()
             return {"success": True}
@@ -66,36 +67,36 @@ class TripService:
             raise HTTPException(status_code=500, detail="Internal server error")
 
     
-    @staticmethod
-    def validate_trip_data(trip_data: TripCreate):
-        """ Validate trip data fields before adding to the database. """
-        required_fields = {
-            "rider_id": (int, lambda x: x > 0),
-            "driver_id": (int, lambda x: x > 0),
-            "pickup_location": (str, lambda x: x.strip() != ""),
-            "destination": (str, lambda x: x.strip() != ""),
-            "status": (str, lambda x: x.strip() != ""),
-            "fare": ((int, float), lambda x: x > 0)
-        }
+    # @staticmethod
+    # def validate_trip_data(trip_data: TripCreate):
+    #     """ Validate trip data fields before adding to the database. """
+    #     required_fields = {
+    #         "rider_id": (int, lambda x: x > 0),
+    #         "driver_id": (int, lambda x: x > 0),
+    #         "pickup_location": (str, lambda x: x.strip() != ""),
+    #         "destination": (str, lambda x: x.strip() != ""),
+    #         "status": (str, lambda x: x.strip() != ""),
+    #         "fare": ((int, float), lambda x: x > 0)
+    #     }
 
-        for field, (expected_type, condition) in required_fields.items():
-            value = getattr(trip_data, field, None)
-            if not isinstance(value, expected_type) or not condition(value):
-                raise HTTPException(status_code=400, detail=f"Invalid {field}")
+    #     for field, (expected_type, condition) in required_fields.items():
+    #         value = getattr(trip_data, field, None)
+    #         if not isinstance(value, expected_type) or not condition(value):
+    #             raise HTTPException(status_code=400, detail=f"Invalid {field}")
 
     @staticmethod
-    def add_trip(db: Session, trip_data: TripCreate):
+    def add_trip(db: Session, trip_data):
         try:
-            TripService.validate_trip_data(trip_data)
+            # TripService.validate_trip_data(trip_data)
 
             trip = Trip(**trip_data.dict())
             db.add(trip)
             db.commit()
             db.refresh(trip)
-            return trip
+            return {"rider_id": trip.rider_id, "driver_id":trip.driver_id,"pickup_location":trip.pickup_location,"destination":trip.destination,"fare":trip.fare,"status":trip.status}
 
-        except HTTPException:
-            raise  
+        except HTTPException as e :
+            raise e 
 
         except Exception:
             db.rollback()
@@ -109,7 +110,7 @@ class TripService:
                 raise HTTPException(status_code=404, detail="Trip not found")
             trip.status = status
             db.commit()
-            return {"trip_id": str(trip_id), "status": status}
+            return {"trip_id": trip_id, "status": status}
         except HTTPException:
             raise
         except Exception:

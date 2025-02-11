@@ -29,3 +29,13 @@ class TripResponse(TripCreate):
 
     class Config:
         orm_mode = True
+
+
+class EngageDriverRequest(BaseModel):
+    driver_id: int
+    req_id: int
+
+
+class UpdateTripStatusRequest(BaseModel):
+    trip_id: int
+    status: str
