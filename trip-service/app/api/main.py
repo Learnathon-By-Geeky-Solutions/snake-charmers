@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, select
-from app.schemas.trip_schemas import TripRequestCreate, TripRequestResponse
+from app.schemas.trip_schemas import TripRequestCreate, TripRequestResponse, TripCreate,TripResponse
 from app.models.main import TripRequest, Trip
 from app.services.main import TripService
 from app.dependencies import get_db
@@ -25,12 +25,12 @@ def engage_driver(req_id: int, driver_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/release", status_code=200)
-def release_driver(req_id: int, db: Session = Depends(get_db)):
-    return TripService.release_driver(db, req_id)
+def release_driver(driver_id: int, db: Session = Depends(get_db)):
+    return TripService.release_driver(db, driver_id)
 
 
-@router.post("/add", status_code=201)
-def add_trip(trip_data: Trip, db: Session = Depends(get_db)):
+@router.post("/add", response_model=TripResponse, status_code=201)
+def add_trip(trip_data: TripCreate, db: Session = Depends(get_db)):  # ✅ Using TripCreate
     return TripService.add_trip(db, trip_data)
 
 
