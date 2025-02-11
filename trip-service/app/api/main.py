@@ -13,7 +13,7 @@ def add_trip_request(request_data: TripRequestCreate, db: Session = Depends(get_
     return TripService.add_trip_request(db, request_data)
 
 
-@router.delete("/request/remove/{req_id}", status_code=204)
+@router.delete("/request/remove/{req_id}", status_code=200)
 def remove_trip_request(req_id: int, db: Session = Depends(get_db)):
     TripService.remove_trip_request(db, req_id)
     return {"message": "Trip request removed successfully"}
