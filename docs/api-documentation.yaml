@@ -384,8 +384,8 @@ paths:
               type: object
               properties:
                 rider_id:
-                  type: string
-                pickup_loc:
+                  type: int
+                pickup_loccation:
                   type: string
                 destination:
                   type: string
@@ -397,8 +397,8 @@ paths:
               schema:
                 type: object
                 properties:
-                  trip_id:
-                    type: string
+                  req_id:
+                    type: int
         '400':
           description: Invalid input
           content:
@@ -428,7 +428,7 @@ paths:
           in: query
           required: true
           schema:
-            type: string
+            type: int
       responses:
         '200':
           description: Trip request removed successfully
@@ -471,11 +471,11 @@ paths:
               type: object
               properties:
                 driver_id:
-                  type: string
-                trip_id:
-                  type: string
+                  type: int
+                req_id:
+                  type: int
       responses:
-        '200':
+        '201':
           description: Driver engaged successfully
           content:
             application/json:
@@ -504,19 +504,17 @@ paths:
                     type: string
 
   /trip/release:
-    post:
+    delete:
       tags:
         - Trip Service
       summary: Release driver from a trip
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                driver_id:
-                  type: string
+      parameters:
+        - name: driver_id
+          in: query
+          required: true
+          schema:
+            type: int
+      
       responses:
         '200':
           description: Driver released successfully
@@ -559,15 +557,15 @@ paths:
               type: object
               properties:
                 rider_id:
-                  type: string
+                  type: int
                 driver_id:
-                  type: string
-                pickup_loc:
+                  type: int
+                pickup_location:
                   type: string
                 destination:
                   type: string
                 fare:
-                  type: number
+                  type: float
                 status:
                   type: string
       responses:
@@ -579,15 +577,15 @@ paths:
                 type: object
                 properties:
                   rider_id:
-                    type: string
+                    type: int
                   driver_id:
-                    type: string
-                  pickup_loc:
+                    type: int
+                  pickup_location:
                     type: string
                   destination:
                     type: string
                   fare:
-                    type: number
+                    type: float
                   status:
                     type: string
         '400':
@@ -622,7 +620,7 @@ paths:
               type: object
               properties:
                 trip_id:
-                  type: string
+                  type: int
                 status:
                   type: string
       responses:
@@ -633,10 +631,8 @@ paths:
               schema:
                 type: object
                 properties:
-                  trip_id:
-                    type: string
-                  status:
-                    type: string
+                  success:
+                    type: boolean
         '404':
           description: Trip not found
           content:

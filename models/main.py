@@ -77,4 +77,5 @@ class EngagedDriver(SQLModel, table=True):
             ForeignKey(DRIVER_ID_FK, ondelete="CASCADE"),
             index=True
         )
-    )
+    )  
+    
