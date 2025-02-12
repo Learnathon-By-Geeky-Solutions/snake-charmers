@@ -25,7 +25,7 @@ def engage_driver(request: EngageDriverRequest, db: Session = Depends(get_db)):
     return TripService.engage_driver(db, request.req_id, request.driver_id)
 
 
-@router.post("/release/{driver_id}", status_code=200)
+@router.delete("/release/{driver_id}", status_code=200)
 def release_driver(driver_id : int, db: Session = Depends(get_db)):
     return TripService.release_driver(db, driver_id)
 
@@ -34,6 +34,6 @@ def add_trip(trip_data: TripCreate, db: Session = Depends(get_db)):
     return TripService.add_trip(db, trip_data)
 
 
-@router.put("/status/{trip_id}", status_code=200)
+@router.put("/status", status_code=200)
 def update_trip_status(request: UpdateTripStatusRequest, db: Session = Depends(get_db)):
     return TripService.update_trip_status(db, request.trip_id, request.status)

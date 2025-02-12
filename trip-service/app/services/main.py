@@ -110,7 +110,7 @@ class TripService:
                 raise HTTPException(status_code=404, detail="Trip not found")
             trip.status = status
             db.commit()
-            return {"trip_id": trip_id, "status": status}
+            return {"success": True}
         except HTTPException:
             raise
         except Exception:
