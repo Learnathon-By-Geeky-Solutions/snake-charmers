@@ -384,7 +384,7 @@ paths:
               type: object
               properties:
                 rider_id:
-                  type: int
+                  type: integer
                 pickup_loccation:
                   type: string
                 destination:
@@ -398,7 +398,7 @@ paths:
                 type: object
                 properties:
                   req_id:
-                    type: int
+                    type: integer
         '400':
           description: Invalid input
           content:
@@ -428,7 +428,7 @@ paths:
           in: query
           required: true
           schema:
-            type: int
+            type: integer
       responses:
         '200':
           description: Trip request removed successfully
@@ -471,9 +471,9 @@ paths:
               type: object
               properties:
                 driver_id:
-                  type: int
+                  type: integer
                 req_id:
-                  type: int
+                  type: integer
       responses:
         '201':
           description: Driver engaged successfully
@@ -513,7 +513,7 @@ paths:
           in: query
           required: true
           schema:
-            type: int
+            type: integer
       
       responses:
         '200':
@@ -557,15 +557,15 @@ paths:
               type: object
               properties:
                 rider_id:
-                  type: int
+                  type: integer
                 driver_id:
-                  type: int
+                  type: integer
                 pickup_location:
                   type: string
                 destination:
                   type: string
                 fare:
-                  type: float
+                  type: number
                 status:
                   type: string
       responses:
@@ -577,15 +577,15 @@ paths:
                 type: object
                 properties:
                   rider_id:
-                    type: int
+                    type: integer
                   driver_id:
-                    type: int
+                    type: integer
                   pickup_location:
                     type: string
                   destination:
                     type: string
                   fare:
-                    type: float
+                    type: number
                   status:
                     type: string
         '400':
@@ -620,7 +620,7 @@ paths:
               type: object
               properties:
                 trip_id:
-                  type: int
+                  type: integer
                 status:
                   type: string
       responses:

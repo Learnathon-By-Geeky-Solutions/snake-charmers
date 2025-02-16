@@ -15,6 +15,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy necessary files into the container
 COPY ./trip-service/app ./app
+COPY ./trip-service/.env .
 COPY ./models ./app/models
 
 # Expose the port that the app runs on
