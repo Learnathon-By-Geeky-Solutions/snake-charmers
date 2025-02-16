@@ -2,6 +2,8 @@ from fastapi import HTTPException
 from sqlmodel import Session, select
 from app.models.main import TripRequest, Trip, EngagedDriver
 
+INTERNAL_SERVER_ERROR = HTTPException(status_code=500, detail="Internal server error")
+
 class TripService:
     @staticmethod
     def add_trip_request(db: Session, request_data):
@@ -12,9 +14,9 @@ class TripService:
             db.refresh(trip_request)
             return {"req_id": (trip_request.req_id)}
 
-        except Exception as e:
+        except Exception as exc:
             db.rollback()
-            raise HTTPException(status_code=500, detail="Internal server error")
+            raise INTERNAL_SERVER_ERROR from exc
 
     @staticmethod
     def remove_trip_request(db: Session, req_id: int):
@@ -25,11 +27,10 @@ class TripService:
             db.delete(trip_request)
             db.commit()
             return {"success": True}
-        except HTTPException:
-            raise
-        except Exception:
+
+        except Exception as exc:
             db.rollback()
-            raise HTTPException(status_code=500, detail="Internal server error")
+            raise INTERNAL_SERVER_ERROR from exc
 
     @staticmethod
     def engage_driver(db: Session, req_id: int, driver_id: int):
@@ -43,48 +44,38 @@ class TripService:
             db.add(engagement)
             db.commit()
             return {"success": True}
-        except HTTPException:
-            raise
-        except Exception as e:
-            print(e)
+
+        except Exception as exc:
             db.rollback()
-            raise HTTPException(status_code=500, detail="Internal server error")
+            raise INTERNAL_SERVER_ERROR from exc
 
     @staticmethod
     def release_driver(db: Session, driver_id: int):
         try:
-            engaged_driver = db.exec(select(EngagedDriver).where(EngagedDriver.driver_id == driver_id)).first()
+            engaged_driver = db.exec(
+            select(EngagedDriver).where(EngagedDriver.driver_id == driver_id)
+            ).first()
             if not engaged_driver:
                 raise HTTPException(status_code=404, detail="Driver not found")
 
             db.delete(engaged_driver)
             db.commit()
             return {"success": True}
-        except HTTPException:
-            raise
-        except Exception:
+        except Exception as exc:
             db.rollback()
-            raise HTTPException(status_code=500, detail="Internal server error")
-
-    
+            raise INTERNAL_SERVER_ERROR from exc
 
     @staticmethod
     def add_trip(db: Session, trip_data):
         try:
-            # TripService.validate_trip_data(trip_data)
-
             trip = Trip(**trip_data.dict())
             db.add(trip)
             db.commit()
             db.refresh(trip)
-            return {"trip_id": trip.trip_id, "rider_id": trip.rider_id, "driver_id":trip.driver_id,"pickup_location":trip.pickup_location,"destination":trip.destination,"fare":trip.fare,"status":trip.status}
-
-        except HTTPException as e :
-            raise e 
-
-        except Exception:
+            return trip.dict()
+        except Exception as exc:
             db.rollback()
-            raise HTTPException(status_code=500, detail="Internal server error")
+            raise INTERNAL_SERVER_ERROR from exc
 
     @staticmethod
     def update_trip_status(db: Session, trip_id: int, status: str):
@@ -95,8 +86,7 @@ class TripService:
             trip.status = status
             db.commit()
             return {"success": True}
-        except HTTPException:
-            raise
-        except Exception:
+
+        except Exception as exc:
             db.rollback()
-            raise HTTPException(status_code=500, detail="Internal server error")
+            raise INTERNAL_SERVER_ERROR from exc
