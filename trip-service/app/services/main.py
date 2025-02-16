@@ -1,7 +1,6 @@
 from fastapi import HTTPException
 from sqlmodel import Session, select
 from app.models.main import TripRequest, Trip, EngagedDriver
-from app.schemas.trip_schemas import TripCreate
 
 class TripService:
     @staticmethod
@@ -11,9 +10,9 @@ class TripService:
             db.add(trip_request)
             db.commit()
             db.refresh(trip_request)
-            return {"trip_id": (trip_request.req_id)}
+            return {"req_id": (trip_request.req_id)}
 
-        except Exception:
+        except Exception as e:
             db.rollback()
             raise HTTPException(status_code=500, detail="Internal server error")
 
@@ -46,7 +45,8 @@ class TripService:
             return {"success": True}
         except HTTPException:
             raise
-        except Exception:
+        except Exception as e:
+            print(e)
             db.rollback()
             raise HTTPException(status_code=500, detail="Internal server error")
 
@@ -67,22 +67,6 @@ class TripService:
             raise HTTPException(status_code=500, detail="Internal server error")
 
     
-    # @staticmethod
-    # def validate_trip_data(trip_data: TripCreate):
-    #     """ Validate trip data fields before adding to the database. """
-    #     required_fields = {
-    #         "rider_id": (int, lambda x: x > 0),
-    #         "driver_id": (int, lambda x: x > 0),
-    #         "pickup_location": (str, lambda x: x.strip() != ""),
-    #         "destination": (str, lambda x: x.strip() != ""),
-    #         "status": (str, lambda x: x.strip() != ""),
-    #         "fare": ((int, float), lambda x: x > 0)
-    #     }
-
-    #     for field, (expected_type, condition) in required_fields.items():
-    #         value = getattr(trip_data, field, None)
-    #         if not isinstance(value, expected_type) or not condition(value):
-    #             raise HTTPException(status_code=400, detail=f"Invalid {field}")
 
     @staticmethod
     def add_trip(db: Session, trip_data):
@@ -93,7 +77,7 @@ class TripService:
             db.add(trip)
             db.commit()
             db.refresh(trip)
-            return {"rider_id": trip.rider_id, "driver_id":trip.driver_id,"pickup_location":trip.pickup_location,"destination":trip.destination,"fare":trip.fare,"status":trip.status}
+            return {"trip_id": trip.trip_id, "rider_id": trip.rider_id, "driver_id":trip.driver_id,"pickup_location":trip.pickup_location,"destination":trip.destination,"fare":trip.fare,"status":trip.status}
 
         except HTTPException as e :
             raise e 

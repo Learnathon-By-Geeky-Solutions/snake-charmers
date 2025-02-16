@@ -8,7 +8,7 @@ class TripRequestCreate(BaseModel):
     destination: str
 
 
-class TripRequestResponse(TripRequestCreate):
+class TripRequestResponse(BaseModel):
     req_id: int
 
     class Config:
