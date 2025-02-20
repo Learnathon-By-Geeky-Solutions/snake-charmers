@@ -25,9 +25,7 @@ def add_trip_request(
 
 @router.delete("/remove-request/{req_id}", status_code=200)
 def remove_trip_request(req_id: int, db: Session = Depends(get_session)):
-    TripService.remove_trip_request(db, req_id)
-    return {"message": "Trip request removed successfully"}
-
+    return TripService.remove_trip_request(db, req_id)
 
 
 @router.post("/engage-driver", status_code=201)
