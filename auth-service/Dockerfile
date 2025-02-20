@@ -1,24 +1,43 @@
-# Use the official Python 3.10-slim image from Docker Hub.
-# NOTE: This image runs as root by default. For production,
-#       consider creating a dedicated non-root user to reduce
-#       privilege escalation risks.
-FROM python:3.10-slim
+# Stage 1: Build stage (install dependencies into a virtual environment)
+FROM python:3.13.2-alpine AS build
+
+# Install build dependencies
+RUN apk update && apk add --no-cache build-base=0.5-r2 libffi-dev=3.2.1-r0
 
 # Set the working directory in the container
 WORKDIR /app
 
-# Copy the requirements.txt file into the container
-COPY ./auth-service/requirements.txt .
-
-# Install the dependencies
+# Copy the requirements file
+COPY ./trip-service/requirements.txt .
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy necessary files into the container
+# Stage 2: Final production stage (smaller image)
+FROM python:3.13.2-alpine
+
+# Install runtime dependencies (if needed)
+# RUN apk add --no-cache libffi-dev
+
+# Create a non-root user
+RUN adduser -D myuser
+USER myuser
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the virtual environment from the build stage
+COPY --from=build /opt/venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+
+# Copy application code
 COPY ./auth-service/app ./app
+COPY ./auth-service/.env .
 COPY ./models ./app/models
 
 # Expose the port that the app runs on
 EXPOSE 8000
 
-# Command to run the application with auto-reload for development
+# Run the application with auto-reload for development
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
