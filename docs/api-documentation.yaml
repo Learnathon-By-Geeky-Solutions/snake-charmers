@@ -20,7 +20,7 @@ paths:
             schema:
               type: object
               properties:
-                id:
+                driver_id:
                   type: string
                 latitude:
                   type: number
@@ -68,9 +68,7 @@ paths:
             schema:
               type: object
               properties:
-                id:
-                  type: string
-                socket_id:
+                driver_id:
                   type: string
                 latitude:
                   type: number
@@ -187,15 +185,11 @@ paths:
                 items:
                   type: object
                   properties:
-                    id:
+                    driver_id:
                       type: string
                     name:
                       type: string
-                    ratings:
-                      type: number
-                    ETA:
-                      type: string
-                    socket_id:
+                    mobile:
                       type: string
         '400':
           description: Invalid input
@@ -576,6 +570,8 @@ paths:
               schema:
                 type: object
                 properties:
+                  trip_id:
+                    type: integer
                   rider_id:
                     type: integer
                   driver_id:
