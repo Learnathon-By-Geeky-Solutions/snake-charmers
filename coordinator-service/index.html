@@ -22,10 +22,10 @@
     <script>
         const socket = new WebSocket("ws://localhost:8080/ws");
 
-        // socket.onopen = () => {
-        //     console.log("Connected to WebSocket server.");
-        //     emitEvent("join", { username: "User123" }); // Default join event
-        // };
+        socket.onopen = () => {
+            console.log("Connected to WebSocket server.");
+            emitEvent("client-join", {id: 2,  role: "rider"}); // Default join event
+        };
 
         socket.onmessage = (event) => {
             try {

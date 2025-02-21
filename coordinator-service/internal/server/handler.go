@@ -13,8 +13,8 @@ func HandleConnections(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
-	AddClient(conn)
-	fmt.Println("New client connected:", conn.RemoteAddr())
+	// AddClient(conn)
+	// fmt.Println("New client connected:", conn.RemoteAddr())
 	
 	// Handle messages in a separate Goroutine
 	go handleMessages(conn)
@@ -29,6 +29,6 @@ func handleMessages(conn *websocket.Conn){
 				fmt.Println("Error reading message:", err)
 				break // Exit loop if error occurs (disconnect)
 			}
-			ProcessEvent(conn, message)
+			ProcessEvents(conn, message)
 		}
 }

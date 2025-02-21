@@ -7,22 +7,44 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-// Store active clients
-var clients = make(map[*websocket.Conn]bool)
-var mutex = sync.Mutex{} // Prevents concurrent map modifications
+type ClientInfo struct {
+	ID   int    `json:"id"`
+	Role string `json:"role"`
+}
 
-// Add a client to the map
-func AddClient(conn *websocket.Conn) {
+var mutex = sync.Mutex{} 
+
+var clients = make(map[*websocket.Conn]ClientInfo)
+var drivers = make(map[int]*websocket.Conn)
+var riders = make(map[int]*websocket.Conn)
+
+func AddClient(conn *websocket.Conn, payload ClientInfo) {
+
 	mutex.Lock()
-	clients[conn] = true
+	clients[conn] = payload
+	if payload.Role == "driver" {
+		drivers[payload.ID] = conn
+		fmt.Println("driver joined:", conn.RemoteAddr())
+	} else if payload.Role == "rider" {
+		riders[payload.ID] = conn
+		fmt.Println("rider joined:", conn.RemoteAddr())
+	}
 	mutex.Unlock()
-	fmt.Println("Client added:", conn.RemoteAddr())
+	fmt.Println("Client added:", payload)
 }
 
 // Remove a client from the map
 func RemoveClient(conn *websocket.Conn) {
 	mutex.Lock()
-	delete(clients, conn)
+	client, exists := clients[conn]
+	if exists {
+		if client.Role == "driver" {
+			delete(drivers, client.ID)
+		} else {
+			delete(riders, client.ID)
+		}
+		delete(clients, conn)
+	}
 	mutex.Unlock()
 	fmt.Println("Client removed:", conn.RemoteAddr())
 }
