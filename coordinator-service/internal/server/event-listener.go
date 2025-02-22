@@ -40,23 +40,23 @@ func ProcessEvents(conn *websocket.Conn, message []byte) {
 			fmt.Println("trip-checkout:", event.Data)
 
 		case "place-bid-driver":
-			// HandleBidFromDriver(conn, event.Data)
+			HandleBidFromDriver(conn, event.Data)
 			fmt.Println("place-bid-driver:", event.Data)
 
 		case "place-bid-client":
-			// HandleBidFromClient(conn, event.Data)
+			HandleBidFromClient(conn, event.Data)
 			fmt.Println("place-bid-client:", event.Data)
 
 		case "confirm-trip":
-			// HandleTripConfirmation(conn, event.Data)
+			HandleTripConfirmation(conn, event.Data)
 			fmt.Println("confirm-trip:", event.Data)
 
 		case "decline-trip":
-			// HandleTripDecline(conn, event.Data)
+			HandleTripRequestDecline(conn, event.Data)
 			fmt.Println("decline-trip:", event.Data)
 
 		case "end-trip":
-			// HandleEndTrip(conn, event.Data)
+			HandleEndTrip(conn, event.Data)
 			fmt.Println("end-trip:", event.Data)
 
 		default:

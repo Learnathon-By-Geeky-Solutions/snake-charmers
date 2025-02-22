@@ -24,7 +24,7 @@ func InitiateTripRequest(reqID int, clientID int) {
 	fmt.Println("Trip initiated:", ActiveTripRequest[reqID])
 }
 
-func EngageDriver(reqID int, driverID int, driver Driver) {
+func EngageDriver(reqID int, driverID int, driver Driver){
 	trip, exists := ActiveTripRequest[reqID]
 	if !exists {
 		fmt.Println("Trip request not found!")
@@ -35,6 +35,7 @@ func EngageDriver(reqID int, driverID int, driver Driver) {
 	ActiveTripRequest[reqID] = trip // Update the map entry
 
 	fmt.Println("Driver added to trip:", trip.Drivers)
+	// return nil
 }
 
 func ReleaseDriver(reqID int, driverID int) {

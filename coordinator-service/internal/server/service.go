@@ -21,7 +21,7 @@ func HandleTripRequest(conn *websocket.Conn, payload any) {
 		// send error response
 	} else {
 		InitiateTripRequest(res1.ReqID, data.RiderID)
-		res2, err := SearchAmbulancesRequest(data)
+		res2, err := RequestAmbulances(data)
 		if err != nil {
 			// send error response
 		} else {
@@ -45,7 +45,7 @@ func HandleLocationUpdate(conn *websocket.Conn, payload any, typ string) {
 	} else {
 		method = http.MethodPost
 	}
-	_, err = LocationUpdateRequest(data, method, typ)
+	err = RequestLocationUpdate(data, method, typ)
 	if err != nil {
 		// send error response
 	}
@@ -59,7 +59,7 @@ func HandleTripRequestCheckout(conn *websocket.Conn, payload any) {
 		fmt.Println("Failed to decode request payload:", err)
 		return
 	}
-	_, err = TripCheckoutRequest(data)
+	err = RequestTripCheckout(data)
 	if err != nil {
 		// send error response
 	}
@@ -68,9 +68,20 @@ func HandleTripRequestCheckout(conn *websocket.Conn, payload any) {
 		Mobile: data.Mobile,
 	})
 }
-// func HandleTripRequestDecline(conn *websocket.Conn, payload any) {
-
-// }
+func HandleTripRequestDecline(conn *websocket.Conn, payload any) {
+	var data TripDecline
+	err := mapstructure.Decode(payload, &data)
+	if err != nil {
+		fmt.Println("Failed to decode request payload:", err)
+		return
+	}
+	err = RequestTripDecline(data)
+	if err != nil {
+		// send error response
+	}else{
+		ReleaseDriver(data.ReqID, data.DriverID)
+	}
+}
 func HandleBidFromDriver(conn *websocket.Conn, payload any) {
 	var data BidFromDriver
 	err := mapstructure.Decode(payload, &data)
@@ -97,10 +108,42 @@ func HandleBidFromClient(conn *websocket.Conn, payload any) {
 	}
 }
 
-// func HandleTripConfirmation(conn *websocket.Conn, payload any) {
+func HandleTripConfirmation(conn *websocket.Conn, payload any) {
+	var data TripConfirm
+	err := mapstructure.Decode(payload, &data)
+	if err != nil {
+		fmt.Println("Failed to decode request payload:", err)
+		return
+	}
+	res, err := RequestTripConfirmation(data)
+	if err != nil {
+		// send error response
+	}
+	err = SendTripConfirmation(res)
+	if err != nil {
+		//handle error
+	}
+	err = RequestTripRequestRemoval(data.ReqID)
+	if err != nil {
+		//handle error	
+	}
+	for _, driver := range ActiveTripRequest[data.ReqID].Drivers {
+		if driver.DriverID == data.DriverID {
+			continue
+		}
+		go NotifyOtherDriver(data.DriverID)
+	}
+	DeleteTripRequest(data.ReqID)
+}
 
-// }
-
-// func HandleEndTrip(conn *websocket.Conn, payload any) {
-
-// }
+func HandleEndTrip(conn *websocket.Conn, payload any) {
+	tripID, ok := payload.(int)
+	if !ok {
+		fmt.Println("Failed to convert payload to int")
+		return
+	}
+	err := RequestEndTrip(tripID)
+	if err != nil {
+		// send error response
+	}
+}
