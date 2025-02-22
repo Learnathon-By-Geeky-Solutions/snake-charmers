@@ -9,6 +9,8 @@ class DriverLocationCreate(BaseModel):
 
 class DriverLocationResponse(BaseModel):
     driver_id: int
+    name: str
+    mobile: str
 
 class NearbyDriversRequest(BaseModel):
     lat: float = Field(..., ge=-90, le=90)
