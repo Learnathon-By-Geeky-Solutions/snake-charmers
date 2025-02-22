@@ -8,14 +8,11 @@ class AmbulanceService:
     @staticmethod
     def update_driver_location(db: Session, location_data: DriverLocationCreate):
         try:
-            # Create WKT (Well-Known Text) point from lat/lon
             point = f'POINT({location_data.lon} {location_data.lat})'
-            # print("test point", point)
             # Check if driver location exists
             driver_location = db.query(DriverLocation).filter(
                 DriverLocation.driver_id == location_data.driver_id
-            ).first()
-            # print("test driver_location ", driver_location)   
+            ).first()  
             if driver_location:
                 # Update existing location
                 driver_location.location = ST_GeomFromText(point, 4326)
@@ -26,10 +23,7 @@ class AmbulanceService:
                     driver_id=location_data.driver_id,
                     location=ST_GeomFromText(point, 4326)
                 )
-                print("test driver_location ", driver_location)
                 db.add(driver_location)
-                print("successfully created driver location", driver_location)
-            
             db.commit()
             return {"driver_id": location_data.driver_id}
         
