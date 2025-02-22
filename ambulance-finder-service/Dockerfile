@@ -2,7 +2,7 @@
 FROM python:3.13.2-alpine AS build
 
 # Install build dependencies
-RUN apk update && apk add --no-cache build-base=0.5-r2 libffi-dev=3.2.1-r0
+RUN apk update && apk add --no-cache build-base=0.5-r3 libffi-dev=3.4.6-r0
 
 # Set the working directory in the container
 WORKDIR /app

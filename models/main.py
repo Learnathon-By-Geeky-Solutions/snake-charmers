@@ -30,10 +30,6 @@ class DriverLocation(SQLModel, table=True):
             index=True
         )
     ) 
-    # socket_id: str = Field(index=True)
-    # latitude: float
-    # longitude: float
-    # h3_index: str = Field(index=True)
     location: Geography = Field(sa_column=Column(Geography(geometry_type="POINT", srid=4326), nullable=False))
     model_config = {
         "arbitrary_types_allowed": True
