@@ -13,7 +13,6 @@ func main() {
 
 	// Initialize WebSocket server
 	http.HandleFunc("/ws", server.HandleConnections)
-
 	// Start broadcaster
 	// go server.HandleMessages()
 

@@ -7,6 +7,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+
 // Handle WebSocket connections
 func HandleConnections(w http.ResponseWriter, r *http.Request) {
 	conn, err := UpgradeConnection(w, r)

@@ -1,62 +1,59 @@
 package server
 
 import (
-	"bytes"
-	"encoding/json"
-	"net/http"
-	"log"
 	"fmt"
-	
+	"net/http"
+	"encoding/json"
+	"log"
 )
+
 type TripRequest struct {
-	RiderID  int    `json:"rider_id"`
-	PickupLocation  string `json:"pickup_location"`
-	Destination string `json:"destination"`
+	RiderID        int     `json:"rider_id"`
+	PickupLocation string  `json:"pickup_location"`
+	Destination    string  `json:"destination"`
+	Latitude       float64 `json:"latitude"`
+	Longitude      float64 `json:"longitude"`
 }
-type AmbulanceRequest struct {
-	Radius    int     `json:"radius"`
+type LocationUpdate struct {
+	DriverID  int     `json:"driver_id"`
 	Latitude  float64 `json:"latitude"`
 	Longitude float64 `json:"longitude"`
 }
-
-func SendTripRequest(payload TripRequest) (*http.Response, error){
-	jsonData, err := json.Marshal(payload)
-	if err != nil {
-		log.Println("Error marshalling JSON:", err)
-		return nil, err
+type TripRequestResponse struct {
+	ReqID int `json:"req_id"`
+}
+type SearchAmbulancesRequestResponse struct {
+	DriverID int `json:"driver_id"`
+	Name string `json:"driver_name"`
+	Mobile string `json:"mobile"`
+}
+func SendTripRequest(payload TripRequest) (TripRequestResponse, error) {
+	data := map[string]any{
+		"rider_id":        payload.RiderID,
+		"pickup_location": payload.PickupLocation,
+		"destination":     payload.Destination,
 	}
-	res, err := http.Post("http://localhost:8000/api/trip/request/add", "application/json", bytes.NewBuffer(jsonData))
-	if err != nil {
-		log.Println("Error making HTTP request:", err)
-		return nil, err
+	res, err := MakeRequest(http.MethodGet, "http://localhost:8000/api/trip/request/add", data)
+	var responseData TripRequestResponse
+	if err := json.Unmarshal(res, &responseData); err != nil {
+		log.Println("Error parsing JSON:", err)
+		return TripRequestResponse{}, err
 	}
-	defer res.Body.Close()
-	if res.StatusCode != http.StatusOK {
-		log.Println("Received non-OK response:", res.Status)
-		return nil, fmt.Errorf("Received non-OK response: %s", res.Status)	
-	}
-	return res, nil
+	return responseData, err
 }
 
-func SearchAmbulances(payload AmbulanceRequest) (map[string]any, error) {
-
-	url := fmt.Sprintf("http://localhost:8000/api/ambulances/search?radius=%d&latitude=%f&longitude=%f", payload.Radius, payload.Latitude, payload.Longitude)
-	res, err := http.Get(url)
-	if err != nil {
-		log.Println("Error making HTTP request:", err)
-		return nil, err
+func SearchAmbulancesRequest(payload TripRequest) ([]SearchAmbulancesRequestResponse, error) {
+	url := fmt.Sprintf("http://localhost:8000/api/ambulances/search?radius=5&latitude=%f&longitude=%f", payload.Latitude, payload.Longitude)
+	res, err := MakeRequest(http.MethodGet, url, nil)
+	var responseData []SearchAmbulancesRequestResponse
+	if err := json.Unmarshal(res, &responseData); err != nil {
+		log.Println("Error parsing JSON:", err)
+		return []SearchAmbulancesRequestResponse{}, err
 	}
-	defer res.Body.Close()
+	return responseData, err
+}
 
-	if res.StatusCode != http.StatusOK {
-		log.Println("Received non-OK response:", res.Status)
-		return nil, fmt.Errorf("Received non-OK response: %s", res.Status)
-	}
-
-	var responseData map[string]any
-	if err := json.NewDecoder(res.Body).Decode(&responseData); err != nil {
-		log.Println("Error decoding response JSON:", err)
-		return nil, err
-	}
-	return responseData, nil
+func LocationUpdateRequest(payload LocationUpdate) (any, error) {
+	res, err := MakeRequest(http.MethodPut, "http://localhost:8000/api/location/update", payload)
+	return res, err
 }
