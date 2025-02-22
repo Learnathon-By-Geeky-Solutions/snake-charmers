@@ -22,18 +22,26 @@ type LocationUpdate struct {
 type TripRequestResponse struct {
 	ReqID int `json:"req_id"`
 }
-type SearchAmbulancesRequestResponse struct {
-	DriverID int `json:"driver_id"`
-	Name string `json:"driver_name"`
-	Mobile string `json:"mobile"`
-}
+// type SearchAmbulancesRequestResponse struct {
+// 	DriverID int `json:"driver_id"`
+// 	Name string `json:"driver_name"`
+// 	Mobile string `json:"mobile"`
+// }
 type TripCheckout struct {
 	ReqID int `json:"req_id"`
 	DriverID int `json:"driver_id"`
 	Name string `json:"driver_name"`
 	Mobile string `json:"mobile"`
 }
-
+type BidFromDriver struct {
+	ReqID int `json:"req_id"`
+	DriverID int `json:"driver_id"`
+	Amount int `json:"amount"`
+}
+type BidFromClient struct{
+	ReqID int `json:"req_id"`
+	Amount int `json:"amount"`
+}
 func SendTripRequest(payload TripRequest) (TripRequestResponse, error) {
 	data := map[string]any{
 		"rider_id":        payload.RiderID,
@@ -49,13 +57,13 @@ func SendTripRequest(payload TripRequest) (TripRequestResponse, error) {
 	return responseData, err
 }
 
-func SearchAmbulancesRequest(payload TripRequest) ([]SearchAmbulancesRequestResponse, error) {
+func SearchAmbulancesRequest(payload TripRequest) ([]Driver, error) {
 	url := fmt.Sprintf("http://localhost:8000/api/ambulances/search?radius=5&latitude=%f&longitude=%f", payload.Latitude, payload.Longitude)
 	res, err := MakeRequest(http.MethodGet, url, nil)
-	var responseData []SearchAmbulancesRequestResponse
+	var responseData []Driver
 	if err := json.Unmarshal(res, &responseData); err != nil {
 		log.Println("Error parsing JSON:", err)
-		return []SearchAmbulancesRequestResponse{}, err
+		return []Driver{}, err
 	}
 	return responseData, err
 }

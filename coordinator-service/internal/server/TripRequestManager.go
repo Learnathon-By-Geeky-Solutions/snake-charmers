@@ -5,8 +5,9 @@ import (
 )
 
 type Driver struct {
-	Name     string
-	Mobile   string
+	DriverID int     `json:"driver_id"`
+	Name     string  `json:"name"`
+	Mobile   string  `json:"mobile`
 }
 type TripDetails struct {
 	ClientID int

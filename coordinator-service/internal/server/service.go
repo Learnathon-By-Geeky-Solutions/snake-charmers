@@ -52,7 +52,7 @@ func HandleLocationUpdate(conn *websocket.Conn, payload any, typ string) {
 
 }
 
-func HandleTripCheckout(conn *websocket.Conn, payload any) {
+func HandleTripRequestCheckout(conn *websocket.Conn, payload any) {
 	var data TripCheckout
 	err := mapstructure.Decode(payload, &data)
 	if err != nil {
@@ -68,20 +68,36 @@ func HandleTripCheckout(conn *websocket.Conn, payload any) {
 		Mobile: data.Mobile,
 	})
 }
-
-// func HandleBidFromDriver(conn *websocket.Conn, payload any) {
-
-// }
-
-// func HandleBidFromClient(conn *websocket.Conn, payload any) {
+// func HandleTripRequestDecline(conn *websocket.Conn, payload any) {
 
 // }
+func HandleBidFromDriver(conn *websocket.Conn, payload any) {
+	var data BidFromDriver
+	err := mapstructure.Decode(payload, &data)
+	if err != nil {
+		fmt.Println("Failed to decode request payload:", err)
+		return
+	}
+	err = SendBidFromDriver(data)
+	if err != nil {
+		// send error response
+	}
+}
+
+func HandleBidFromClient(conn *websocket.Conn, payload any) {
+	var data BidFromClient
+	err := mapstructure.Decode(payload, &data)
+	if err != nil {
+		fmt.Println("Failed to decode request payload:", err)
+		return
+	}
+	err = SendBidFromClient(data)
+	if err != nil {
+		// send error response
+	}
+}
 
 // func HandleTripConfirmation(conn *websocket.Conn, payload any) {
-
-// }
-
-// func HandleTripDecline(conn *websocket.Conn, payload any) {
 
 // }
 

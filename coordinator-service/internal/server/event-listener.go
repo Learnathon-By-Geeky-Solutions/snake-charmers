@@ -36,7 +36,7 @@ func ProcessEvents(conn *websocket.Conn, message []byte) {
 			fmt.Println("update-location:", event.Data)
 
 		case "checkout-trip":
-			HandleTripCheckout(conn, event.Data)
+			HandleTripRequestCheckout(conn, event.Data)
 			fmt.Println("trip-checkout:", event.Data)
 
 		case "place-bid-driver":
