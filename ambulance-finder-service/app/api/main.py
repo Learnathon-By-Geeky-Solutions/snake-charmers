@@ -4,7 +4,7 @@ from app.schemas.main import DriverLocationCreate, NearbyDriversRequest, DriverL
 from app.services.main import AmbulanceService
 from app.db import get_session
 
-router = APIRouter(prefix="api/ambulances", tags=["Ambulance Finder Service"])
+router = APIRouter(prefix="/api/ambulances", tags=["Ambulance Finder Service"])
 
 # for testing purposes
 @router.post("/", response_model=DriverLocationResponse,status_code=201)  
