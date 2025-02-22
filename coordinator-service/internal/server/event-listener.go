@@ -3,7 +3,6 @@ package server
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/mitchellh/mapstructure"
 	"github.com/gorilla/websocket"
 )
 
@@ -23,13 +22,7 @@ func ProcessEvents(conn *websocket.Conn, message []byte) {
 	switch event.Name {
 
 		case "new-client":
-			var data ClientInfo
-			err := mapstructure.Decode(event.Data, &data)
-			if err != nil {
-				fmt.Println("Failed to decode client payload:", err)
-				return
-			}
-			AddClient(conn, data)
+			AddClient(conn, event.Data)
 
 		case "request-trip":
 			HandleTripRequest(conn, event.Data)
@@ -37,12 +30,13 @@ func ProcessEvents(conn *websocket.Conn, message []byte) {
 		case "update-location":
 			HandleLocationUpdate(conn, event.Data, "update")
 			fmt.Println("update-location:", event.Data)
+			
 		case "add-location":
 			HandleLocationUpdate(conn, event.Data, "add")
 			fmt.Println("update-location:", event.Data)
 
 		case "checkout-trip":
-			// HandleTripCheckout(conn, event.Data)
+			HandleTripCheckout(conn, event.Data)
 			fmt.Println("trip-checkout:", event.Data)
 
 		case "place-bid-driver":

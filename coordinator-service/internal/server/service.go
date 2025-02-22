@@ -26,10 +26,6 @@ func HandleTripRequest(conn *websocket.Conn, payload any) {
 			// send error response
 		} else {
 			for _, driver := range res2 {
-				// EngageDriver(res1.ReqID, driver.DriverID, Driver{
-				// 	Name: driver.Name,
-				// 	Mobile: driver.Mobile,
-				// })
 				go PingDrivers(driver.DriverID, res1.ReqID, data.PickupLocation, data.Destination)
 			}
 		}
@@ -56,10 +52,22 @@ func HandleLocationUpdate(conn *websocket.Conn, payload any, typ string) {
 
 }
 
-
-// func HandleTripCheckout(conn *websocket.Conn, payload any) {
-
-// }
+func HandleTripCheckout(conn *websocket.Conn, payload any) {
+	var data TripCheckout
+	err := mapstructure.Decode(payload, &data)
+	if err != nil {
+		fmt.Println("Failed to decode request payload:", err)
+		return
+	}
+	_, err = TripCheckoutRequest(data)
+	if err != nil {
+		// send error response
+	}
+	EngageDriver(data.ReqID, data.DriverID, Driver{
+		Name: data.Name,
+		Mobile: data.Mobile,
+	})
+}
 
 // func HandleBidFromDriver(conn *websocket.Conn, payload any) {
 

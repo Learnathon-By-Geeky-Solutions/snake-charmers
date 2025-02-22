@@ -27,6 +27,13 @@ type SearchAmbulancesRequestResponse struct {
 	Name string `json:"driver_name"`
 	Mobile string `json:"mobile"`
 }
+type TripCheckout struct {
+	ReqID int `json:"req_id"`
+	DriverID int `json:"driver_id"`
+	Name string `json:"driver_name"`
+	Mobile string `json:"mobile"`
+}
+
 func SendTripRequest(payload TripRequest) (TripRequestResponse, error) {
 	data := map[string]any{
 		"rider_id":        payload.RiderID,
@@ -59,3 +66,11 @@ func LocationUpdateRequest(payload LocationUpdate, method, typ string) (any, err
 	return res, err
 }
 
+func TripCheckoutRequest(payload TripCheckout) (any, error) {
+	data := map[string]any{
+		"req_id":         payload.ReqID,
+		"driver_id":      payload.DriverID,
+	}
+	res, err := MakeRequest(http.MethodPost, "http://localhost:8000/api/trip/engage-driver", data)
+	return res, err
+}

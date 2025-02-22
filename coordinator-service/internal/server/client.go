@@ -3,7 +3,7 @@ package server
 import (
 	"fmt"
 	"sync"
-
+	"github.com/mitchellh/mapstructure"
 	"github.com/gorilla/websocket"
 )
 
@@ -18,19 +18,26 @@ var clients = make(map[*websocket.Conn]ClientInfo)
 var drivers = make(map[int]*websocket.Conn)
 var riders = make(map[int]*websocket.Conn)
 
-func AddClient(conn *websocket.Conn, payload ClientInfo) {
+func AddClient(conn *websocket.Conn, payload any) {
+
+	var data ClientInfo
+	err := mapstructure.Decode(payload, &data)
+	if err != nil {
+		fmt.Println("Failed to decode client payload:", err)
+		return
+	}
 
 	mutex.Lock()
-	clients[conn] = payload
-	if payload.Role == "driver" {
-		drivers[payload.ID] = conn
+	clients[conn] = data
+	if data.Role == "driver" {
+		drivers[data.ID] = conn
 		fmt.Println("driver joined:", conn.RemoteAddr())
-	} else if payload.Role == "rider" {
-		riders[payload.ID] = conn
+	} else if data.Role == "rider" {
+		riders[data.ID] = conn
 		fmt.Println("rider joined:", conn.RemoteAddr())
 	}
 	mutex.Unlock()
-	fmt.Println("Client added:", payload)
+	fmt.Println("Client added:", data)
 }
 
 // Remove a client from the map
