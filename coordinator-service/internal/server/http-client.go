@@ -53,7 +53,9 @@ func SearchAmbulancesRequest(payload TripRequest) ([]SearchAmbulancesRequestResp
 	return responseData, err
 }
 
-func LocationUpdateRequest(payload LocationUpdate) (any, error) {
-	res, err := MakeRequest(http.MethodPut, "http://localhost:8000/api/location/update", payload)
+func LocationUpdateRequest(payload LocationUpdate, method, typ string) (any, error) {
+	url := fmt.Sprintf("http://localhost:8000/api/location/%s", typ)
+	res, err := MakeRequest(method, url, payload)
 	return res, err
 }
+

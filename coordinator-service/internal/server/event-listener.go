@@ -35,7 +35,10 @@ func ProcessEvents(conn *websocket.Conn, message []byte) {
 			HandleTripRequest(conn, event.Data)
 
 		case "update-location":
-			HandleLocationUpdate(conn, event.Data)
+			HandleLocationUpdate(conn, event.Data, "update")
+			fmt.Println("update-location:", event.Data)
+		case "add-location":
+			HandleLocationUpdate(conn, event.Data, "add")
 			fmt.Println("update-location:", event.Data)
 
 		case "checkout-trip":
