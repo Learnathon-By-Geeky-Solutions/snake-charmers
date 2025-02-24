@@ -430,7 +430,7 @@ paths:
           schema:
             type: integer
       responses:
-        '200':
+        '204':
           description: Trip request removed successfully
           content:
             application/json:
@@ -516,7 +516,7 @@ paths:
             type: integer
       
       responses:
-        '200':
+        '204':
           description: Driver released successfully
           content:
             application/json:
