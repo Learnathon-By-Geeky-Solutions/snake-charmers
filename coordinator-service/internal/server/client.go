@@ -15,8 +15,8 @@ type ClientInfo struct {
 var mutex = sync.Mutex{} 
 
 var clients = make(map[*websocket.Conn]ClientInfo)
-var drivers = make(map[int]*websocket.Conn)
-var riders = make(map[int]*websocket.Conn)
+var activeDrivers = make(map[int]*websocket.Conn)
+var activeRiders = make(map[int]*websocket.Conn)
 
 func AddClient(conn *websocket.Conn, payload any) {
 
@@ -30,10 +30,10 @@ func AddClient(conn *websocket.Conn, payload any) {
 	mutex.Lock()
 	clients[conn] = data
 	if data.Role == "driver" {
-		drivers[data.ID] = conn
+		activeDrivers[data.ID] = conn
 		fmt.Println("driver joined:", conn.RemoteAddr())
 	} else if data.Role == "rider" {
-		riders[data.ID] = conn
+		activeRiders[data.ID] = conn
 		fmt.Println("rider joined:", conn.RemoteAddr())
 	}
 	mutex.Unlock()
@@ -46,9 +46,9 @@ func RemoveClient(conn *websocket.Conn) {
 	client, exists := clients[conn]
 	if exists {
 		if client.Role == "driver" {
-			delete(drivers, client.ID)
+			delete(activeDrivers, client.ID)
 		} else {
-			delete(riders, client.ID)
+			delete(activeRiders, client.ID)
 		}
 		delete(clients, conn)
 	}

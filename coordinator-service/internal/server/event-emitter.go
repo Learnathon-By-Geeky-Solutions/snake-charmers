@@ -3,10 +3,11 @@ import(
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/websocket"
+	"coordinator-service/internal/schemas"
 )
 func PingDrivers(driverID int, reqID int, pickupLocation string, destination string) {
 
-		driverConn, exists := drivers[driverID]
+		driverConn, exists := activeDrivers[driverID]
 		if !exists {
 			fmt.Println("Driver not found for ID", driverID)
 			return
@@ -33,10 +34,10 @@ func PingDrivers(driverID int, reqID int, pickupLocation string, destination str
 		}
 }
 
-func SendBidFromDriver(payload BidFromDriver) (error){
+func SendBidFromDriver(payload schemas.BidFromDriver) (error){
 	// Prepare the event data
 	riderID := ActiveTripRequest[payload.ReqID].ClientID
-	riderConn, exists := riders[riderID]
+	riderConn, exists := activeRiders[riderID]
 	if !exists {
 		fmt.Println("Driver not found for ID",  riderID)
 		// return error
@@ -64,7 +65,7 @@ func SendBidFromDriver(payload BidFromDriver) (error){
 	}
 	return nil
 }
-func SendBidFromClient(payload BidFromClient) (error){
+func SendBidFromClient(payload schemas.BidFromClient) (error){
 	// Prepare the event data
 	eventData := map[string]any{
 		"event":     "bid-from-client",
@@ -79,23 +80,23 @@ func SendBidFromClient(payload BidFromClient) (error){
 	}
 	//send event to the drivers
 	var Err error = nil
-	for _,driver := range ActiveTripRequest[payload.ReqID].Drivers {
-		driverConn, exists := drivers[driver.DriverID]
+	for driverID,_ := range ActiveTripRequest[payload.ReqID].Drivers {
+		driverConn, exists := activeDrivers[driverID]
 		if !exists {
-			fmt.Println("Driver not found for ID", driver.DriverID)
+			fmt.Println("Driver not found for ID", driverID)
 			continue
 		}
 		err = driverConn.WriteMessage(websocket.TextMessage, eventMessage)
 		if err != nil {
 			Err = err
-			fmt.Println("Failed to send message to driver", driver.DriverID, ":", err)
+			fmt.Println("Failed to send message to driver", driverID, ":", err)
 		}
 	}
 	return Err
 }
 
-func SendTripConfirmation(payload TripConfirmResponse)(error){
-	driverConn, exists := drivers[payload.DriverID]
+func SendTripConfirmation(payload schemas.TripConfirmResponse)(error){
+	driverConn, exists := activeDrivers[payload.DriverID]
 	if !exists {
 		fmt.Println("Driver not found for ID", payload.DriverID)
 		// return error
@@ -120,7 +121,7 @@ func SendTripConfirmation(payload TripConfirmResponse)(error){
 }
 
 func NotifyOtherDriver(driverID int)(error){
-	driverConn, exists := drivers[driverID]
+	driverConn, exists := activeDrivers[driverID]
 	if !exists {
 		fmt.Println("Driver not found for ID", driverID)
 		// return error

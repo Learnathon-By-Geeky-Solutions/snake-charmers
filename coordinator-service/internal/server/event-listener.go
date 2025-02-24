@@ -4,15 +4,16 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/websocket"
+	"coordinator-service/internal/schemas"
 )
 
-type Event struct {
-	Name string  `json:"name"` 
-	Data any `json:"data"`
-}
+// type Event struct {
+// 	Name string  `json:"name"` 
+// 	Data any `json:"data"`
+// }
 
 func ProcessEvents(conn *websocket.Conn, message []byte) {
-	var event Event
+	var event schemas.Event
 	err := json.Unmarshal(message, &event)
 	if err != nil {
 		fmt.Println("Invalid event format:", err)
