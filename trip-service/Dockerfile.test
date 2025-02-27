@@ -1,0 +1,33 @@
+# Dockerfile.test: Dockerfile specifically for testing environment
+
+# Use the official Python image as the base image
+FROM python:3.13.2-alpine AS build
+
+# Install build dependencies
+RUN apk update && apk add --no-cache build-base libffi-dev bash
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the requirements files
+COPY ./trip-service/requirements.txt .
+
+
+# Install dependencies in a virtual environment
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+RUN pip install --no-cache-dir -r requirements.txt
+# RUN pip install --no-cache-dir -r requirements-test.txt
+
+# Copy the application code
+COPY ./trip-service/app ./app
+COPY ./trip-service/.env .
+COPY ./models ./app/models
+COPY ./trip-service/pytest.ini .
+COPY ./trip-service/tests ./app/tests
+
+# Set the PYTHONPATH
+ENV PYTHONPATH=/app
+
+# Default command to run unit tests with pytest
+CMD ["pytest", "-v", "tests/unittest"]
