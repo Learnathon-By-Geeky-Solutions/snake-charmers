@@ -1,4 +1,4 @@
-package server
+package Utils
 
 import (
 	"bytes"
@@ -63,19 +63,4 @@ func MakeRequest(method, url string, payload any) ([]byte, error) {
 		return nil, err
 	}
 	return body, err
-	// Try decoding into map[string]any (object response)
-	// var objectResponse map[string]any
-	// if err := json.Unmarshal(body, &objectResponse); err == nil {
-	// 	return objectResponse, nil
-	// }
-
-	// // If it fails, try decoding into []map[string]any (array response)
-	// var arrayResponse []map[string]any
-	// if err := json.Unmarshal(body, &arrayResponse); err == nil {
-	// 	return arrayResponse, nil
-	// }
-
-	// // If neither works, return an error
-	// log.Println("Unexpected response format")
-	// return nil, fmt.Errorf("unexpected response format")
 }

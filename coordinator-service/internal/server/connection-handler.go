@@ -1,9 +1,10 @@
-package server
+package Server
 
 import (
 	"fmt"
 	"net/http"
-
+	"coordinator-service/internal/client-manager"
+	"coordinator-service/internal/event-listener"
 	"github.com/gorilla/websocket"
 )
 
@@ -14,8 +15,6 @@ func HandleConnections(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
-	// AddClient(conn)
-	// fmt.Println("New client connected:", conn.RemoteAddr())
 	
 	// Handle messages in a separate Goroutine
 	go handleMessages(conn)
@@ -23,13 +22,13 @@ func HandleConnections(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleMessages(conn *websocket.Conn){
-	defer RemoveClient(conn)
+	defer ClientManager.RemoveClient(conn)
 		for {
 			_, message, err := conn.ReadMessage()
 			if err != nil {
 				fmt.Println("Error reading message:", err)
 				break // Exit loop if error occurs (disconnect)
 			}
-			ProcessEvents(conn, message)
+			EventListener.ProcessEvents(conn, message)
 		}
 }

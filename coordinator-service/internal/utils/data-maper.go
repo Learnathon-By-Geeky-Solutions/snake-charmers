@@ -1,4 +1,4 @@
-package utils
+package Utils
 import(
 	"github.com/mitchellh/mapstructure"
 )

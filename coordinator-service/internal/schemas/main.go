@@ -1,4 +1,4 @@
-package schemas
+package Schemas
 
 // TripRequest represents a trip request from a rider
 type TripRequest struct {
@@ -11,11 +11,6 @@ type LocationUpdate struct {
 	driverBase   `mapstructure:",squash"`
 	locationBase `mapstructure:",squash"`
 }
-
-// TripRequestResponse represents the response to a trip request
-// type TripRequestResponse struct {
-// 	requestBase `mapstructure:",squash"`
-// }
 
 // TripCheckout represents trip checkout details
 type TripCheckout struct {

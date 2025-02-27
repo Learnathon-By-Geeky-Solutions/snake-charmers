@@ -1,41 +1,43 @@
-package server
+package Services
 
 import (
 	"fmt"
 	"net/http"
 	"github.com/gorilla/websocket"
 	"coordinator-service/internal/schemas"
+	"coordinator-service/internal/trip-manager"
+	"coordinator-service/internal/event-emitter"
 	"coordinator-service/internal/utils"
 )
 
 const DecodingError = "Error decoding:"
 
 func HandleTripRequest(conn *websocket.Conn, payload map[string]any) {
-	var data schemas.TripRequest
-	err := utils.DecodeMapToStruct(payload, &data)
+	var data Schemas.TripRequest
+	err := Utils.DecodeMapToStruct(payload, &data)
 	if err != nil {
 		fmt.Println(DecodingError, err)
 		return
 	}
-	res1, err := SendTripRequest(data)
+	res1, err := TripManager.SendTripRequest(data)
 	if err != nil {
 		// send error response
 	} else {
-		InitiateTripRequest(res1.ReqID, data.RiderID)
-		res2, err := RequestAmbulances(data)
+		TripManager.InitiateTripRequest(res1.ReqID, data.RiderID)
+		res2, err := TripManager.RequestAmbulances(data)
 		if err != nil {
 			// send error response
 		} else {
 			for _, driver := range res2 {
-				go PingDrivers(driver.DriverID, res1.ReqID, data.PickupLocation, data.Destination)
+				go EventEmitter.PingDrivers(driver.DriverID, res1.ReqID, data.PickupLocation, data.Destination)
 			}
 		}
 	}
 }
 
 func HandleLocationUpdate(conn *websocket.Conn, payload map[string]any, typ string) {
-	var data schemas.LocationUpdate
-	err := utils.DecodeMapToStruct(payload, &data)
+	var data Schemas.LocationUpdate
+	err := Utils.DecodeMapToStruct(payload, &data)
 	if err != nil {
 		fmt.Println(DecodingError, err)
 		return
@@ -46,7 +48,7 @@ func HandleLocationUpdate(conn *websocket.Conn, payload map[string]any, typ stri
 	} else {
 		method = http.MethodPost
 	}
-	err = RequestLocationUpdate(data, method, typ)
+	err = TripManager.RequestLocationUpdate(data, method, typ)
 	if err != nil {
 		// send error response
 	}
@@ -54,94 +56,94 @@ func HandleLocationUpdate(conn *websocket.Conn, payload map[string]any, typ stri
 }
 
 func HandleTripRequestCheckout(conn *websocket.Conn, payload map[string]any) {
-	var data schemas.TripCheckout
-	err := utils.DecodeMapToStruct(payload, &data)
+	var data Schemas.TripCheckout
+	err := Utils.DecodeMapToStruct(payload, &data)
 	if err != nil {
 		fmt.Println(DecodingError, err)
 		return
 	}
-	err = RequestTripCheckout(data)
+	err = TripManager.RequestTripCheckout(data)
 	if err != nil {
 		// send error response
 	}
-	EngageDriver(data.ReqID, data.DriverID)
+	TripManager.EngageDriver(data.ReqID, data.DriverID)
 }
 func HandleTripRequestDecline(conn *websocket.Conn, payload map[string]any) {
-	var data schemas.TripDecline
-	err := utils.DecodeMapToStruct(payload, &data)
+	var data Schemas.TripDecline
+	err := Utils.DecodeMapToStruct(payload, &data)
 	if err != nil {
 		fmt.Println(DecodingError, err)
 		return
 	}
-	err = RequestTripDecline(data)
+	err = TripManager.RequestTripDecline(data)
 	if err != nil {
 		// send error response
 	}else{
-		ReleaseDriver(data.ReqID, data.DriverID)
+		TripManager.ReleaseDriver(data.ReqID, data.DriverID)
 	}
 }
 func HandleBidFromDriver(conn *websocket.Conn, payload map[string]any) {
-	var data schemas.BidFromDriver
-	err := utils.DecodeMapToStruct(payload, &data)
+	var data Schemas.BidFromDriver
+	err := Utils.DecodeMapToStruct(payload, &data)
 	if err != nil {
 		fmt.Println(DecodingError, err)
 		return
 	}
-	err = SendBidFromDriver(data)
+	err = EventEmitter.SendBidFromDriver(data)
 	if err != nil {
 		// send error response
 	}
 }
 
 func HandleBidFromClient(conn *websocket.Conn, payload map[string]any) {
-	var data schemas.BidFromClient
-	err := utils.DecodeMapToStruct(payload, &data)
+	var data Schemas.BidFromClient
+	err := Utils.DecodeMapToStruct(payload, &data)
 	if err != nil {
 		fmt.Println(DecodingError, err)
 		return
 	}
-	err = SendBidFromClient(data)
+	err = EventEmitter.SendBidFromClient(data)
 	if err != nil {
 		// send error response
 	}
 }
 
 func HandleTripConfirmation(conn *websocket.Conn, payload map[string]any) {
-	var data schemas.TripConfirm
-	err := utils.DecodeMapToStruct(payload, &data)
+	var data Schemas.TripConfirm
+	err := Utils.DecodeMapToStruct(payload, &data)
 	if err != nil {
 		fmt.Println(DecodingError, err)
 		return
 	}
-	res, err := RequestTripConfirmation(data)
+	res, err := TripManager.RequestTripConfirmation(data)
 	if err != nil {
 		// send error response
 	}
-	err = SendTripConfirmation(res)
+	err = EventEmitter.SendTripConfirmation(res)
 	if err != nil {
 		//handle error
 	}
-	err = RequestTripRequestRemoval(data.ReqID)
+	err = TripManager.RequestTripRequestRemoval(data.ReqID)
 	if err != nil {
 		//handle error	
 	}
-	for driverID, _ := range ActiveTripRequest[data.ReqID].Drivers {
+	for driverID, _ := range TripManager.ActiveTripRequest[data.ReqID].Drivers {
 		if driverID == data.DriverID {
 			continue
 		}
-		go NotifyOtherDriver(data.DriverID)
+		go EventEmitter.NotifyOtherDriver(data.DriverID)
 	}
-	DeleteTripRequest(data.ReqID)
+	TripManager.DeleteTripRequest(data.ReqID)
 }
 
 func HandleEndTrip(conn *websocket.Conn, payload map[string]any) {
-	var data schemas.TripID
-	err := utils.DecodeMapToStruct(payload, &data)
+	var data Schemas.TripID
+	err := Utils.DecodeMapToStruct(payload, &data)
 	if err != nil {
 		fmt.Println(DecodingError, err)
 		return
 	}
-	err = RequestEndTrip(data.TripID)
+	err = TripManager.RequestEndTrip(data.TripID)
 	if err != nil {
 		// send error response
 	}

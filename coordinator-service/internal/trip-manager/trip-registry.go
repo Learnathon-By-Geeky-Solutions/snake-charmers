@@ -1,4 +1,4 @@
-package server
+package TripManager
 
 import (
 	"fmt"
@@ -15,10 +15,10 @@ import (
 // 	Drivers  map[int]bool
 // }
 
-var ActiveTripRequest = make(map[int]schemas.TripDetails)
+var ActiveTripRequest = make(map[int]Schemas.TripDetails)
 
 func InitiateTripRequest(reqID int, clientID int) {
-	ActiveTripRequest[reqID] = schemas.TripDetails{
+	ActiveTripRequest[reqID] = Schemas.TripDetails{
 		ClientID: clientID,
 		Drivers:  make(map[int]bool), // Initialize an empty map for drivers
 	}

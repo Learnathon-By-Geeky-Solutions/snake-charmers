@@ -1,10 +1,12 @@
-package server
+package EventListener
 
 import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/websocket"
 	"coordinator-service/internal/schemas"
+	"coordinator-service/internal/client-manager"
+	"coordinator-service/internal/services"
 )
 
 // type Event struct {
@@ -13,7 +15,7 @@ import (
 // }
 
 func ProcessEvents(conn *websocket.Conn, message []byte) {
-	var event schemas.Event
+	var event Schemas.Event
 	err := json.Unmarshal(message, &event)
 	if err != nil {
 		fmt.Println("Invalid event format:", err)
@@ -23,41 +25,41 @@ func ProcessEvents(conn *websocket.Conn, message []byte) {
 	switch event.Name {
 
 		case "new-client":
-			AddClient(conn, event.Data)
+			ClientManager.AddClient(conn, event.Data)
 
 		case "request-trip":
-			HandleTripRequest(conn, event.Data)
+			Services.HandleTripRequest(conn, event.Data)
 
 		case "update-location":
-			HandleLocationUpdate(conn, event.Data, "update")
+			Services.HandleLocationUpdate(conn, event.Data, "update")
 			fmt.Println("update-location:", event.Data)
 			
 		case "add-location":
-			HandleLocationUpdate(conn, event.Data, "add")
+			Services.HandleLocationUpdate(conn, event.Data, "add")
 			fmt.Println("update-location:", event.Data)
 
 		case "checkout-trip":
-			HandleTripRequestCheckout(conn, event.Data)
+			Services.HandleTripRequestCheckout(conn, event.Data)
 			fmt.Println("trip-checkout:", event.Data)
 
 		case "place-bid-driver":
-			HandleBidFromDriver(conn, event.Data)
+			Services.HandleBidFromDriver(conn, event.Data)
 			fmt.Println("place-bid-driver:", event.Data)
 
 		case "place-bid-client":
-			HandleBidFromClient(conn, event.Data)
+			Services.HandleBidFromClient(conn, event.Data)
 			fmt.Println("place-bid-client:", event.Data)
 
 		case "confirm-trip":
-			HandleTripConfirmation(conn, event.Data)
+			Services.HandleTripConfirmation(conn, event.Data)
 			fmt.Println("confirm-trip:", event.Data)
 
 		case "decline-trip":
-			HandleTripRequestDecline(conn, event.Data)
+			Services.HandleTripRequestDecline(conn, event.Data)
 			fmt.Println("decline-trip:", event.Data)
 
 		case "end-trip":
-			HandleEndTrip(conn, event.Data)
+			Services.HandleEndTrip(conn, event.Data)
 			fmt.Println("end-trip:", event.Data)
 
 		default:

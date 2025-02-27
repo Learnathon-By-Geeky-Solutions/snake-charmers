@@ -1,4 +1,4 @@
-package schemas
+package Schemas
 
 
 type RequestBase struct {

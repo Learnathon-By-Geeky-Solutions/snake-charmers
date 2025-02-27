@@ -12,7 +12,7 @@ func main() {
 	port := ":" + pkg.Config.Port
 
 	// Initialize WebSocket server
-	http.HandleFunc("/ws", server.HandleConnections)
+	http.HandleFunc("/ws", Server.HandleConnections)
 	// Start broadcaster
 	// go server.HandleMessages()
 
