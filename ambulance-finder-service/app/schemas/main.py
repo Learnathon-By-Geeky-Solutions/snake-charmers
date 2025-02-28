@@ -1,7 +1,4 @@
-from sqlmodel import SQLModel
-from pydantic import BaseModel, Field, validator
-from typing import List
-
+from pydantic import BaseModel, Field
 class DriverLocationCreate(BaseModel):
     driver_id: int
     lat: float = Field(..., ge=-90, le=90)
