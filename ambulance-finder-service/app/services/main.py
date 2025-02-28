@@ -5,31 +5,31 @@ from app.models.main import DriverLocation,Driver
 from fastapi import HTTPException
 
 class AmbulanceService:
-    @staticmethod
-    def update_driver_location(db: Session, location_data: DriverLocationCreate):
-        try:
-            point = f'POINT({location_data.lon} {location_data.lat})'
-            # Check if driver location exists
-            driver_location = db.query(DriverLocation).filter(
-                DriverLocation.driver_id == location_data.driver_id
-            ).first()  
-            if driver_location:
-                # Update existing location
-                driver_location.location = ST_GeomFromText(point, 4326)
-                db.merge(driver_location)
-            else:
-                # Create new driver location
-                driver_location = DriverLocation(
-                    driver_id=location_data.driver_id,
-                    location=ST_GeomFromText(point, 4326)
-                )
-                db.add(driver_location)
-            db.commit()
-            return {"driver_id": location_data.driver_id}
+    # @staticmethod
+    # def update_driver_location(db: Session, location_data: DriverLocationCreate):
+    #     try:
+    #         point = f'POINT({location_data.lon} {location_data.lat})'
+    #         # Check if driver location exists
+    #         driver_location = db.query(DriverLocation).filter(
+    #             DriverLocation.driver_id == location_data.driver_id
+    #         ).first()  
+    #         if driver_location:
+    #             # Update existing location
+    #             driver_location.location = ST_GeomFromText(point, 4326)
+    #             db.merge(driver_location)
+    #         else:
+    #             # Create new driver location
+    #             driver_location = DriverLocation(
+    #                 driver_id=location_data.driver_id,
+    #                 location=ST_GeomFromText(point, 4326)
+    #             )
+    #             db.add(driver_location)
+    #         db.commit()
+    #         return {"driver_id": location_data.driver_id}
         
-        except Exception as exc:
-            db.rollback()
-            raise HTTPException(status_code=500, detail="Internal server error") from exc
+    #     except Exception as exc:
+    #         db.rollback()
+    #         raise HTTPException(status_code=500, detail="Internal server error") from exc
 
     @staticmethod
     def find_nearby_drivers(db: Session, request: NearbyDriversRequest):
