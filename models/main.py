@@ -37,8 +37,20 @@ class DriverLocation(SQLModel, table=True):
 
 class Trip(SQLModel, table=True):
     trip_id: Optional[int] = Field(default=None, primary_key=True, index=True)
-    rider_id: int = Field(index=True) 
-    driver_id: int = Field(index=True)
+    rider_id: int = Field(
+        sa_column=Column(
+            Integer,
+            ForeignKey("rider.rider_id", ondelete="CASCADE"),
+            index=True
+        )
+    )
+    driver_id: int = Field(
+        sa_column=Column(
+            Integer,
+            ForeignKey(DRIVER_ID_FK, ondelete="CASCADE"),
+            index=True
+        )
+    )
     pickup_location: str
     destination: str
     fare: float
@@ -73,5 +85,4 @@ class EngagedDriver(SQLModel, table=True):
             ForeignKey(DRIVER_ID_FK, ondelete="CASCADE"),
             index=True
         )
-    )  
-    
+    )
