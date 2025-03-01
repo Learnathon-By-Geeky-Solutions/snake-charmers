@@ -1,21 +1,61 @@
 from fastapi import status
 from fastapi.testclient import TestClient
+from sqlmodel import Session, select
 from app.main import app
-
+from app.models.main import TripRequest, EngagedDriver, Rider
+from app.db import get_session 
 
 client = TestClient(app)
+
 # Success Scenario
 def test_release_driver_success():
-    # Pre-condition: Ensure the driver with ID 2 exists
+    session = next(get_session())  # ✅ Get the session properly
+
+    # Step 1: Insert a dummy Rider (Ensure the rider exists)
+    existing_rider = session.exec(select(Rider).where(Rider.id == 10)).first()
+    if not existing_rider:
+        rider = Rider(rider_id=10, name="Test Rider")
+        session.add(rider)
+        session.commit()
+        session.refresh(rider)
+    else:
+        rider = existing_rider  # Use the existing rider
+
+    # Step 2: Insert a dummy trip request into TripRequest table
+    existing_trip_request = session.exec(select(TripRequest).where(TripRequest.req_id == 1)).first()
+    if not existing_trip_request:
+        trip_request = TripRequest(
+            req_id=1,  # Ensuring req_id exists
+            rider_id=rider.rider_id,  # Use the rider_id we just inserted
+            pickup_location="Test Pickup",
+            destination="Test Destination"
+        )
+        session.add(trip_request)
+        session.commit()
+        session.refresh(trip_request)
+    else:
+        trip_request = existing_trip_request
+
+    # Step 3: Engage a driver
+    existing_driver = session.exec(select(EngagedDriver).where(EngagedDriver.driver_id == 2)).first()
+    if not existing_driver:
+        engaged_driver = EngagedDriver(req_id=trip_request.req_id, driver_id=2)
+        session.add(engaged_driver)
+        session.commit()
+        session.refresh(engaged_driver)
+    else:
+        engaged_driver = existing_driver  # Use existing engaged driver
+
     response = client.post("/api/trip/engage-driver", json={
-        "req_id": 1,
-        "driver_id": 2
-    })
+        "req_id": trip_request.req_id,
+        "driver_id": engaged_driver.driver_id  # Use dynamically assigned driver_id
+    })  
     assert response.status_code in [status.HTTP_201_CREATED, status.HTTP_409_CONFLICT]
 
-    # Test the release of the driver
-    response = client.delete("/api/trip/release-driver/2")
+    # Step 4: Test releasing the driver
+    response = client.delete(f"/api/trip/release-driver/{engaged_driver.driver_id}")
     assert response.status_code == status.HTTP_204_NO_CONTENT
+
 
 # Scenario: Driver Not Found
 def test_release_driver_not_found():
