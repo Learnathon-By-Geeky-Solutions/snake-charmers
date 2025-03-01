@@ -11,22 +11,28 @@ client = TestClient(app)
 def test_release_driver_success():
     session = next(get_session())  # ✅ Get the session properly
 
-    # Step 1: Insert a dummy Rider (Ensure the rider exists)
-    existing_rider = session.exec(select(Rider).where(Rider.id == 10)).first()
+    # ✅ Step 1: Ensure Rider exists
+    existing_rider = session.exec(select(Rider).where(Rider.rider_id == 10)).first()
     if not existing_rider:
-        rider = Rider(rider_id=10, name="Test Rider")
+        rider = Rider(
+            rider_id=10,
+            name="Test Rider",
+            mobile="1234567890",  # ✅ Provide a default value
+            email="testrider@example.com",  # ✅ Provide a default value
+            password="testpassword"  # ✅ Provide a default value
+        )
         session.add(rider)
         session.commit()
         session.refresh(rider)
     else:
-        rider = existing_rider  # Use the existing rider
+        rider = existing_rider  # Use existing rider
 
-    # Step 2: Insert a dummy trip request into TripRequest table
+    # ✅ Step 2: Ensure Trip Request exists
     existing_trip_request = session.exec(select(TripRequest).where(TripRequest.req_id == 1)).first()
     if not existing_trip_request:
         trip_request = TripRequest(
             req_id=1,  # Ensuring req_id exists
-            rider_id=rider.rider_id,  # Use the rider_id we just inserted
+            rider_id=rider.rider_id,  # ✅ Use the existing rider_id
             pickup_location="Test Pickup",
             destination="Test Destination"
         )
@@ -36,7 +42,7 @@ def test_release_driver_success():
     else:
         trip_request = existing_trip_request
 
-    # Step 3: Engage a driver
+    # ✅ Step 3: Ensure Driver is Engaged
     existing_driver = session.exec(select(EngagedDriver).where(EngagedDriver.driver_id == 2)).first()
     if not existing_driver:
         engaged_driver = EngagedDriver(req_id=trip_request.req_id, driver_id=2)
@@ -52,9 +58,10 @@ def test_release_driver_success():
     })  
     assert response.status_code in [status.HTTP_201_CREATED, status.HTTP_409_CONFLICT]
 
-    # Step 4: Test releasing the driver
+    # ✅ Step 4: Test releasing the driver
     response = client.delete(f"/api/trip/release-driver/{engaged_driver.driver_id}")
     assert response.status_code == status.HTTP_204_NO_CONTENT
+
 
 
 # Scenario: Driver Not Found
