@@ -3,8 +3,7 @@ from sqlalchemy.orm import Session
 from app.db import get_session
 from app.services.main import (
     update_driver_location,
-    add_driver_location,
-    remove_driver_location
+    add_driver_location
 )
 from app.schemas.main import (
     UpdateDriverLocationRequest,
@@ -71,7 +70,6 @@ async def add_location(
         add_driver_location(
             session,
             location.driver_id,
-            location.socket_id,
             location.latitude,
             location.longitude
         )
@@ -87,34 +85,34 @@ async def add_location(
             detail=UNEXPECTED_ERROR_MESSAGE
         ) from exc
 
-@router.delete(
-        "/location/remove",
-        response_model=LocationRemoveResponse,
-        responses={
-            404: {"model": LocationRemoveResponse},
-            500: {"model": ErrorResponse}
-        }
-)
-async def remove_location(
-    driver_id: int = Query(
-            ...,
-            description="The ID of the driver to delete location"
-    ),
-    session: Session = Depends(get_session)
-):
-    """
-    Removes a driver's location by ID.
-    """
-    try:
-        remove_driver_location(session, driver_id)
-        return {
-            "success": True,
-            "message": "Location removed successfully"
-        }
-    except HTTPException as e:
-        raise e
-    except Exception as exc:
-        raise HTTPException(
-            status_code=500,
-            detail=UNEXPECTED_ERROR_MESSAGE
-        ) from exc
+# @router.delete(
+#         "/location/remove",
+#         response_model=LocationRemoveResponse,
+#         responses={
+#             404: {"model": LocationRemoveResponse},
+#             500: {"model": ErrorResponse}
+#         }
+# )
+# async def remove_location(
+#     driver_id: int = Query(
+#             ...,
+#             description="The ID of the driver to delete location"
+#     ),
+#     session: Session = Depends(get_session)
+# ):
+#     """
+#     Removes a driver's location by ID.
+#     """
+#     try:
+#         remove_driver_location(session, driver_id)
+#         return {
+#             "success": True,
+#             "message": "Location removed successfully"
+#         }
+#     except HTTPException as e:
+#         raise e
+#     except Exception as exc:
+#         raise HTTPException(
+#             status_code=500,
+#             detail=UNEXPECTED_ERROR_MESSAGE
+#         ) from exc
