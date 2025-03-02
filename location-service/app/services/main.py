@@ -46,4 +46,29 @@ def update_driver_location(
     except Exception as exc:
        session.rollback()
        raise HTTPException(status_code=500, detail="Internal server error") from exc
-
+def remove_driver_location(
+        session: Session,
+        driver_id: int
+        ) -> None:
+        """
+        Remove a driver's location from the database by ID.
+        """
+        statement = (
+            select(DriverLocation)
+           .where(DriverLocation.driver_id == driver_id)
+        )
+        result = session.exec(statement).first()
+        if not result:
+            raise HTTPException(
+                status_code=404,
+                detail="Location not found"
+            )
+        try:
+            session.delete(result)
+            session.commit()
+        except Exception as exc:
+            session.rollback()
+            raise HTTPException(
+                status_code=500,
+                detail="Internal server error"
+            ) from exc
