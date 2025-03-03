@@ -10,7 +10,8 @@ disable=missing-docstring,
         too-few-public-methods,
         missing-final-newline,
         import-error,
-        no-name-in-module
+        no-name-in-module,
+        trailing-whitespace
         
 [REPORTS]
 output-format=colorized

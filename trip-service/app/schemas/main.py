@@ -11,8 +11,12 @@ from pydantic import BaseModel, Field, validator # type: ignore
 class TripRequestCreate(BaseModel):
     """Schema for creating a trip request."""
     rider_id: int = Field(..., gt=0, description="Rider ID must be greater than 0")
-    pickup_location: str = Field(..., min_length=1, description="Pickup location cannot be empty")
-    destination: str = Field(..., min_length=1, description="Destination cannot be empty")
+    pickup_location: str = Field(..., min_length=1,
+        description="Pickup location cannot be empty"
+    )
+    destination: str = Field(..., min_length=1, 
+        description="Destination cannot be empty"
+    )
 
     @classmethod
     @validator("pickup_location", "destination", pre=True, always=True)
@@ -40,8 +44,12 @@ class TripCreate(BaseModel):
     """Schema for creating a trip."""
     rider_id: int = Field(..., gt=0, description="Rider ID must be greater than 0")
     driver_id: int = Field(..., gt=0, description="Driver ID must be greater than 0")
-    pickup_location: str = Field(..., min_length=1, description="Pickup location cannot be empty")
-    destination: str = Field(..., min_length=1, description="Destination cannot be empty")
+    pickup_location: str = Field(..., min_length=1, 
+        description="Pickup location cannot be empty"
+    )
+    destination: str = Field(..., min_length=1, 
+        description="Destination cannot be empty"
+    )
     fare: float = Field(..., gt=0, description="Fare must be greater than 0")
     status: str = Field(..., min_length=1, description="Trip status cannot be empty")
 

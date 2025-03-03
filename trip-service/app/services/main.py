@@ -1,16 +1,9 @@
 """
 Trip Service - Business Logic Layer.
 
-This module contains service logic for handling trip requests, driver engagement, and trip updates.
+This module contains service logic for handling trip requests, 
+driver engagement, and trip updates.
 """
-
-# ✅ Standard Library Imports
-import sys
-import os
-
-# ✅ Ensure Python can find the `app` module (if running script directly)
-if os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")) not in sys.path:
-    sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 
 # ✅ Third-Party Imports
 from fastapi import HTTPException
@@ -31,8 +24,11 @@ class TripService:
     def add_trip_request(db: Session, request_data: TripRequestCreate):
         """Adds a new trip request to the database."""
         try:
-            if not request_data.rider_id or not request_data.pickup_location.strip() or \
-                    not request_data.destination.strip():
+            if (
+                not request_data.rider_id or 
+                not request_data.pickup_location.strip() or 
+                not request_data.destination.strip()
+            ):
                 raise HTTPException(status_code=422, detail="Fields cannot be empty")
 
             rider = db.get(Rider, request_data.rider_id)
@@ -77,6 +73,7 @@ class TripService:
             db.commit()
             return {"success": True}
         except Exception as exc:
+            print(exc)
             db.rollback()
             raise INTERNAL_SERVER_ERROR from exc
 
