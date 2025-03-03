@@ -1,0 +1,65 @@
+name: Unit Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  unit-tests:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v3
+          with:
+            fetch-depth: 0  # Ensure full history is available
+
+        - name: Set up Docker Buildx
+          uses: docker/setup-buildx-action@v1
+          
+        - name: Determine changed service
+          id: check_changes
+          run: |
+                echo "Checking for changes in PR..."
+                
+                # Get the list of changed files in the PR compared to main
+                CHANGED_FILES=$(git diff --name-only origin/main...HEAD)
+                
+                echo "Changed files:"
+                echo "$CHANGED_FILES"
+
+                # Define an array of services
+                SERVICES=("auth-service" "location-service" "ambulance-finder-service" "trip-service")
+               
+                # Loop through each service and check for changes
+                for SERVICE in "${SERVICES[@]}"; do
+                  if echo "$CHANGED_FILES" | grep -q "^$SERVICE/"; then
+                    echo "SERVICE_CHANGED=$SERVICE" >> $GITHUB_ENV
+                    break
+                  fi
+                done
+
+                # Default to none if no service changed
+                if [ -z "$SERVICE_CHANGED" ]; then
+                  echo "SERVICE_CHANGED=none" >> $GITHUB_ENV
+                fi
+        
+                
+        - name: Run unit tests
+          if: env.SERVICE_CHANGED != 'none'
+          run: |
+            docker-compose -f ${{ env.SERVICE_CHANGED }}/docker-compose.dev.yml up --build --abort-on-container-exit ${{ env.SERVICE_CHANGED }}-test
+              
+
+        - name: SonarCloud Analysis
+          env:
+            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          if: env.SERVICE_CHANGED != 'none'
+          run: |
+            sonar-scanner \
+              -Dsonar.projectKey=my-project \
+              -Dsonar.organization=my-org \
+              -Dsonar.host.url=https://sonarcloud.io \
+              -Dsonar.login=$SONAR_TOKEN \
+              -Dsonar.python.coverage.reportPaths=${{ env.SERVICE_CHANGED }}/coverage.xml
+              
