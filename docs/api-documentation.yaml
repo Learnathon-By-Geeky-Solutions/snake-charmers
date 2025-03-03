@@ -187,15 +187,11 @@ paths:
                 items:
                   type: object
                   properties:
-                    id:
-                      type: string
+                    driver_id:
+                      type: integer
                     name:
                       type: string
-                    ratings:
-                      type: number
-                    ETA:
-                      type: string
-                    socket_id:
+                    mobile:
                       type: string
         '400':
           description: Invalid input
