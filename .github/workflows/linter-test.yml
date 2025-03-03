@@ -3,11 +3,11 @@ name: Lint Check
 on:
   pull_request:
     branches:
-      - dev
+      - main
 
 jobs:
   lint:
-    name: Run Pylint on Changed Services
+    name: Run Pylint on Changed Service
     runs-on: ubuntu-latest
 
     steps:
@@ -24,68 +24,40 @@ jobs:
       - name: Install Pylint
         run: pip install pylint
 
-      - name: Fetch latest dev branch
-        run: git fetch origin dev
+      - name: Fetch latest main branch
+        run: git fetch origin main
 
       - name: Detect Changes
         id: changed-files
         run: |
           echo "Checking for changes in PR..."
           
-          # Get the list of changed files in the PR compared to dev
-          CHANGED_FILES=$(git diff --name-only origin/dev...HEAD)
+          # Get the list of changed files in the PR compared to main
+          CHANGED_FILES=$(git diff --name-only origin/main...HEAD)
           
           echo "Changed files:"
           echo "$CHANGED_FILES"
 
-          # Detect if auth-service/app/ changed
-          if echo "$CHANGED_FILES" | grep -q '^auth-service/app/'; then
-            echo "AUTH_CHANGED=true" >> $GITHUB_ENV
+          # Define an array of services
+          SERVICES=("auth-service" "location-service" "ambulance-finder-service" "trip-service")
+
+          # Loop through each service and check for changes
+          for SERVICE in "${SERVICES[@]}"; do
+            if echo "$CHANGED_FILES" | grep -q "^$SERVICE/app/"; then
+              echo "SERVICE_CHANGED=$SERVICE" >> $GITHUB_ENV
+              break
+            fi
+          done
+
+          # Default to none if no service changed
+          if [ -z "$SERVICE_CHANGED" ]; then
+            echo "SERVICE_CHANGED=none" >> $GITHUB_ENV
           fi
 
-          # Detect if location-service/app/ changed
-          if echo "$CHANGED_FILES" | grep -q '^location-service/app/'; then
-            echo "LOCATION_CHANGED=true" >> $GITHUB_ENV
-          fi
-
-          # Detect if ambulance-finder-service/app/ changed
-          if echo "$CHANGED_FILES" | grep -q '^ambulance-finder-service/app/'; then
-            echo "AMBULANCE_CHANGED=true" >> $GITHUB_ENV
-          fi
-
-          # Detect if trip-service/app/ changed
-          if echo "$CHANGED_FILES" | grep -q '^trip-service/app/'; then
-            echo "TRIP_CHANGED=true" >> $GITHUB_ENV
-          fi
-
-      - name: Install auth-service dependencies (if changed)
-        if: env.AUTH_CHANGED == 'true'
-        run: pip install -r auth-service/requirements.txt
-
-      - name: Install location-service dependencies (if changed)
-        if: env.LOCATION_CHANGED == 'true'
-        run: pip install -r location-service/requirements.txt
-
-      - name: Install ambulance-finder-service dependencies (if changed)
-        if: env.AMBULANCE_CHANGED == 'true'
-        run: pip install -r ambulance-finder-service/requirements.txt
-
-      - name: Install trip-service dependencies (if changed)
-        if: env.TRIP_CHANGED == 'true'
-        run: pip install -r trip-service/requirements.txt
-
-      - name: Run Pylint on auth-service/app/ (if changed)
-        if: env.AUTH_CHANGED == 'true'
-        run: pylint --rcfile=.pylintrc auth-service/app/**/*.py
-
-      - name: Run Pylint on location-service/app/ (if changed)
-        if: env.LOCATION_CHANGED == 'true'
-        run: pylint --rcfile=.pylintrc location-service/app/**/*.py
-
-      - name: Run Pylint on ambulance-finder-service/app/ (if changed)
-        if: env.AMBULANCE_CHANGED == 'true'
-        run: pylint --rcfile=.pylintrc ambulance-finder-service/app/**/*.py
-
-      - name: Run Pylint on trip-service/app/ (if changed)
-        if: env.TRIP_CHANGED == 'true'
-        run: pylint --rcfile=.pylintrc trip-service/app/**/*.py
+      - name: Install dependencies and run Pylint
+        if: env.SERVICE_CHANGED != 'none'
+        run: |
+          echo "Installing dependencies for ${{ env.SERVICE_CHANGED }}..."
+          pip install -r ${{ env.SERVICE_CHANGED }}/requirements.txt
+          echo "Running Pylint on ${{ env.SERVICE_CHANGED }}..."
+          pylint --rcfile=.pylintrc ${{ env.SERVICE_CHANGED }}/app/**/*.py

@@ -21,6 +21,7 @@ def add_trip_request(
 ):
     return TripService.add_trip_request(db, request_data)
 
+
 @router.delete("/remove-request/{req_id}", status_code=204)
 def remove_trip_request(req_id: int, db: Session = Depends(get_session)):
     return TripService.remove_trip_request(db, req_id)
