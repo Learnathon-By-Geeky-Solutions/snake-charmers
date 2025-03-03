@@ -24,6 +24,11 @@ services:
     container_name: trip-service-test
     environment:
       DATABASE_URL: ${DATABASE_URL}
+      RIDER_PASSWORD_1: ${RIDER_PASSWORD_1}
+      RIDER_PASSWORD_2: ${RIDER_PASSWORD_2}
+      DRIVER_PASSWORD_1: ${DRIVER_PASSWORD_1}
+      DRIVER_PASSWORD_2: ${DRIVER_PASSWORD_2}
+
     volumes:
       - /app/app/models
       - ./:/app/  # Mount the whole current directory to /app in the container
