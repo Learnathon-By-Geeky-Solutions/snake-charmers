@@ -22,10 +22,9 @@ services:
       dockerfile: ./trip-service/Dockerfile
       target: test
     container_name: trip-service-test
-    ports:
-      - "8000:8000"
     environment:
       DATABASE_URL: ${DATABASE_URL}
     volumes:
       - /app/app/models
-    command: ["pytest", "-v", "tests/unittest"]
+      - ./:/app/  # Mount the whole current directory to /app in the container
+    command: ["pytest", "-v", "--cov=app", "--cov-report=xml:/app/coverage.xml", "tests/unittest"]
