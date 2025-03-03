@@ -39,3 +39,5 @@ uvicorn==0.34.0
 uvloop==0.21.0
 watchfiles==1.0.4
 websockets==14.2
+pytest==8.3.4
+pytest-cov==6.0.0
