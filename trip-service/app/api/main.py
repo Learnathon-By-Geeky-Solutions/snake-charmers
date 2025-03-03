@@ -22,17 +22,15 @@ def add_trip_request(
     return TripService.add_trip_request(db, request_data)
 
 
-@router.delete("/remove-request/{req_id}", status_code=200)
+@router.delete("/remove-request/{req_id}", status_code=204)
 def remove_trip_request(req_id: int, db: Session = Depends(get_session)):
     return TripService.remove_trip_request(db, req_id)
-
 
 @router.post("/engage-driver", status_code=201)
 def engage_driver(request: EngageDriverRequest, db: Session = Depends(get_session)):
     return TripService.engage_driver(db, request.req_id, request.driver_id)
 
-
-@router.delete("/release-driver/{driver_id}", status_code=200)
+@router.delete("/release-driver/{driver_id}", status_code=204)
 def release_driver(driver_id : int, db: Session = Depends(get_session)):
     return TripService.release_driver(db, driver_id)
 

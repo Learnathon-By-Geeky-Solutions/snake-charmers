@@ -38,7 +38,7 @@ jobs:
                     break
                   fi
                 done
-              
+
                 # Default to none if no service changed
                 if [ -z "$SERVICE_CHANGED" ]; then
                   echo "SERVICE_CHANGED=none" >> $GITHUB_ENV
