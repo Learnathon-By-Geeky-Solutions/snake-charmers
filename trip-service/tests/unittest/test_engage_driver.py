@@ -5,8 +5,6 @@ from app.main import app
 from app.models.main import TripRequest
 from fastapi.testclient import TestClient
 
-client = TestClient(app)
-
 def test_engage_driver_success(client: TestClient, session: Session):
 
     # Create a new trip request
