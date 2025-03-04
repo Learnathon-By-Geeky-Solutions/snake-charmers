@@ -2,6 +2,7 @@ name: Unit Tests
 
 on:
   pull_request:
+    types: [opened, reopened]
     branches:
       - main
 
@@ -15,51 +16,59 @@ jobs:
             fetch-depth: 0  # Ensure full history is available
 
         - name: Set up Docker Buildx
-          uses: docker/setup-buildx-action@v1
+          uses: docker/setup-buildx-action@v3
+
+        - name: Verify Docker installation
+          run: |
+            docker --version
+            docker compose version
           
         - name: Determine changed service
           id: check_changes
           run: |
                 echo "Checking for changes in PR..."
                 
-                # Get the list of changed files in the PR compared to main
                 CHANGED_FILES=$(git diff --name-only origin/main...HEAD)
                 
                 echo "Changed files:"
                 echo "$CHANGED_FILES"
 
-                # Define an array of services
                 SERVICES=("auth-service" "location-service" "ambulance-finder-service" "trip-service")
                
-                # Loop through each service and check for changes
+                SERVICE_CHANGED="none"
+
                 for SERVICE in "${SERVICES[@]}"; do
                   if echo "$CHANGED_FILES" | grep -q "^$SERVICE/"; then
-                    echo "SERVICE_CHANGED=$SERVICE" >> $GITHUB_ENV
+                    SERVICE_CHANGED=$SERVICE
                     break
                   fi
                 done
 
-                # Default to none if no service changed
-                if [ -z "$SERVICE_CHANGED" ]; then
-                  echo "SERVICE_CHANGED=none" >> $GITHUB_ENV
-                fi
-        
+                echo "SERVICE_CHANGED=$SERVICE_CHANGED" >> $GITHUB_ENV
                 
         - name: Run unit tests
           if: env.SERVICE_CHANGED != 'none'
+          env:
+            DATABASE_URL: ${{ secrets.DATABASE_URL }}
+            RIDER_PASSWORD_1: ${{ secrets.RIDER_PASSWORD_1 }}
+            RIDER_PASSWORD_2: ${{ secrets.RIDER_PASSWORD_2 }}
+            DRIVER_PASSWORD_1: ${{ secrets.DRIVER_PASSWORD_1 }}
+            DRIVER_PASSWORD_2: ${{ secrets.DRIVER_PASSWORD_2 }}
+
           run: |
-            docker-compose -f ${{ env.SERVICE_CHANGED }}/docker-compose.dev.yml up --build --abort-on-container-exit ${{ env.SERVICE_CHANGED }}-test
+            docker compose -f ${{ env.SERVICE_CHANGED }}/docker-compose.dev.yml up --build --abort-on-container-exit ${{ env.SERVICE_CHANGED }}-test
               
 
-        - name: SonarCloud Analysis
-          env:
-            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        - name: Debug Coverage Report
           if: env.SERVICE_CHANGED != 'none'
           run: |
-            sonar-scanner \
-              -Dsonar.projectKey=my-project \
-              -Dsonar.organization=my-org \
-              -Dsonar.host.url=https://sonarcloud.io \
-              -Dsonar.login=$SONAR_TOKEN \
-              -Dsonar.python.coverage.reportPaths=${{ env.SERVICE_CHANGED }}/coverage.xml
-              
+            echo "Service Changed: ${{ env.SERVICE_CHANGED }}"
+            pwd
+            ls ${{ env.SERVICE_CHANGED }}
+            cat ${{ env.SERVICE_CHANGED }}/coverage.xml || echo "No coverage.xml found"
+
+
+        - name: SonarQube Scan
+          uses: SonarSource/sonarqube-scan-action@v5
+          env:
+            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
