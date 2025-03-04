@@ -57,8 +57,8 @@ jobs:
           if: env.SERVICE_CHANGED != 'none'
           run: |
             sonar-scanner \
-              -Dsonar.projectKey=my-project \
-              -Dsonar.organization=my-org \
+              -Dsonar.projectKey=Learnathon-By-Geeky-Solutions_snake-charmers \
+              -Dsonar.organization=Learnathon \
               -Dsonar.host.url=https://sonarcloud.io \
               -Dsonar.login=$SONAR_TOKEN \
               -Dsonar.python.coverage.reportPaths=${{ env.SERVICE_CHANGED }}/coverage.xml
