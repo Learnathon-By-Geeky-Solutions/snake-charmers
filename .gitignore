@@ -71,3 +71,4 @@ htmlcov/
 # FastAPI specific
 instance/
 *.db
+wq

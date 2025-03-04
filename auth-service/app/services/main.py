@@ -125,5 +125,4 @@ def authenticate_user(
 
     if not user or not verify_password(password, user.password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
-
     return user
