@@ -29,5 +29,6 @@ services:
 
     volumes:
       - /app/app/models
+      - /app/tests
       - ./:/app/  # Mount the whole current directory to /app in the container
     command: ["pytest", "-v", "--cov=app", "--cov-report=xml:/app/coverage.xml", "tests/unittest"]

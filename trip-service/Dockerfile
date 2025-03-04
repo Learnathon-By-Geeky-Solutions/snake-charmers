@@ -32,9 +32,8 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 # Copy the application code
 COPY ./trip-service/app ./app
-COPY ./trip-service/.env .
+# COPY ./trip-service/.env .
 COPY ./models ./app/models
-
 
 
 
@@ -42,15 +41,16 @@ COPY ./models ./app/models
 FROM base AS dev
 USER myuser
 EXPOSE 8000
-# CMD ["python", "-m", "app.main"]
 
 
 
 
 # Test Stage
 FROM base AS test
-# Copy test files only in the test stage
-COPY ./trip-service/pytest.ini .
+COPY ./pytest.ini .
 COPY ./trip-service/tests ./tests
+COPY ./conftest.py ./tests
+
+ENV PYTHONPATH=.
+
 USER myuser
-# CMD ["pytest", "-v", "tests/unittest"]

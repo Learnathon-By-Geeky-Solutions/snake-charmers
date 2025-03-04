@@ -49,8 +49,10 @@ EXPOSE 8000
 
 # Test Stage
 FROM base AS test
-# Copy test files only in the test stage
-COPY ./ambulance-finder-service/pytest.ini .
+COPY ./pytest.ini .
 COPY ./ambulance-finder-service/tests ./tests
+COPY ./conftest.py ./tests
+
+ENV PYTHONPATH=.
+
 USER myuser
-# CMD ["pytest", "-v", "tests/unittest"]
