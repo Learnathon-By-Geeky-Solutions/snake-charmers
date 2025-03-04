@@ -20,13 +20,13 @@ def populate_test_data(session):
     """Prepopulate the test database with riders and drivers."""
 
     riders = [
-        Rider(rider_id=1, name="Test Rider 1", mobile="1234567890", email="rider1@example.com", password=os.getenv("RIDER_PASSWORD_1")),
-        Rider(rider_id=2, name="Test Rider 2", mobile="2345678901", email="rider2@example.com", password=os.getenv("RIDER_PASSWORD_2")),
+        Rider(rider_id=1, name="Test Rider 1", mobile="1234567890", email="rider1@gmail.com", password=os.getenv("RIDER_PASSWORD_1")),
+        Rider(rider_id=2, name="Test Rider 2", mobile="2345678901", email="rider2@gmail.com", password=os.getenv("RIDER_PASSWORD_2")),
     ]
     
     drivers = [
-        Driver(driver_id=1, name="Test Driver 1", mobile="3456789012", email="driver1@example.com", password=os.getenv("DRIVER_PASSWORD_1")),
-        Driver(driver_id=2, name="Test Driver 2", mobile="4567890123", email="driver2@example.com", password=os.getenv("DRIVER_PASSWORD_2")),
+        Driver(driver_id=1, name="Test Driver 1", mobile="3456789012", email="driver1@gmail.com", password=os.getenv("DRIVER_PASSWORD_1")),
+        Driver(driver_id=2, name="Test Driver 2", mobile="4567890123", email="driver2@gmail.com", password=os.getenv("DRIVER_PASSWORD_2")),
     ]
 
     session.add_all(riders + drivers)

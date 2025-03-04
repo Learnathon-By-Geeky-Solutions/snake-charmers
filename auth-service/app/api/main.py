@@ -20,12 +20,7 @@ router = APIRouter()
 @router.post(
     "/auth/signup",
     response_model=SignupResponse,
-    responses={
-        201: {"model": SignupResponse},
-        400: {"model": ErrorResponse},
-        409: {"model": ErrorResponse},
-        500: {"model": ErrorResponse},
-    },
+    status_code=201
 )
 async def signup(user: SignupRequest, session: Session = Depends(get_session)):
     """
@@ -49,11 +44,7 @@ async def signup(user: SignupRequest, session: Session = Depends(get_session)):
 @router.post(
     "/auth/login",
     response_model=LoginResponse,
-    responses={
-        200: {"model": LoginResponse},
-        401: {"model": ErrorResponse},
-        500: {"model": ErrorResponse},
-    },
+    status_code=200
 )
 async def login(credentials: LoginRequest, session: Session = Depends(get_session)):
     """
@@ -79,7 +70,8 @@ async def login(credentials: LoginRequest, session: Session = Depends(get_sessio
     except HTTPException as exc:
         raise exc
     except Exception as exc:
+        print(exc)
         raise HTTPException(
             status_code=500,
-            detail="An unexpected error occurred",
+            detail=exc
         ) from exc
