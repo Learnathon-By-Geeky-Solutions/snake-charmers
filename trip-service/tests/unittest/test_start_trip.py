@@ -2,7 +2,6 @@ from fastapi import status
 from fastapi.testclient import TestClient
 from sqlmodel import Session, select
 from app.models.main import Rider, EngagedDriver, TripRequest,Driver
-# from app.db import get_session  # Function to get DB session
 
 
 # Success Scenario

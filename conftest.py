@@ -51,7 +51,6 @@ def db_session():
         populate_test_data(session)  # ✅ Call function to add test data
         yield session
         delete_test_data(session)
-        # session.rollback()
 
 
 
@@ -62,6 +61,8 @@ def test_client(session):
     # Override FastAPI's dependency to use the test session
     def override_get_session():
         yield session
+
+    app.dependency_overrides[get_session] = override_get_session 
 
     client = TestClient(app)
     yield client

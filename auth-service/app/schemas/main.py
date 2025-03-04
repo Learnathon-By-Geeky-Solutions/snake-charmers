@@ -25,7 +25,7 @@ class SignupRequest(BaseModel):
         Validates Bangladeshi phone numbers:
         Must start with +880 or 01 and be followed by 9 digits.
         """
-        pattern = r"(\+8801|01)[3-9][0-9]{8}"
+        pattern = r"(\+8801|01)[3-9]\d{8}"
         if not re.fullmatch(pattern, mobile):
             raise ValueError(
                 "Invalid Bangladeshi phone number format. "
