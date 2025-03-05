@@ -21,12 +21,12 @@ UNEXPECTED_ERROR_MESSAGE = "An unexpected error occurred"
 
 
 @router.put(
-        "/location/update", 
-        response_model=LocationUpdateResponse,
-        responses={
-            400: {"model": ErrorResponse},
-            500: {"model": ErrorResponse}
-        }
+    "/location/update",
+    response_model=LocationUpdateResponse,
+    responses={
+        400: {"model": ErrorResponse},
+        500: {"model": ErrorResponse}
+    }
 )
 async def update_location(
     location: UpdateDriverLocationRequest,
@@ -53,12 +53,12 @@ async def update_location(
 
 
 @router.post(
-        "/location/add",
-        response_model=LocationAddResponse,
-        responses={
-            400: {"model": ErrorResponse},
-            500: {"model": ErrorResponse}
-        }
+    "/location/add",
+    response_model=LocationAddResponse,
+    responses={
+        400: {"model": ErrorResponse},
+        500: {"model": ErrorResponse}
+    }
 )
 async def add_location(
     location: AddDriverLocationRequest,
@@ -75,8 +75,8 @@ async def add_location(
             location.longitude
         )
         return {
-                "success": True,
-                "message": "Location added successfully"
+            "success": True,
+            "message": "Location added successfully"
         }
     except HTTPException as e:
         raise e
@@ -86,18 +86,19 @@ async def add_location(
             detail=UNEXPECTED_ERROR_MESSAGE
         ) from exc
 
+
 @router.delete(
-        "/location/remove",
-        response_model=LocationRemoveResponse,
-        responses={
-            404: {"model": LocationRemoveResponse},
-            500: {"model": ErrorResponse}
-        }
+    "/location/remove",
+    response_model=LocationRemoveResponse,
+    responses={
+        404: {"model": LocationRemoveResponse},
+        500: {"model": ErrorResponse}
+    }
 )
 async def remove_location(
     driver_id: int = Query(
-            ...,
-            description="The ID of the driver to delete location"
+        ...,
+        description="The ID of the driver to delete location"
     ),
     session: Session = Depends(get_session)
 ):
