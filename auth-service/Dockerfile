@@ -32,15 +32,12 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 # Copy the application code
 COPY ./auth-service/app ./app
-COPY ./auth-service/.env .
 COPY ./models ./app/models
-
-
 
 
 # Development Stage
 FROM base AS dev
-USER myuser
+# USER myuser
 EXPOSE 8000
 # CMD ["python", "-m", "app.main"]
 
@@ -55,4 +52,4 @@ COPY ./conftest.py ./tests
 
 ENV PYTHONPATH=.
 
-USER myuser
+# USER myuser
