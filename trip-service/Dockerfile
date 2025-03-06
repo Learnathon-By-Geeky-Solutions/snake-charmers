@@ -49,6 +49,7 @@ EXPOSE 8000
 FROM base AS test
 COPY ./pytest.ini .
 COPY ./trip-service/tests ./tests
+COPY ./trip-service/coverage-reports ./coverage-reports
 COPY ./conftest.py ./tests
 
 ENV PYTHONPATH=.
