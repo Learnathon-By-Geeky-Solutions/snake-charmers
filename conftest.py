@@ -1,4 +1,5 @@
 import os
+from passlib.context import CryptContext
 import pytest
 from sqlmodel import SQLModel, create_engine, Session, select, delete
 from app.main import app
@@ -16,17 +17,24 @@ from app.models.main import (
 # Initialize database engine
 engine = create_engine(os.getenv("DATABASE_URL"))
 
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+
+def hash_password(password: str) -> str:
+    return pwd_context.hash(password)
+
 def populate_test_data(session):
     """Prepopulate the test database with riders and drivers."""
 
     riders = [
-        Rider(rider_id=1, name="Test Rider 1", mobile="1234567890", email="rider1@gmail.com", password=os.getenv("RIDER_PASSWORD_1")),
-        Rider(rider_id=2, name="Test Rider 2", mobile="2345678901", email="rider2@gmail.com", password=os.getenv("RIDER_PASSWORD_2")),
+        Rider(rider_id=1, name="Test Rider 1", mobile="01711111111", email="rider1@gmail.com", password=hash_password(os.getenv("RIDER_PASSWORD_1"))),
+        Rider(rider_id=2, name="Test Rider 2", mobile="01722222222", email="rider2@gmail.com", password=hash_password(os.getenv("RIDER_PASSWORD_2"))),
     ]
     
     drivers = [
-        Driver(driver_id=1, name="Test Driver 1", mobile="3456789012", email="driver1@gmail.com", password=os.getenv("DRIVER_PASSWORD_1")),
-        Driver(driver_id=2, name="Test Driver 2", mobile="4567890123", email="driver2@gmail.com", password=os.getenv("DRIVER_PASSWORD_2")),
+        Driver(driver_id=1, name="Test Driver 1", mobile="01733333333", email="driver1@gmail.com", password=hash_password(os.getenv("DRIVER_PASSWORD_1"))),
+        Driver(driver_id=2, name="Test Driver 2", mobile="01744444444", email="driver2@gmail.com", password=hash_password(os.getenv("DRIVER_PASSWORD_2"))),
     ]
 
     session.add_all(riders + drivers)

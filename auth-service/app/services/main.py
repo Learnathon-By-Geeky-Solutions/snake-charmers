@@ -77,20 +77,14 @@ def create_user(session: Session, user_data: dict):
     else:
         raise HTTPException(status_code=400, detail="Invalid user type")
 
-    # ✅ Wrapped in try-except to handle database errors
-    try:
-        session.add(new_user)
-        session.commit()
-        session.refresh(new_user)
-    except SQLAlchemyError as exc:
-        session.rollback()  # Rollback changes in case of error
-        raise HTTPException(
-            status_code=500,
-            detail="Database error occurred while creating user."
-        ) from exc
-
-    return new_user
-
+    session.add(new_user)
+    session.commit()
+    session.refresh(new_user)
+    return {
+        "success": True,
+        "message": f"{user_data["user_type"]} {new_user.name} registered successfully",
+    }
+  
 
 def authenticate_user(
     session: Session,
@@ -102,6 +96,8 @@ def authenticate_user(
     Authenticates a driver or rider using phone or email.
     """
     user = None
+
+    # try:
     if user_type == "driver":
         user = (
             session.query(Driver)
@@ -122,7 +118,16 @@ def authenticate_user(
         )
     else:
         raise HTTPException(status_code=400, detail="Invalid user type")
-
     if not user or not verify_password(password, user.password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
-    return user
+    return {
+        "success": True,
+        "name": user.name,
+        "id": (
+            user.driver_id
+            if user_type == "driver"
+            else user.rider_id
+        ),
+        "user_type": user_type,
+    }
+

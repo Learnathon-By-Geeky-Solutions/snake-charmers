@@ -18,14 +18,13 @@ class SignupRequest(BaseModel):
     password: str
     user_type: str
 
-    @classmethod
     @field_validator("mobile")
     def validate_mobile(cls, mobile: str) -> str:
         """
         Validates Bangladeshi phone numbers:
         Must start with +880 or 01 and be followed by 9 digits.
         """
-        pattern = r"(\+8801|01)[3-9]\d{8}"
+        pattern = r"^(\+8801[3-9]\d{8}|01[3-9]\d{8})$"
         if not re.fullmatch(pattern, mobile):
             raise ValueError(
                 "Invalid Bangladeshi phone number format. "
@@ -33,7 +32,6 @@ class SignupRequest(BaseModel):
             )
         return mobile
 
-    @classmethod
     @field_validator("email")
     def validate_google_email(cls, email: str) -> str:
         """
@@ -45,7 +43,6 @@ class SignupRequest(BaseModel):
             )
         return email
 
-    @classmethod
     @field_validator("password")
     def validate_password(cls, password: str) -> str:
         """
