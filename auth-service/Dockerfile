@@ -48,6 +48,7 @@ EXPOSE 8000
 FROM base AS test
 COPY ./pytest.ini .
 COPY ./auth-service/tests ./tests
+COPY ./auth-service/coverage-reports ./coverage-reports
 COPY ./conftest.py ./tests
 
 ENV PYTHONPATH=.
