@@ -1,8 +1,11 @@
 name: Unit Tests
 
 on:
+  push:
+    branches:
+      - main
   pull_request:
-    types: [opened, reopened]
+    types: [opened, reopened, synchronize]
     branches:
       - main
 
@@ -69,6 +72,7 @@ jobs:
 
 
         - name: SonarQube Scan
+          if: env.SERVICE_CHANGED != 'none'
           uses: SonarSource/sonarqube-scan-action@v5
           env:
             SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
