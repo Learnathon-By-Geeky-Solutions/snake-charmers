@@ -97,7 +97,6 @@ def authenticate_user(
     """
     user = None
 
-    # try:
     if user_type == "driver":
         user = (
             session.query(Driver)
