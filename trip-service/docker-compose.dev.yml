@@ -31,4 +31,4 @@ services:
       - /app/app/models
       - /app/tests
       - ./:/app/  
-    command: ["pytest", "-v", "--cov=app", "--cov-report=xml:/app/coverage.xml", "tests/unittest"]
+    command: ["pytest", "-v", "--cov=app", "--cov-report=xml:/app/coverage-reports/coverage.xml", "tests/unittest"]

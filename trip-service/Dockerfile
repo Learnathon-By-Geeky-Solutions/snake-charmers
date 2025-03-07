@@ -39,7 +39,7 @@ COPY ./models ./app/models
 
 # Development Stage
 FROM base AS dev
-USER myuser
+# USER myuser
 EXPOSE 8000
 
 
@@ -49,8 +49,9 @@ EXPOSE 8000
 FROM base AS test
 COPY ./pytest.ini .
 COPY ./trip-service/tests ./tests
+COPY ./trip-service/coverage-reports ./coverage-reports
 COPY ./conftest.py ./tests
 
 ENV PYTHONPATH=.
 
-USER myuser
+# USER myuser
