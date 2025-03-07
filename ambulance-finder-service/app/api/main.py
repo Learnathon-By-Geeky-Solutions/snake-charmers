@@ -6,8 +6,9 @@ from app.db import get_session
 
 router = APIRouter(prefix="/api/ambulance", tags=["Ambulance Finder Service"])
 
+
 @router.get(
-    "/nearby", 
+    "/nearby",
     response_model=list[DriverLocationResponse],
     status_code=200
 )

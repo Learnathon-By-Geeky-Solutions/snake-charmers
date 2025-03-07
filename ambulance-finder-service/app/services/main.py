@@ -4,6 +4,7 @@ from app.schemas.main import NearbyDriversRequest
 from app.models.main import DriverLocation, Driver
 from fastapi import HTTPException
 
+
 class AmbulanceService:
     @staticmethod
     def find_nearby_drivers(db: Session, request: NearbyDriversRequest):

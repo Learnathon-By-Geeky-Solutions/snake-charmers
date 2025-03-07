@@ -4,7 +4,6 @@ from app.models.main import DriverLocation
 from geoalchemy2.functions import ST_GeomFromText
 
 INTERNAL_SERVER_ERROR_MSG = "Internal server error"
-resolution = 10
 
 
 def add_driver_location(
