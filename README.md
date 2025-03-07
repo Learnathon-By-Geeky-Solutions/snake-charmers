@@ -82,7 +82,7 @@ Below is an explanation of the system's operational flow:
 ## ER Diagram
 The Entity-Relationship (ER) diagram provides a visual representation of the database structure, showing the relationships between different entities.
 
-![ER Diagram](public/images/er_diagram.png)
+![ER Diagram](public/images/ER_Diagram.png)
 
 ## API Documentation
 
