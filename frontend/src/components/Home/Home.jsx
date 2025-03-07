@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import ambulanceImage from '../assets/images/Ambulanceimage.png'; // Correctly import the image
+import ambulanceImage from '../../assets/images/ambulance_image_final_1.png'; // Correctly import the image
 
 function Home() {
   return (
@@ -19,7 +19,7 @@ function Home() {
             </button>
           </Link>
           <Link to="/login">
-            <button className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600">
+            <button className="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600">
               Log In
             </button>
           </Link>
