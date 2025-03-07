@@ -1,10 +1,11 @@
 from fastapi import FastAPI
-from app.api.endpoints.example import router as example_router
+from app.api.main import router as location_router
 
 app = FastAPI()
 
-app.include_router(example_router)
+app.include_router(location_router, prefix="/api", tags=["Location Service"])
 
-@app.get("/")
+
+@app.get("/api", tags=["Root"])
 def read_root():
-    return {"message": " Welcome to my FastAPI project!"}
+    return {"message": "Welcome to the location-service"}
