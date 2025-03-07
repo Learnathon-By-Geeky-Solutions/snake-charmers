@@ -6,6 +6,7 @@ from fastapi import HTTPException
 from sqlalchemy.orm import aliased
 
 
+
 class AmbulanceService:
     @staticmethod
     def find_nearby_drivers(db: Session, request: NearbyDriversRequest):
