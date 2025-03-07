@@ -60,6 +60,7 @@ Thumbs.db
 
 # Testing
 *.coverage
+coverage-reports
 .tox/
 .pytest_cache/
 htmlcov/

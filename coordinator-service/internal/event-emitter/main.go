@@ -8,6 +8,7 @@ import(
 	"coordinator-service/internal/trip-manager"
 	
 )
+
 func PingDrivers(driverID int, reqID int, pickupLocation string, destination string) {
 
 		driverConn, exists := ClientManager.ActiveDrivers[driverID]
@@ -27,7 +28,6 @@ func PingDrivers(driverID int, reqID int, pickupLocation string, destination str
 			fmt.Println("Failed to marshal event data:", err)
 			return 
 		}
-
 		// Send the event to the driver
 		err = driverConn.WriteMessage(websocket.TextMessage, eventMessage)
 		if err != nil {
@@ -68,6 +68,7 @@ func SendBidFromDriver(payload Schemas.BidFromDriver) (error){
 	}
 	return nil
 }
+
 func SendBidFromClient(payload Schemas.BidFromClient) (error){
 	// Prepare the event data
 	eventData := map[string]any{
@@ -139,4 +140,19 @@ func NotifyOtherDriver(driverID int)(error){
 	}
 	err = driverConn.WriteMessage(websocket.TextMessage, eventMessage)
 	return err
+}
+
+func SendErrorMessage(conn *websocket.Conn) {
+	eventData := map[string]any{
+		"event":   "unexpected-error",
+	}
+	eventMessage, err := json.Marshal(eventData)
+	if err != nil {
+		fmt.Println("Failed to marshal event data:", err)
+		return
+	}
+	err = conn.WriteMessage(websocket.TextMessage, eventMessage)
+	if err != nil {
+		fmt.Println("Failed to send message to client:", err)
+	}
 }

@@ -10,7 +10,7 @@ import (
 	"coordinator-service/internal/utils"
 )
 
-const DecodingError = "Error decoding:"
+const DecodingError = "Error decoding: "
 
 func HandleTripRequest(conn *websocket.Conn, payload map[string]any) {
 	var data Schemas.TripRequest
@@ -19,14 +19,14 @@ func HandleTripRequest(conn *websocket.Conn, payload map[string]any) {
 		fmt.Println(DecodingError, err)
 		return
 	}
-	res1, err := TripManager.SendTripRequest(data)
-	if err != nil {
-		// send error response
+	res1, ok := TripManager.SendTripRequest(data)
+	if !ok {
+		EventEmitter.SendErrorMessage(conn)
 	} else {
 		TripManager.InitiateTripRequest(res1.ReqID, data.RiderID)
-		res2, err := TripManager.RequestAmbulances(data)
-		if err != nil {
-			// send error response
+		res2, ok := TripManager.RequestAmbulances(data)
+		if !ok {
+			EventEmitter.SendErrorMessage(conn)
 		} else {
 			for _, driver := range res2 {
 				go EventEmitter.PingDrivers(driver.DriverID, res1.ReqID, data.PickupLocation, data.Destination)
@@ -48,9 +48,9 @@ func HandleLocationUpdate(conn *websocket.Conn, payload map[string]any, typ stri
 	} else {
 		method = http.MethodPost
 	}
-	err = TripManager.RequestLocationUpdate(data, method, typ)
-	if err != nil {
-		// send error response
+	ok := TripManager.RequestLocationUpdate(data, method, typ)
+	if !ok {
+		EventEmitter.SendErrorMessage(conn)
 	}
 
 }
@@ -62,9 +62,10 @@ func HandleTripRequestCheckout(conn *websocket.Conn, payload map[string]any) {
 		fmt.Println(DecodingError, err)
 		return
 	}
-	err = TripManager.RequestTripCheckout(data)
-	if err != nil {
-		// send error response
+	ok := TripManager.RequestTripCheckout(data)
+	if !ok {
+		EventEmitter.SendErrorMessage(conn)
+		return
 	}
 	TripManager.EngageDriver(data.ReqID, data.DriverID)
 }
@@ -75,9 +76,9 @@ func HandleTripRequestDecline(conn *websocket.Conn, payload map[string]any) {
 		fmt.Println(DecodingError, err)
 		return
 	}
-	err = TripManager.RequestTripDecline(data)
-	if err != nil {
-		// send error response
+	ok := TripManager.RequestTripDecline(data)
+	if !ok {
+		EventEmitter.SendErrorMessage(conn)
 	}else{
 		TripManager.ReleaseDriver(data.ReqID, data.DriverID)
 	}
@@ -91,7 +92,9 @@ func HandleBidFromDriver(conn *websocket.Conn, payload map[string]any) {
 	}
 	err = EventEmitter.SendBidFromDriver(data)
 	if err != nil {
-		// send error response
+		// EventEmitter.SendErrorMessage(ClientManager.ActiveRiders[TripManager.ActiveTripRequest[data.ReqID].ClientID])
+		EventEmitter.SendErrorMessage(conn)
+		
 	}
 }
 
@@ -104,7 +107,7 @@ func HandleBidFromClient(conn *websocket.Conn, payload map[string]any) {
 	}
 	err = EventEmitter.SendBidFromClient(data)
 	if err != nil {
-		// send error response
+		EventEmitter.SendErrorMessage(conn)
 	}
 }
 
@@ -115,17 +118,20 @@ func HandleTripConfirmation(conn *websocket.Conn, payload map[string]any) {
 		fmt.Println(DecodingError, err)
 		return
 	}
-	res, err := TripManager.RequestTripConfirmation(data)
-	if err != nil {
-		// send error response
+	res, ok := TripManager.RequestTripConfirmation(data)
+	if !ok {
+		EventEmitter.SendErrorMessage(conn)
+		return
 	}
 	err = EventEmitter.SendTripConfirmation(res)
 	if err != nil {
-		//handle error
+		EventEmitter.SendErrorMessage(conn)
+		return        // need to implement retry mechanism here
 	}
-	err = TripManager.RequestTripRequestRemoval(data.ReqID)
-	if err != nil {
-		//handle error	
+	ok = TripManager.RequestTripRequestRemoval(data.ReqID)
+	if !ok {
+		EventEmitter.SendErrorMessage(conn)	
+		return        // need to implement retry mechanism here      
 	}
 	for driverID, _ := range TripManager.ActiveTripRequest[data.ReqID].Drivers {
 		if driverID == data.DriverID {
@@ -143,8 +149,8 @@ func HandleEndTrip(conn *websocket.Conn, payload map[string]any) {
 		fmt.Println(DecodingError, err)
 		return
 	}
-	err = TripManager.RequestEndTrip(data.TripID)
-	if err != nil {
-		// send error response
+	ok := TripManager.RequestEndTrip(data.TripID)
+	if !ok {
+		EventEmitter.SendErrorMessage(conn)	
 	}
 }

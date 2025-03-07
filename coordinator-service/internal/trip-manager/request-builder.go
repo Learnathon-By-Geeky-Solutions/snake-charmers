@@ -9,75 +9,99 @@ import (
 	"net/http"
 )
 
-func SendTripRequest(payload Schemas.TripRequest) (Schemas.RequestBase, error) {
+func SendTripRequest(payload Schemas.TripRequest) (Schemas.RequestBase, bool) {
 	data := map[string]any{
 		"rider_id":        payload.RiderID,
 		"pickup_location": payload.PickupLocation,
 		"destination":     payload.Destination,
 	}
-	res, err := Utils.MakeRequest(http.MethodPost, "http://localhost:8000/api/trip/new-request", data)
+	res, statusCode, err := Utils.MakeRequest(http.MethodPost, "http://localhost:8000/api/trip/new-request", data)
+	if err != nil || *statusCode < 200 || *statusCode >= 300 {
+		return Schemas.RequestBase{}, false
+	}
 	var responseData Schemas.RequestBase
 	if err := json.Unmarshal(res, &responseData); err != nil {
 		log.Println("Error parsing JSON:", err)
-		return Schemas.RequestBase{}, err
+		return Schemas.RequestBase{}, false
 	}
-	return responseData, err
+	return responseData, true
 }
 
-func RequestAmbulances(payload Schemas.TripRequest) ([]Schemas.Driver, error) {
+func RequestAmbulances(payload Schemas.TripRequest) ([]Schemas.Driver, bool) {
 	url := fmt.Sprintf("http://localhost:8000/api/ambulances?radius=5&latitude=%f&longitude=%f", payload.Latitude, payload.Longitude)
-	res, err := Utils.MakeRequest(http.MethodGet, url, nil)
+	res, statusCode,err := Utils.MakeRequest(http.MethodGet, url, nil)
+	if err != nil || *statusCode < 200 || *statusCode >= 300 {
+		return []Schemas.Driver{}, false
+	}
 	var responseData []Schemas.Driver
 	if err := json.Unmarshal(res, &responseData); err != nil {
 		log.Println("Error parsing JSON:", err)
-		return []Schemas.Driver{}, err
+		return []Schemas.Driver{}, false
 	}
-	return responseData, err
+	return responseData, true
 }
 
-func RequestLocationUpdate(payload Schemas.LocationUpdate, method, typ string) error {
+func RequestLocationUpdate(payload Schemas.LocationUpdate, method, typ string) bool {
 	url := fmt.Sprintf("http://localhost:8000/api/location/%s", typ)
-	_, err := Utils.MakeRequest(method, url, payload)
-	return err
+	_, statusCode, err := Utils.MakeRequest(method, url, payload)
+	if err != nil || *statusCode < 200 || *statusCode >= 300 {
+		return false
+	}
+	return true
 }
 
-func RequestTripCheckout(payload Schemas.TripCheckout) error {
+func RequestTripCheckout(payload Schemas.TripCheckout) bool {
 	data := map[string]any{
 		"req_id":    payload.ReqID,
 		"driver_id": payload.DriverID,
 	}
-	_, err := Utils.MakeRequest(http.MethodPost, "http://localhost:8000/api/trip/engage-driver", data)
-	return err
+	_, statusCode, err := Utils.MakeRequest(http.MethodPost, "http://localhost:8000/api/trip/engage-driver", data)
+	if err != nil || *statusCode < 200 || *statusCode >= 300 {
+		return false
+	}
+	return true
 }
 
-func RequestTripDecline(payload Schemas.TripDecline) error {
+func RequestTripDecline(payload Schemas.TripDecline) bool {
 	url := fmt.Sprintf("http://localhost:8000/api/trip/release-driver?driver_id=%d", payload.DriverID)
-	_, err := Utils.MakeRequest(http.MethodDelete, url, nil)
-	return err
+	_, statusCode, err := Utils.MakeRequest(http.MethodDelete, url, nil)
+	if err != nil || *statusCode < 200 || *statusCode >= 300 {
+		return false
+	}
+	return true
 }
 
-func RequestTripConfirmation(payload Schemas.TripConfirm) (Schemas.TripConfirmResponse, error) {
-	res, err := Utils.MakeRequest(http.MethodPost, "http://localhost:8000/api/trip/start", payload)
+func RequestTripConfirmation(payload Schemas.TripConfirm) (Schemas.TripConfirmResponse, bool) {
+	res, statusCode, err := Utils.MakeRequest(http.MethodPost, "http://localhost:8000/api/trip/start", payload)
+	if err != nil || *statusCode < 200 || *statusCode >= 300 {
+		return Schemas.TripConfirmResponse{}, false
+	}
 	var responseData Schemas.TripConfirmResponse
 	if err = json.Unmarshal(res, &responseData); err != nil {
 		log.Println("Error parsing JSON:", err)
-		return Schemas.TripConfirmResponse{}, err
+		return Schemas.TripConfirmResponse{}, false
 	}
 
-	return responseData, nil
+	return responseData, true
 }
 
-func RequestTripRequestRemoval(reqID int) error {
+func RequestTripRequestRemoval(reqID int) bool {
 	url := fmt.Sprintf("http://localhost:8000/api/trip/remove-request?req_id=%d", reqID)
-	_, err := Utils.MakeRequest(http.MethodDelete, url, nil)
-	return err
+	_, statusCode, err := Utils.MakeRequest(http.MethodDelete, url, nil)
+	if err != nil || *statusCode < 200 || *statusCode >= 300 {
+		return false
+	}
+	return true
 }
 
-func RequestEndTrip(tripID int) error {
+func RequestEndTrip(tripID int) bool {
 	data := map[string]any{
 		"trip_id": tripID,
 		"status":  "complete",
 	}
-	_, err := Utils.MakeRequest(http.MethodPut, "http://localhost:8000/api/trip/update-status", data)
-	return err
+	_, statusCode, err := Utils.MakeRequest(http.MethodPut, "http://localhost:8000/api/trip/update-status", data)
+	if err != nil || *statusCode < 200 || *statusCode >= 300 {
+		return false
+	}
+	return true
 }

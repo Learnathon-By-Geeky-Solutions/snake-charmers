@@ -5,16 +5,6 @@ import (
 	"coordinator-service/internal/schemas"
 )
 
-// type Driver struct {
-// 	DriverID int     `json:"driver_id"`
-// 	Name     string  `json:"name"`
-// 	Mobile   string  `json:"mobile`
-// }
-// type TripDetails struct {
-// 	ClientID int
-// 	Drivers  map[int]bool
-// }
-
 var ActiveTripRequest = make(map[int]Schemas.TripDetails)
 
 func InitiateTripRequest(reqID int, clientID int) {
