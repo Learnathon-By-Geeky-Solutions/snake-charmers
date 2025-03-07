@@ -47,8 +47,14 @@ def update_driver_location(
         driver_location = session.query(DriverLocation).filter(
             DriverLocation.driver_id == driver_id
         ).first()
+        if not driver_location:
+            raise HTTPException(
+                status_code=404, detail="Driver location not found"
+            )
+
         driver_location.location = ST_GeomFromText(point, 4326)
         session.merge(driver_location)
+        session.commit()
     except Exception as exc:
         session.rollback()
         raise HTTPException(
