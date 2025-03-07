@@ -13,7 +13,7 @@ function UserLogin() {
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-light-green">
-      <div className="w-full max-w-sm bg-white shadow-lg rounded-lg p-6">
+      <div className="w-full max-w-sm bg-white rounded-lg p-6 shadow-black shadow-2xl -mt-14" >
         <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
           User Login
         </h2>
