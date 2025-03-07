@@ -187,15 +187,11 @@ paths:
                 items:
                   type: object
                   properties:
-                    id:
-                      type: string
+                    driver_id:
+                      type: integer
                     name:
                       type: string
-                    ratings:
-                      type: number
-                    ETA:
-                      type: string
-                    socket_id:
+                    mobile:
                       type: string
         '400':
           description: Invalid input
@@ -430,7 +426,7 @@ paths:
           schema:
             type: integer
       responses:
-        '200':
+        '204':
           description: Trip request removed successfully
           content:
             application/json:
@@ -516,7 +512,7 @@ paths:
             type: integer
       
       responses:
-        '200':
+        '204':
           description: Driver released successfully
           content:
             application/json:

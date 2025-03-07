@@ -60,6 +60,7 @@ Thumbs.db
 
 # Testing
 *.coverage
+coverage.xml
 .tox/
 .pytest_cache/
 htmlcov/
@@ -70,3 +71,4 @@ htmlcov/
 # FastAPI specific
 instance/
 *.db
+wq

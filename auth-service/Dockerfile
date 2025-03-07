@@ -1,27 +1,27 @@
-# Stage 1: Build stage (install dependencies into a virtual environment)
+# Build Stage
 FROM python:3.13.2-alpine AS build
 
 # Install build dependencies
-RUN apk update && apk add --no-cache build-base=0.5-r2 libffi-dev=3.2.1-r0
+RUN apk update && apk add --no-cache bash build-base libffi-dev
 
 # Set the working directory in the container
 WORKDIR /app
 
-# Copy the requirements file
-COPY ./trip-service/requirements.txt .
+# Copy the requirements files
+COPY ./auth-service/requirements.txt .
 RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Stage 2: Final production stage (smaller image)
-FROM python:3.13.2-alpine
 
-# Install runtime dependencies (if needed)
-# RUN apk add --no-cache libffi-dev
 
+
+
+# Base Runtime Stage
+FROM python:3.13.2-alpine AS base
 # Create a non-root user
+
 RUN adduser -D myuser
-USER myuser
 
 # Set the working directory in the container
 WORKDIR /app
@@ -30,14 +30,27 @@ WORKDIR /app
 COPY --from=build /opt/venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
-
-# Copy application code
+# Copy the application code
 COPY ./auth-service/app ./app
-COPY ./auth-service/.env .
 COPY ./models ./app/models
 
-# Expose the port that the app runs on
-EXPOSE 8000
 
-# Run the application with auto-reload for development
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+# Development Stage
+FROM base AS dev
+# USER myuser
+EXPOSE 8000
+# CMD ["python", "-m", "app.main"]
+
+
+
+
+# Test Stage
+FROM base AS test
+COPY ./pytest.ini .
+COPY ./auth-service/tests ./tests
+COPY ./auth-service/coverage-reports ./coverage-reports
+COPY ./conftest.py ./tests
+
+ENV PYTHONPATH=.
+
+# USER myuser

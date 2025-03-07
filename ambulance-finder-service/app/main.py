@@ -1,9 +1,9 @@
 from fastapi import FastAPI
-from app.api.endpoints.example import router as example_router
+from app.api.main import router as finder_router
 
 app = FastAPI()
 
-app.include_router(example_router)
+app.include_router(finder_router)
 
 @app.get("/")
 def read_root():

@@ -3,12 +3,32 @@ services:
     build:
       context: ..
       dockerfile: ./ambulance-finder-service/Dockerfile
+      target: dev 
     container_name: ambulance-finder-service
     ports:
       - "8000:8000"
-    env_file:
-      - .env
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
     volumes:
       - .:/app
       - /app/app/models
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+
+  ambulance-finder-service-test:
+    build:
+      context: ..
+      dockerfile: ./ambulance-finder-service/Dockerfile
+      target: test
+    container_name: ambulance-finder-service-test
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      RIDER_PASSWORD_1: ${RIDER_PASSWORD_1}
+      RIDER_PASSWORD_2: ${RIDER_PASSWORD_2}
+      DRIVER_PASSWORD_1: ${DRIVER_PASSWORD_1}
+      DRIVER_PASSWORD_2: ${DRIVER_PASSWORD_2}
+
+    volumes:
+      - /app/app/models
+      - /app/tests
+      - ./:/app/  # Mount the whole current directory to /app in the container
+    command: ["pytest", "-v", "--cov=app", "--cov-report=xml:/app/coverage.xml", "tests/unittest"]

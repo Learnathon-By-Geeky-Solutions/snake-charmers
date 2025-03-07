@@ -20,66 +20,28 @@ router = APIRouter()
 @router.post(
     "/auth/signup",
     response_model=SignupResponse,
-    responses={
-        201: {"model": SignupResponse},
-        400: {"model": ErrorResponse},
-        409: {"model": ErrorResponse},
-        500: {"model": ErrorResponse},
-    },
+    status_code=201
 )
 async def signup(user: SignupRequest, session: Session = Depends(get_session)):
     """
     Handles user signup for drivers or riders.
     """
-    try:
-        create_user(session, user_data=user.dict())  # ✅ Pass as dictionary
-        return {
-            "success": True,
-            "message": f"{user.user_type.capitalize()} registered successfully",
-        }
-    except HTTPException as exc:
-        raise exc
-    except Exception as exc:
-        raise HTTPException(
-            status_code=500,
-            detail="An unexpected error occurred",
-        ) from exc
+    return create_user(session, user_data=user.dict())  
 
 
 @router.post(
     "/auth/login",
     response_model=LoginResponse,
-    responses={
-        200: {"model": LoginResponse},
-        401: {"model": ErrorResponse},
-        500: {"model": ErrorResponse},
-    },
+    status_code=200
 )
 async def login(credentials: LoginRequest, session: Session = Depends(get_session)):
     """
     Handles login for drivers or riders.
     """
-    try:
-        user = authenticate_user(
-            session,
-            credentials.phone_or_email,
-            credentials.password,
-            credentials.user_type,
-        )
-        return {
-            "success": True,
-            "name": user.name,
-            "id": (
-                user.driver_id
-                if credentials.user_type == "driver"
-                else user.rider_id
-            ),
-            "user_type": credentials.user_type,
-        }
-    except HTTPException as exc:
-        raise exc
-    except Exception as exc:
-        raise HTTPException(
-            status_code=500,
-            detail="An unexpected error occurred",
-        ) from exc
+    return authenticate_user(
+        session,
+        credentials.phone_or_email,
+        credentials.password,
+        credentials.user_type,
+    )
+
