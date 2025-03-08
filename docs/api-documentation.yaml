@@ -187,15 +187,11 @@ paths:
                 items:
                   type: object
                   properties:
-                    id:
-                      type: string
+                    driver_id:
+                      type: integer
                     name:
                       type: string
-                    ratings:
-                      type: number
-                    ETA:
-                      type: string
-                    socket_id:
+                    mobile:
                       type: string
         '400':
           description: Invalid input
@@ -371,7 +367,7 @@ paths:
 
   # Endpoints for Trip Service
 
-  /trip/request/add:
+  /trip/new-request:
     post:
       tags:
         - Trip Service
@@ -418,7 +414,7 @@ paths:
                   error:
                     type: string
 
-  /trip/request/remove:
+  /trip/remove-request:
     delete:
       tags:
         - Trip Service
@@ -430,7 +426,7 @@ paths:
           schema:
             type: integer
       responses:
-        '200':
+        '204':
           description: Trip request removed successfully
           content:
             application/json:
@@ -458,7 +454,7 @@ paths:
                   error:
                     type: string
 
-  /trip/engage:
+  /trip/engage-driver:
     post:
       tags:
         - Trip Service
@@ -503,7 +499,7 @@ paths:
                   error:
                     type: string
 
-  /trip/release:
+  /trip/release-driver:
     delete:
       tags:
         - Trip Service
@@ -516,7 +512,7 @@ paths:
             type: integer
       
       responses:
-        '200':
+        '204':
           description: Driver released successfully
           content:
             application/json:
@@ -544,7 +540,7 @@ paths:
                   error:
                     type: string
 
-  /trip/add:
+  /trip/start:
     post:
       tags:
         - Trip Service
@@ -607,7 +603,7 @@ paths:
                   error:
                     type: string
 
-  /trip/status:
+  /trip/update-status:
     put:
       tags:
         - Trip Service

@@ -1,24 +1,58 @@
-# Use the official Python 3.10-slim image from Docker Hub.
-# NOTE: This image runs as root by default. For production,
-#       consider creating a dedicated non-root user to reduce
-#       privilege escalation risks.
-FROM python:3.10-slim
+# Build Stage
+FROM python:3.13.2-alpine AS build
+
+# Install build dependencies
+RUN apk update && apk add --no-cache bash build-base libffi-dev
 
 # Set the working directory in the container
 WORKDIR /app
 
-# Copy the requirements.txt file into the container
+# Copy the requirements files
 COPY ./location-service/requirements.txt .
-
-# Install the dependencies
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy necessary files into the container
+
+
+
+
+# Base Runtime Stage
+FROM python:3.13.2-alpine AS base
+# Create a non-root user
+
+RUN adduser -D myuser
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the virtual environment from the build stage
+COPY --from=build /opt/venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Copy the application code
 COPY ./location-service/app ./app
+COPY ./location-service/.env .
 COPY ./models ./app/models
 
-# Expose the port that the app runs on
-EXPOSE 8000
 
-# Command to run the application with auto-reload for development
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+
+
+# Development Stage
+FROM base AS dev
+USER myuser
+EXPOSE 8000
+# CMD ["python", "-m", "app.main"]
+
+
+
+
+# Test Stage
+FROM base AS test
+COPY ./pytest.ini .
+COPY ./location-service/tests ./tests
+COPY ./conftest.py ./tests
+
+ENV PYTHONPATH=.
+
+USER myuser
