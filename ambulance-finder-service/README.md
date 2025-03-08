@@ -80,6 +80,20 @@ alembic revision --autogenerate -m "migration msg"
 alembic upgrade head
 ```
 
-## License
+## Geospatial Data Handling
+
+This project utilizes `geoalchemy2` and `postgis` to handle geospatial data effectively. 
+
+- **geoalchemy2**: This library extends SQLAlchemy to support geospatial data types and functions. In our application, we use it to store and query driver locations as geographic points.
+
+- **PostGIS**: This is a spatial database extender for PostgreSQL, which allows us to perform geographic queries. 
+
+### DriverLocation Model
+The `DriverLocation` model uses the `Geography` type to store the driver's location as a point with a specified SRID (Spatial Reference System Identifier). This allows for accurate geospatial queries.
+
+### Finding Nearby Drivers
+The `find_nearby_drivers` method in the `AmbulanceService` class utilizes geospatial queries to find drivers within a specified radius of a given location. It constructs a reference point using the provided latitude and longitude, and then queries the database to return a list of nearby drivers.
+
+
 
 This project is licensed under the MIT License. See the LICENSE file for more details.
