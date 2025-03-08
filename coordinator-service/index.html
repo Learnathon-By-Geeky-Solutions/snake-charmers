@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Event-Based Client</title>
+</head>
+<body>
+    <h2>WebSocket Event-Based Client</h2>
+
+    <label for="eventName">Event Name:</label>
+    <input type="text" id="eventName" placeholder="Enter event name (e.g., message, join, leave)">
+
+    <label for="eventData">Data:</label>
+    <input type="text" id="eventData" placeholder="Enter event data (text or JSON)">
+    
+    <button onclick="sendEvent()">Send Event</button>
+
+    <h3>Messages</h3>
+    <ul id="messages"></ul>
+
+    <script>
+        const socket = new WebSocket("ws://localhost:8080/ws");
+
+        socket.onopen = () => {
+            console.log("Connected to WebSocket server.");
+            emitEvent("client-join", {id: 2,  role: "rider"}); // Default join event
+        };
+
+        socket.onmessage = (event) => {
+            try {
+                const msg = JSON.parse(event.data);
+                displayMessage(msg.name, msg.data);
+            } catch (error) {
+                console.error("Error parsing message:", error);
+            }
+        };
+
+        socket.onclose = () => {
+            console.log("Disconnected from server.");
+            emitEvent("leave", { username: "User123" }); // Default leave event
+        };
+
+        function sendEvent() {
+            const Name = document.getElementById("eventName").value.trim();
+            const Data = document.getElementById("eventData").value.trim();
+
+            if (Name === "" || Data === "") {
+                alert("Both event name and data are required!");
+                return;
+            }
+
+            let parsedData;
+            try {
+                parsedData = JSON.parse(Data); // Try to parse JSON input
+            } catch {
+                parsedData = Data; // If not JSON, treat as string
+            }
+
+            emitEvent(Name, Data);
+        }
+
+        function emitEvent(Name, Data) {
+            const event = { Name, Data };
+            socket.send(JSON.stringify(event));
+        }
+
+        function displayMessage(eventName, data) {
+            const li = document.createElement("li");
+            li.innerHTML = `<strong>${eventName}:</strong> ${typeof data === "object" ? JSON.stringify(data) : data}`;
+            document.getElementById("messages").appendChild(li);
+        }
+    </script>
+</body>
+</html>
