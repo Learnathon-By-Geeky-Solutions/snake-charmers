@@ -1,7 +1,14 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { FaMapMarkerAlt } from "react-icons/fa";
 
 const RideRequestPage = () => {
+  const navigate = useNavigate(); // ✅ Hook for navigation
+
+  const handleSearch = () => {
+    navigate("/driver_search"); // ✅ Redirects to /driver_search
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center p-8">
       
@@ -36,8 +43,11 @@ const RideRequestPage = () => {
                   />
                 </div>
 
-                {/* Search Button */}
-                <button className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700">
+                {/* Search Button (Navigates to /driver_search) */}
+                <button
+                  onClick={handleSearch} // ✅ Calls handleSearch on click
+                  className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700"
+                >
                   Search
                 </button>
               </div>

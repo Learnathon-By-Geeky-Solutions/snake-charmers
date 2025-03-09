@@ -13,6 +13,7 @@ import Home from './components/Home/Home';
 import OverallSignup from './components/OverallSignup/OverallSignup';
 import UserLogin from './components/UserLogin/UserLogin';
 import RideRequest from './components/RideRequest/RideRequest';
+import DriverSearch from './components/DriverSearch/DriverSearch';
 
 
 
@@ -37,6 +38,10 @@ const router = createBrowserRouter([
       {
         path: '/ride_request',
         element: <RideRequest></RideRequest>
+      },
+      {
+        path: '/driver_search',
+        element: <DriverSearch></DriverSearch>
       }
     ]
 
