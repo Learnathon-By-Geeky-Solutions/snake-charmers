@@ -12,6 +12,7 @@ import ErrorPage from './components/ErrorPage/ErrorPage';
 import Home from './components/Home/Home';
 import OverallSignup from './components/OverallSignup/OverallSignup';
 import UserLogin from './components/UserLogin/UserLogin';
+import RideRequest from './components/RideRequest/RideRequest';
 
 
 
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
       {
         path: "/login",
         element: <UserLogin></UserLogin>
+      },
+      {
+        path: '/ride_request',
+        element: <RideRequest></RideRequest>
       }
     ]
 
