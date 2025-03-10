@@ -14,6 +14,7 @@ import OverallSignup from './components/OverallSignup/OverallSignup';
 import UserLogin from './components/UserLogin/UserLogin';
 import RideRequest from './components/RideRequest/RideRequest';
 import DriverSearch from './components/DriverSearch/DriverSearch';
+import AvailableRide from './components/AvailableRide/AvailableRide';
 
 
 
@@ -42,6 +43,10 @@ const router = createBrowserRouter([
       {
         path: '/driver_search',
         element: <DriverSearch></DriverSearch>
+      }, 
+      {
+        path: '/available_ride',
+        element: <AvailableRide></AvailableRide>
       }
     ]
 
