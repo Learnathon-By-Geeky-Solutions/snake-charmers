@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import logo from '../../assets/images/ambulancelogo1.png';
+import logo from '../../assets/images/Logo2.png';
 
 function Navbar() {
   return (
@@ -26,7 +26,7 @@ function Navbar() {
           <img 
             src={logo} 
             alt="Life Ride Logo" 
-            className="h-12 w-13 max-h-full object-contain scale-110" // Increased size without affecting navbar
+            className="h-16 w-17 max-h-full object-fill scale-110" // Increased size without affecting navbar
           />
         </Link>
       </div>
