@@ -16,6 +16,8 @@ import RideRequest from './components/RideRequest/RideRequest';
 import DriverSearch from './components/DriverSearch/DriverSearch';
 import AvailableRide from './components/AvailableRide/AvailableRide';
 import RiderReview from './components/RiderReview/RiderReview';
+import TripConfirmed from './components/TripConfirmed/TripConfirmed';
+import OngoingTrip from './components/OngoingTrip/OngoingTrip';
 
 
 
@@ -52,7 +54,11 @@ const router = createBrowserRouter([
       {
         path: '/rider_review',
         element: <RiderReview></RiderReview>
-      }
+      }, 
+      {
+        path: '/ongoing_trip',
+        element:<OngoingTrip></OngoingTrip>
+      },
     ]
 
   },

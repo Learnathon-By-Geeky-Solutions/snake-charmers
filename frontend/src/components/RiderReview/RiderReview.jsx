@@ -1,5 +1,7 @@
 import React from "react";
 import WaitingRiderReview from "../WaitingRiderReview/WaitingRiderReview";
+import TripConfirmed from "../TripConfirmed/TripConfirmed";
+import TripBooked from "../TripBooked/TripBooked";
 
 const RiderReview = () => {
   return (
@@ -13,13 +15,16 @@ const RiderReview = () => {
           
           {/* Left Side - Waiting Rider Review Component */}
           <WaitingRiderReview />
+          {/* <TripBooked></TripBooked>  when user will press search for ride he will redirect to the RideReview page with waitingriderReview loader*/}
+          {/* <TripConfirmed></TripConfirmed> */}
+          {/* this will be coniditional rendering */}
 
           {/* Right Side - Driver Request Image */}
           <div className="flex justify-center">
             <img
               src="/src/assets/images/driverPage 1.png"
               alt="Driver at Work"
-              className="w-[300px] h-[300px] md:w-[400px] md:h-[400px] rounded-lg shadow-lg"
+              className="w-[300px] h-[300px] md:w-[400px] md:h-[384px] rounded-lg shadow-lg"
             />
           </div>
 
