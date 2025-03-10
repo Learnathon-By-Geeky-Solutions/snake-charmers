@@ -15,6 +15,7 @@ import UserLogin from './components/UserLogin/UserLogin';
 import RideRequest from './components/RideRequest/RideRequest';
 import DriverSearch from './components/DriverSearch/DriverSearch';
 import AvailableRide from './components/AvailableRide/AvailableRide';
+import RiderReview from './components/RiderReview/RiderReview';
 
 
 
@@ -47,6 +48,10 @@ const router = createBrowserRouter([
       {
         path: '/available_ride',
         element: <AvailableRide></AvailableRide>
+      }, 
+      {
+        path: '/rider_review',
+        element: <RiderReview></RiderReview>
       }
     ]
 

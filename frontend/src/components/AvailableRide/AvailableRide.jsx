@@ -4,7 +4,7 @@ import FareDetails from "../FareDetails/FareDetails";
 
 const DriverPage = () => {
   return (
-    <div className="min-h-screen bg-gray-200 flex items-center justify-center p-6">
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
       
       {/* Wrapper for all components */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-5xl">
