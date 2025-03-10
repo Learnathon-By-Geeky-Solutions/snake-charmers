@@ -19,7 +19,7 @@ const DriverPage = () => {
         </div>
 
         {/* Right Side - Trip Details (Ash Div) */}
-        <div className="bg-gray-400 p-4 rounded-lg shadow-lg flex flex-col space-y-4">
+        <div className="bg-gray-300 p-4 rounded-lg shadow-lg flex flex-col space-y-4">
           <TripDetails tripNumber={1} />
           <TripDetails tripNumber={2} />
           <TripDetails tripNumber={3} />
@@ -39,7 +39,7 @@ const DriverPage = () => {
         </div>
 
         {/* Right Side - Fare Section (Ash Div) */}
-        <div className="bg-gray-400 p-4 rounded-lg shadow-lg flex flex-col space-y-4">
+        <div className="bg-gray-300 p-4 rounded-lg shadow-lg flex flex-col space-y-4">
           <FareDetails tripNumber={1} fareAmount={500} />
         </div>
 

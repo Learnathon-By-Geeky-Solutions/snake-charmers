@@ -6,7 +6,8 @@ const FareDetails = ({ tripNumber, fareAmount }) => {
 
   const handleAskClick = () => {
     navigate("/rider_review"); // Redirect to RiderReview page
-  };
+  }; 
+  
 
   return (
     <div className="bg-black text-white w-[300px] md:w-full p-4 rounded-lg shadow-lg flex flex-col items-center">
