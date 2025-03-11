@@ -2,13 +2,13 @@ import { useState } from 'react';
 import { useDispatch } from "react-redux";
 import handleLogin from '../../controllers/Login';
 
+
 function UserLogin() {
   const dispatch = useDispatch();
   const [role, setRole] = useState('User'); // Default role is "User"
   const [phoneOrEmail, setPhoneOrEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  console.log(role);
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(`Logging in as ${role}`);
