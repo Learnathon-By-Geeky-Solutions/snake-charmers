@@ -1,10 +1,15 @@
 from fastapi import FastAPI
 from app.api.main import router as auth_router
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
-app.include_router(auth_router, prefix="/api",tags=["Auth Service"])
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins
+    allow_credentials=True,  # Allows cookies (useful for authentication)
+    allow_methods=["*"],  # Allows all HTTP methods (GET, POST, PUT, DELETE, etc.)
+    allow_headers=["*"],  # Allows all headers
+)
 
-# @app.get("/api",tags=["Root"])
-# def read_root():
-#     return {"message": " Welcome to the Auth Service"}
+app.include_router(auth_router, prefix="/api",tags=["Auth Service"])

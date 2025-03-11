@@ -234,6 +234,8 @@ paths:
                   type: string
                 password:
                   type: string
+                user_type:
+                  type: string
       responses:
         '201':
           description: User registered successfully
@@ -286,11 +288,11 @@ paths:
             schema:
               type: object
               properties:
-                phoneOrEmail:
+                phone_or_email:
                   type: string
                 password:
                   type: string
-                role:
+                user_type:
                   type: string
       responses:
         '200':
@@ -304,8 +306,12 @@ paths:
                     type: string
                   id:
                     type: string
-                  ratings:
-                    type: number
+                  mobie:
+                    type: string
+                  role: 
+                    type: string
+                  email:
+                    type: string
         '401':
           description: Invalid credentials
           content:

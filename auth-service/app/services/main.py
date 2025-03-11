@@ -137,7 +137,9 @@ def authenticate_user(
                 if user_type == "driver"
                 else user.rider_id
             ),
-            "user_type": user_type,
+            "role": user_type,
+            "mobile": user.mobile,
+            "email": user.email,
         }
 
     except HTTPException:
