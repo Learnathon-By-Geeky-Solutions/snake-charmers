@@ -42,6 +42,7 @@ class TripService:
             return {"req_id": trip_request.req_id}
 
         except HTTPException:
+            db.rollback()
             raise
         except Exception as exc:
             db.rollback()
@@ -57,6 +58,10 @@ class TripService:
             db.delete(trip_request)
             db.commit()
             return {"success": True}
+
+        except HTTPException:
+            db.rollback()
+            raise
         except Exception as exc:
             db.rollback()
             raise INTERNAL_SERVER_ERROR from exc
@@ -72,6 +77,10 @@ class TripService:
             db.add(engagement)
             db.commit()
             return {"success": True}
+        
+        except HTTPException:
+            db.rollback()
+            raise
         except Exception as exc:
             print(exc)
             db.rollback()
@@ -90,6 +99,11 @@ class TripService:
             db.delete(engaged_driver)
             db.commit()
             return {"success": True}
+
+        except HTTPException:
+            db.rollback()
+            raise
+
         except Exception as exc:
             db.rollback()
             raise INTERNAL_SERVER_ERROR from exc
@@ -112,6 +126,7 @@ class TripService:
             db.refresh(trip)
             return trip.dict()
         except HTTPException:
+            db.rollback()
             raise
         except Exception as exc:
             db.rollback()
@@ -127,6 +142,9 @@ class TripService:
             trip.status = status
             db.commit()
             return {"success": True}
+        except HTTPException:
+            db.rollback()
+            raise
         except Exception as exc:
             db.rollback()
             raise INTERNAL_SERVER_ERROR from exc

@@ -10,10 +10,10 @@ from sqlalchemy.orm import aliased
 class AmbulanceService:
     @staticmethod
     def find_nearby_drivers(db: Session, request: NearbyDriversRequest):
+        # Create reference point
+        ref_point = f'POINT({request.lon} {request.lat})'
+        
         try:
-            # Create reference point
-            ref_point = f'POINT({request.lon} {request.lat})'
-
             # Subquery to get engaged drivers
             engaged_drivers_subquery = db.query(
                 EngagedDriver.driver_id).subquery()
@@ -44,7 +44,6 @@ class AmbulanceService:
                 for driver in results
             ]
         except Exception as exc:
-            raise HTTPException(
-                status_code=500,
-                detail="Error finding nearby drivers"
-            ) from exc
+            db.rollback()
+            raise INTERNAL_SERVER_ERROR from exc
+

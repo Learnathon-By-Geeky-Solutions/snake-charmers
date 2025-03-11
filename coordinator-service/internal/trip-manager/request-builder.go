@@ -7,7 +7,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 )
+
 
 func SendTripRequest(payload Schemas.TripRequest) (Schemas.RequestBase, bool) {
 	data := map[string]any{
@@ -15,7 +17,7 @@ func SendTripRequest(payload Schemas.TripRequest) (Schemas.RequestBase, bool) {
 		"pickup_location": payload.PickupLocation,
 		"destination":     payload.Destination,
 	}
-	res, statusCode, err := Utils.MakeRequest(http.MethodPost, "http://localhost:8000/api/trip/new-request", data)
+	res, statusCode, err := Utils.MakeRequest(http.MethodPost, fmt.Sprintf("%s/new-request", os.Getenv("TRIP_SERVICE_URL")), data)
 	if err != nil || *statusCode < 200 || *statusCode >= 300 {
 		return Schemas.RequestBase{}, false
 	}
@@ -28,7 +30,7 @@ func SendTripRequest(payload Schemas.TripRequest) (Schemas.RequestBase, bool) {
 }
 
 func RequestAmbulances(payload Schemas.TripRequest) ([]Schemas.Driver, bool) {
-	url := fmt.Sprintf("http://localhost:8000/api/ambulances?radius=5&latitude=%f&longitude=%f", payload.Latitude, payload.Longitude)
+	url := fmt.Sprintf("%s?radius=5&lat=%f&lon=%f",os.Getenv("AMBULANCE_FINDER_URL"), payload.Latitude, payload.Longitude)
 	res, statusCode,err := Utils.MakeRequest(http.MethodGet, url, nil)
 	if err != nil || *statusCode < 200 || *statusCode >= 300 {
 		return []Schemas.Driver{}, false
@@ -42,12 +44,20 @@ func RequestAmbulances(payload Schemas.TripRequest) ([]Schemas.Driver, bool) {
 }
 
 func RequestLocationUpdate(payload Schemas.LocationUpdate, method, typ string) bool {
-	url := fmt.Sprintf("http://localhost:8000/api/location/%s", typ)
+	url := fmt.Sprintf("%s/%s", os.Getenv("LOCATION_SERVICE_URL"), typ)
 	_, statusCode, err := Utils.MakeRequest(method, url, payload)
 	if err != nil || *statusCode < 200 || *statusCode >= 300 {
 		return false
 	}
 	return true
+}
+func RequestLocationRemoval(id int) {
+	url := fmt.Sprintf("%s/remove?driver_id=%d", os.Getenv("LOCATION_SERVICE_URL"), id)
+	_, statusCode, err := Utils.MakeRequest(http.MethodDelete, url, nil)
+	if err != nil || *statusCode < 200 || *statusCode >= 300 {
+		fmt.Println(fmt.Errorf("error while removing location"))
+	}
+	fmt.Printf("Successfully remove location for the disconneted driver having id %d\n", id)
 }
 
 func RequestTripCheckout(payload Schemas.TripCheckout) bool {
@@ -55,7 +65,7 @@ func RequestTripCheckout(payload Schemas.TripCheckout) bool {
 		"req_id":    payload.ReqID,
 		"driver_id": payload.DriverID,
 	}
-	_, statusCode, err := Utils.MakeRequest(http.MethodPost, "http://localhost:8000/api/trip/engage-driver", data)
+	_, statusCode, err := Utils.MakeRequest(http.MethodPost, fmt.Sprintf("%s/engage-driver", os.Getenv("TRIP_SERVICE_URL")), data)
 	if err != nil || *statusCode < 200 || *statusCode >= 300 {
 		return false
 	}
@@ -63,16 +73,16 @@ func RequestTripCheckout(payload Schemas.TripCheckout) bool {
 }
 
 func RequestTripDecline(payload Schemas.TripDecline) bool {
-	url := fmt.Sprintf("http://localhost:8000/api/trip/release-driver?driver_id=%d", payload.DriverID)
+	url := fmt.Sprintf("%s/release-driver?driver_id=%d", os.Getenv("TRIP_SERVICE_URL"), payload.DriverID)
 	_, statusCode, err := Utils.MakeRequest(http.MethodDelete, url, nil)
-	if err != nil || *statusCode < 200 || *statusCode >= 300 {
-		return false
+	if err == nil && (*statusCode == 404 || *statusCode == 204) {
+		return true
 	}
 	return true
 }
 
 func RequestTripConfirmation(payload Schemas.TripConfirm) (Schemas.TripConfirmResponse, bool) {
-	res, statusCode, err := Utils.MakeRequest(http.MethodPost, "http://localhost:8000/api/trip/start", payload)
+	res, statusCode, err := Utils.MakeRequest(http.MethodPost, fmt.Sprintf("%s/start", os.Getenv("TRIP_SERVICE_URL")), payload)
 	if err != nil || *statusCode < 200 || *statusCode >= 300 {
 		return Schemas.TripConfirmResponse{}, false
 	}
@@ -86,7 +96,7 @@ func RequestTripConfirmation(payload Schemas.TripConfirm) (Schemas.TripConfirmRe
 }
 
 func RequestTripRequestRemoval(reqID int) bool {
-	url := fmt.Sprintf("http://localhost:8000/api/trip/remove-request?req_id=%d", reqID)
+	url := fmt.Sprintf("%s/remove-request/%d",os.Getenv("TRIP_SERVICE_URL"), reqID)
 	_, statusCode, err := Utils.MakeRequest(http.MethodDelete, url, nil)
 	if err != nil || *statusCode < 200 || *statusCode >= 300 {
 		return false
@@ -99,7 +109,7 @@ func RequestEndTrip(tripID int) bool {
 		"trip_id": tripID,
 		"status":  "complete",
 	}
-	_, statusCode, err := Utils.MakeRequest(http.MethodPut, "http://localhost:8000/api/trip/update-status", data)
+	_, statusCode, err := Utils.MakeRequest(http.MethodPut, fmt.Sprintf("%s/update-status",os.Getenv("TRIP_SERVICE_URL")), data)
 	if err != nil || *statusCode < 200 || *statusCode >= 300 {
 		return false
 	}

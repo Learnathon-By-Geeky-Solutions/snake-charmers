@@ -3,73 +3,297 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebSocket Event-Based Client</title>
+    <title>WebSocket Client</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .connection-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .message-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .message-input {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .initial-message {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-top: 15px;
+            background-color: #f8f8f8;
+            border-radius: 5px;
+        }
+        .log-container {
+            border: 1px solid #ccc;
+            padding: 10px;
+            height: 300px;
+            overflow-y: auto;
+            background-color: #f9f9f9;
+        }
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 5px;
+            border-radius: 4px;
+        }
+        .log-entry.sent {
+            background-color: #e6f7ff;
+        }
+        .log-entry.received {
+            background-color: #f0f9eb;
+        }
+        .log-entry.system {
+            background-color: #f5f5f5;
+            font-style: italic;
+        }
+        .status {
+            font-weight: bold;
+        }
+        .status.connected {
+            color: green;
+        }
+        .status.disconnected {
+            color: red;
+        }
+        button {
+            padding: 8px 16px;
+            cursor: pointer;
+        }
+        input, textarea {
+            padding: 8px;
+        }
+        label {
+            font-weight: bold;
+        }
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
-    <h2>WebSocket Event-Based Client</h2>
-
-    <label for="eventName">Event Name:</label>
-    <input type="text" id="eventName" placeholder="Enter event name (e.g., message, join, leave)">
-
-    <label for="eventData">Data:</label>
-    <input type="text" id="eventData" placeholder="Enter event data (text or JSON)">
-    
-    <button onclick="sendEvent()">Send Event</button>
-
-    <h3>Messages</h3>
-    <ul id="messages"></ul>
+    <div class="container">
+        <h1>WebSocket Client</h1>
+        
+        <div class="connection-controls">
+            <label for="server-url">Server URL:</label>
+            <input type="text" id="server-url" value="ws://localhost:8080" style="width: 250px;">
+            <button id="connect-btn">Connect</button>
+            <button id="disconnect-btn" disabled>Disconnect</button>
+            <span>Status: <span id="connection-status" class="status disconnected">Disconnected</span></span>
+        </div>
+        
+        <div class="initial-message">
+            <h2>Initial Connection Message</h2>
+            <div class="checkbox-container">
+                <input type="checkbox" id="send-initial-msg" checked>
+                <label for="send-initial-msg">Send message on connection</label>
+            </div>
+            <div class="message-input">
+                <label for="initial-name-input">Name:</label>
+                <input type="text" id="initial-name-input" placeholder="Enter name" value="connectionInit">
+                
+                <label for="initial-data-input">Data (JSON):</label>
+                <textarea id="initial-data-input" rows="3" placeholder='{"key": "value"}'></textarea>
+            </div>
+        </div>
+        
+        <div class="message-container">
+            <h2>Send Message</h2>
+            <div class="message-input">
+                <label for="name-input">Name:</label>
+                <input type="text" id="name-input" placeholder="Enter name">
+                
+                <label for="data-input">Data (JSON):</label>
+                <textarea id="data-input" rows="5" placeholder='{"key": "value"}'></textarea>
+                
+                <button id="send-btn" disabled>Send Message</button>
+            </div>
+        </div>
+        
+        <div>
+            <h2>Message Log</h2>
+            <div id="log" class="log-container"></div>
+            <button id="clear-log-btn">Clear Log</button>
+        </div>
+    </div>
 
     <script>
-        const socket = new WebSocket("ws://localhost:8080/ws");
+        let socket = null;
 
-        socket.onopen = () => {
-            console.log("Connected to WebSocket server.");
-            emitEvent("client-join", {id: 2,  role: "rider"}); // Default join event
-        };
+        // DOM Elements
+        const serverUrlInput = document.getElementById('server-url');
+        const connectBtn = document.getElementById('connect-btn');
+        const disconnectBtn = document.getElementById('disconnect-btn');
+        const statusElement = document.getElementById('connection-status');
+        const nameInput = document.getElementById('name-input');
+        const dataInput = document.getElementById('data-input');
+        const sendBtn = document.getElementById('send-btn');
+        const logContainer = document.getElementById('log');
+        const clearLogBtn = document.getElementById('clear-log-btn');
+        const sendInitialMsgCheckbox = document.getElementById('send-initial-msg');
+        const initialNameInput = document.getElementById('initial-name-input');
+        const initialDataInput = document.getElementById('initial-data-input');
 
-        socket.onmessage = (event) => {
-            try {
-                const msg = JSON.parse(event.data);
-                displayMessage(msg.name, msg.data);
-            } catch (error) {
-                console.error("Error parsing message:", error);
-            }
-        };
-
-        socket.onclose = () => {
-            console.log("Disconnected from server.");
-            emitEvent("leave", { username: "User123" }); // Default leave event
-        };
-
-        function sendEvent() {
-            const Name = document.getElementById("eventName").value.trim();
-            const Data = document.getElementById("eventData").value.trim();
-
-            if (Name === "" || Data === "") {
-                alert("Both event name and data are required!");
+        // Connect to WebSocket server
+        connectBtn.addEventListener('click', () => {
+            const serverUrl = serverUrlInput.value.trim();
+            if (!serverUrl) {
+                addLogEntry('Please enter a server URL', 'system');
                 return;
             }
 
-            let parsedData;
             try {
-                parsedData = JSON.parse(Data); // Try to parse JSON input
-            } catch {
-                parsedData = Data; // If not JSON, treat as string
+                socket = new WebSocket(serverUrl);
+                
+                socket.onopen = () => {
+                    statusElement.textContent = 'Connected';
+                    statusElement.className = 'status connected';
+                    connectBtn.disabled = true;
+                    disconnectBtn.disabled = false;
+                    sendBtn.disabled = false;
+                    addLogEntry(`Connected to ${serverUrl}`, 'system');
+                    
+                    // Send initial message if checkbox is checked
+                    if (sendInitialMsgCheckbox.checked) {
+                        sendInitialMessage();
+                    }
+                };
+                
+                socket.onclose = (event) => {
+                    statusElement.textContent = 'Disconnected';
+                    statusElement.className = 'status disconnected';
+                    connectBtn.disabled = false;
+                    disconnectBtn.disabled = true;
+                    sendBtn.disabled = true;
+                    addLogEntry(`Disconnected from server. Code: ${event.code}, Reason: ${event.reason || 'No reason provided'}`, 'system');
+                    socket = null;
+                };
+                
+                socket.onerror = (error) => {
+                    addLogEntry(`WebSocket error: ${error.message || 'Unknown error'}`, 'system');
+                };
+                
+                socket.onmessage = (event) => {
+                    try {
+                        const message = JSON.parse(event.data);
+                        addLogEntry(`Received: ${JSON.stringify(message, null, 2)}`, 'received');
+                    } catch (e) {
+                        addLogEntry(`Received non-JSON message: ${event.data}`, 'received');
+                    }
+                };
+                
+            } catch (error) {
+                addLogEntry(`Error creating WebSocket: ${error.message}`, 'system');
+            }
+        });
+
+        // Send initial message function
+        function sendInitialMessage() {
+            if (!socket || socket.readyState !== WebSocket.OPEN) {
+                return;
             }
 
-            emitEvent(Name, Data);
+            const name = initialNameInput.value.trim() || 'connectionInit';
+            
+            let data;
+            try {
+                data = JSON.parse(initialDataInput.value.trim() || '{}');
+            } catch (e) {
+                addLogEntry(`Invalid JSON for initial message: ${e.message}. Using empty object instead.`, 'system');
+                data = {};
+            }
+
+            const message = {
+                name: name,
+                data: data
+            };
+
+            try {
+                socket.send(JSON.stringify(message));
+                addLogEntry(`Sent initial message: ${JSON.stringify(message, null, 2)}`, 'sent');
+            } catch (error) {
+                addLogEntry(`Error sending initial message: ${error.message}`, 'system');
+            }
         }
 
-        function emitEvent(Name, Data) {
-            const event = { Name, Data };
-            socket.send(JSON.stringify(event));
+        // Disconnect from WebSocket server
+        disconnectBtn.addEventListener('click', () => {
+            if (socket) {
+                socket.close();
+            }
+        });
+
+        // Send message to server
+        sendBtn.addEventListener('click', () => {
+            if (!socket || socket.readyState !== WebSocket.OPEN) {
+                addLogEntry('Not connected to a server', 'system');
+                return;
+            }
+
+            const name = nameInput.value.trim();
+            if (!name) {
+                addLogEntry('Please enter a name', 'system');
+                return;
+            }
+
+            let data;
+            try {
+                data = JSON.parse(dataInput.value.trim() || '{}');
+            } catch (e) {
+                addLogEntry(`Invalid JSON data: ${e.message}`, 'system');
+                return;
+            }
+
+            const message = {
+                name: name,
+                data: data
+            };
+
+            try {
+                socket.send(JSON.stringify(message));
+                addLogEntry(`Sent: ${JSON.stringify(message, null, 2)}`, 'sent');
+            } catch (error) {
+                addLogEntry(`Error sending message: ${error.message}`, 'system');
+            }
+        });
+
+        // Clear log
+        clearLogBtn.addEventListener('click', () => {
+            logContainer.innerHTML = '';
+        });
+
+        // Add entry to log
+        function addLogEntry(message, type) {
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            
+            // Format JSON strings with proper indentation if the message contains JSON
+            const formattedMessage = message.replace(/\n/g, '<br>');
+            
+            entry.innerHTML = formattedMessage;
+            logContainer.appendChild(entry);
+            logContainer.scrollTop = logContainer.scrollHeight;
         }
 
-        function displayMessage(eventName, data) {
-            const li = document.createElement("li");
-            li.innerHTML = `<strong>${eventName}:</strong> ${typeof data === "object" ? JSON.stringify(data) : data}`;
-            document.getElementById("messages").appendChild(li);
-        }
+        // Initial log entry
+        addLogEntry('WebSocket client initialized. Click "Connect" to start.', 'system');
     </script>
 </body>
 </html>

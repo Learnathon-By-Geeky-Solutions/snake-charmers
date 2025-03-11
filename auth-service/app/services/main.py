@@ -8,6 +8,7 @@ from fastapi import HTTPException
 from app.models.main import Driver, Rider
 from app.utils.security import hash_password, verify_password
 
+INTERNAL_SERVER_ERROR = HTTPException(status_code=500, detail="Internal server error")
 
 def is_email_or_mobile_taken(session: Session, email: str, mobile: str):
     """
@@ -76,14 +77,22 @@ def create_user(session: Session, user_data: dict):
         )
     else:
         raise HTTPException(status_code=400, detail="Invalid user type")
+    try:
+        session.add(new_user)
+        session.commit()
+        session.refresh(new_user)
+        return {
+            "success": True,
+            "message": f"{user_data["user_type"]} {new_user.name} registered successfully",
+        }
 
-    session.add(new_user)
-    session.commit()
-    session.refresh(new_user)
-    return {
-        "success": True,
-        "message": f"{user_data["user_type"]} {new_user.name} registered successfully",
-    }
+    except HTTPException:
+        session.rollback()
+        raise
+    
+    except Exception as exc:
+        session.rollback()
+        raise INTERNAL_SERVER_ERROR from exc
   
 
 def authenticate_user(
@@ -97,37 +106,45 @@ def authenticate_user(
     """
     user = None
 
-    # try:
-    if user_type == "driver":
-        user = (
-            session.query(Driver)
-            .filter(
-                (Driver.email == phone_or_email)
-                | (Driver.mobile == phone_or_email)
+    try:
+        if user_type == "driver":
+            user = (
+                session.query(Driver)
+                .filter(
+                    (Driver.email == phone_or_email)
+                    | (Driver.mobile == phone_or_email)
+                )
+                .first()
             )
-            .first()
-        )
-    elif user_type == "rider":
-        user = (
-            session.query(Rider)
-            .filter(
-                (Rider.email == phone_or_email)
-                | (Rider.mobile == phone_or_email)
+        elif user_type == "rider":
+            user = (
+                session.query(Rider)
+                .filter(
+                    (Rider.email == phone_or_email)
+                    | (Rider.mobile == phone_or_email)
+                )
+                .first()
             )
-            .first()
-        )
-    else:
-        raise HTTPException(status_code=400, detail="Invalid user type")
-    if not user or not verify_password(password, user.password):
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-    return {
-        "success": True,
-        "name": user.name,
-        "id": (
-            user.driver_id
-            if user_type == "driver"
-            else user.rider_id
-        ),
-        "user_type": user_type,
-    }
+        else:
+            raise HTTPException(status_code=400, detail="Invalid user type")
+        if not user or not verify_password(password, user.password):
+            raise HTTPException(status_code=401, detail="Invalid credentials")
+        return {
+            "success": True,
+            "name": user.name,
+            "id": (
+                user.driver_id
+                if user_type == "driver"
+                else user.rider_id
+            ),
+            "user_type": user_type,
+        }
+
+    except HTTPException:
+        session.rollback()
+        raise
+    
+    except Exception as exc:
+        session.rollback()
+        raise INTERNAL_SERVER_ERROR from exc
 
