@@ -1,8 +1,8 @@
 import React from "react";
-import TripDetails from "../TripDetails/TripDetails";
-import FareDetails from "../FareDetails/FareDetails";
+import ShowAvailableTrip from "../ShowAvailableTrip/ShowAvailableTrip";
+import DetailAvailableTrip from "../DetailAvailableTrip/DetailAvailableTrip";
 
-const DriverPage = () => {
+const AvailableRide = () => {
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
       
@@ -18,12 +18,8 @@ const DriverPage = () => {
           />
         </div>
 
-        {/* Right Side - Trip Details (Ash Div) */}
-        <div className="bg-gray-300 p-4 rounded-lg shadow-lg flex flex-col space-y-4">
-          <TripDetails tripNumber={1} />
-          <TripDetails tripNumber={2} />
-          <TripDetails tripNumber={3} />
-        </div>
+        {/* Right Side - Available Trips */}
+        <ShowAvailableTrip />
 
         {/* Left Side - Google Map */}
         <div className="flex justify-center">
@@ -38,14 +34,12 @@ const DriverPage = () => {
           ></iframe>
         </div>
 
-        {/* Right Side - Fare Section (Ash Div) */}
-        <div className="bg-gray-300 p-4 rounded-lg shadow-lg flex flex-col space-y-4">
-          <FareDetails tripNumber={1} fareAmount={500} />
-        </div>
+        {/* Right Side - Trip Fare Details */}
+        <DetailAvailableTrip />
 
       </div>
     </div>
   );
 };
 
-export default DriverPage;
+export default AvailableRide;
