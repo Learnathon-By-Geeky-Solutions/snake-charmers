@@ -74,3 +74,4 @@ htmlcov/
 instance/
 *.db
 wq
+tmp
