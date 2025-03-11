@@ -32,7 +32,7 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 # Copy the application code
 COPY ./ambulance-finder-service/app ./app
-COPY ./ambulance-finder-service/.env .
+# COPY ./ambulance-finder-service/.env .
 COPY ./models ./app/models
 
 
@@ -41,7 +41,7 @@ COPY ./models ./app/models
 # Development Stage
 FROM base AS dev
 EXPOSE 8000
-USER myuser
+# USER myuser
 # CMD ["python", "-m", "app.main"]
 
 
@@ -51,6 +51,7 @@ USER myuser
 FROM base AS test
 COPY ./pytest.ini .
 COPY ./ambulance-finder-service/tests ./tests
+COPY ./ambulance-finder-service/coverage-reports ./coverage-reports
 COPY ./conftest.py ./tests
 
 ENV PYTHONPATH=.

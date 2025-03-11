@@ -22,7 +22,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 def hash_password(password: str) -> str:
-    return pwd_context.hash(password)
+    return pwd_context.hash(password)    # need to encrypt the password otherwise error might occur while testing
 
 def populate_test_data(session):
     """Prepopulate the test database with riders and drivers."""
