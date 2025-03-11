@@ -1,7 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
-
+import { Provider } from 'react-redux'
 
 import {
   createBrowserRouter,
@@ -16,9 +16,10 @@ import RideRequest from './components/RideRequest/RideRequest';
 import DriverSearch from './components/DriverSearch/DriverSearch';
 import AvailableRide from './components/AvailableRide/AvailableRide';
 import RiderReview from './components/RiderReview/RiderReview';
-import TripConfirmed from './components/TripConfirmed/TripConfirmed';
+// import TripConfirmed from './components/TripConfirmed/TripConfirmed';
 import OngoingTrip from './components/OngoingTrip/OngoingTrip';
 
+import store from './store/index'
 
 
 const router = createBrowserRouter([
@@ -68,6 +69,8 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <RouterProvider router={router} />
-  </StrictMode>,
+    <Provider store={store}>
+      <RouterProvider router={router} />
+    </Provider>
+  </StrictMode>
 );

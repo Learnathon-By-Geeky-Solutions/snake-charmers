@@ -78,8 +78,9 @@ class LoginResponse(BaseModel):
     success: bool
     name: str
     id: int
-    user_type: str
-
+    role: str
+    mobile: str
+    email: str
 
 class ErrorResponse(BaseModel):
     """
