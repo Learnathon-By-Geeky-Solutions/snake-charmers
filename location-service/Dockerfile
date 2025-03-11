@@ -32,7 +32,7 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 # Copy the application code
 COPY ./location-service/app ./app
-COPY ./location-service/.env .
+# COPY ./location-service/.env .
 COPY ./models ./app/models
 
 
@@ -40,7 +40,7 @@ COPY ./models ./app/models
 
 # Development Stage
 FROM base AS dev
-USER myuser
+# USER myuser
 EXPOSE 8000
 # CMD ["python", "-m", "app.main"]
 
@@ -51,6 +51,7 @@ EXPOSE 8000
 FROM base AS test
 COPY ./pytest.ini .
 COPY ./location-service/tests ./tests
+COPY ./location-service/coverage-reports ./coverage-reports
 COPY ./conftest.py ./tests
 
 ENV PYTHONPATH=.

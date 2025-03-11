@@ -105,6 +105,22 @@ Detailed API documentation is available [here](https://app.swaggerhub.com/apis-d
 ## Development Guidelines
    This is a monorepo combining multiple microservice. Refer to the respective service folders to get the detailed development setup.
 
+## Testing Guidelines
+   **Note**: All the commands here are written relative to the root directory, that is the `snake-charmers` folder in your local machine.
+   - Create a **coverage-reports** folder inside the service you need to test.
+     For example, if you want to test auth-service, there should be a `auth-service/coverage-reports` folder.
+   - Write your test files inside the `<service-name>/tests/unitest folder`. This folder is already created.
+   In this project, we are running the tests using **Docker**. Now to run the tests, use:
+   ```
+   cd <service-name>
+   docker compose -f docker-compose.dev.yml up --build <service-name>-test
+   ```
+   for example:
+   ```
+   cd auth-service
+   docker compose -f docker-compose.dev.yml up --build auth-service-test
+   ```
+
 ## Resources
 - [Project Documentation](docs/)
 - [Development Setup](docs/setup.md)
