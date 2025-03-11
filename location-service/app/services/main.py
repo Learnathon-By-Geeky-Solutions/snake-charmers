@@ -11,32 +11,35 @@ def add_driver_location(
         driver_id: int,
         latitude: float,
         longitude: float
-) -> None:
+):
     """
     Add a new driver's location to the database.
     """
+    point = f'POINT({longitude} {latitude})'
+    # Create new driver location
+    driver_location = DriverLocation(
+        driver_id=driver_id,
+        location=ST_GeomFromText(point, 4326)
+    )
     try:
-        point = f'POINT({longitude} {latitude})'
-        # Create new driver location
-        driver_location = DriverLocation(
-            driver_id=driver_id,
-            location=ST_GeomFromText(point, 4326)
-        )
         session.add(driver_location)
         session.commit()
+        return {"success": True}
 
+    except HTTPException:
+        session.rollback()
+        raise
+    
     except Exception as exc:
         session.rollback()
-        raise HTTPException(
-            status_code=500, detail=INTERNAL_SERVER_ERROR_MSG) from exc
-
+        raise INTERNAL_SERVER_ERROR_MSG from exc
 
 def update_driver_location(
         session: Session,
         driver_id: int,
         latitude: float,
         longitude: float
-) -> None:
+):
     """
     Update the latitude and longitude of a driver's location in the database.
     """
@@ -50,39 +53,45 @@ def update_driver_location(
             raise HTTPException(
                 status_code=404, detail="Driver location not found"
             )
-
         driver_location.location = ST_GeomFromText(point, 4326)
         session.merge(driver_location)
         session.commit()
+        return {"success": True}
+
+    except HTTPException:
+        session.rollback()
+        raise
+    
     except Exception as exc:
         session.rollback()
-        raise HTTPException(
-            status_code=500, detail=INTERNAL_SERVER_ERROR_MSG) from exc
-
+        raise INTERNAL_SERVER_ERROR from exc
 
 def remove_driver_location(
         session: Session,
         driver_id: int
-) -> None:
+):
     """
     Remove a driver's location from the database by ID.
     """
-    statement = (
-        select(DriverLocation)
-        .where(DriverLocation.driver_id == driver_id)
-    )
-    result = session.exec(statement).first()
-    if not result:
-        raise HTTPException(
-            status_code=404,
-            detail="Location not found"
-        )
     try:
+        statement = (
+            select(DriverLocation)
+            .where(DriverLocation.driver_id == driver_id)
+        )
+        result = session.exec(statement).first()
+        if not result:
+            raise HTTPException(
+                status_code=404,
+                detail="Location not found"
+            )
         session.delete(result)
         session.commit()
+        return {"success": True}
+        
+    except HTTPException:
+        session.rollback()
+        raise
+    
     except Exception as exc:
         session.rollback()
-        raise HTTPException(
-            status_code=500,
-            detail=INTERNAL_SERVER_ERROR_MSG
-        ) from exc
+        raise INTERNAL_SERVER_ERROR from exc

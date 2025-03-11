@@ -23,10 +23,7 @@ UNEXPECTED_ERROR_MESSAGE = "An unexpected error occurred"
 @router.put(
     "/location/update",
     response_model=LocationUpdateResponse,
-    responses={
-        400: {"model": ErrorResponse},
-        500: {"model": ErrorResponse}
-    }
+    status_code=200
 )
 async def update_location(
     location: UpdateDriverLocationRequest,
@@ -35,30 +32,19 @@ async def update_location(
     """
     Updates a driver's location based on their ID.
     """
-    try:
-        update_driver_location(
+    # try:
+    return update_driver_location(
             session,
             location.driver_id,
             location.latitude,
             location.longitude
         )
-        return {"success": True}
-    except HTTPException as e:
-        raise e
-    except Exception as exc:
-        raise HTTPException(
-            detail=UNEXPECTED_ERROR_MESSAGE,
-            status_code=500,
-        ) from exc
 
 
 @router.post(
     "/location/add",
     response_model=LocationAddResponse,
-    responses={
-        400: {"model": ErrorResponse},
-        500: {"model": ErrorResponse}
-    }
+    status_code=200
 )
 async def add_location(
     location: AddDriverLocationRequest,
@@ -67,33 +53,18 @@ async def add_location(
     """
     Adds a new driver's location.
     """
-    try:
-        add_driver_location(
-            session,
-            location.driver_id,
-            location.latitude,
-            location.longitude
-        )
-        return {
-            "success": True,
-            "message": "Location added successfully"
-        }
-    except HTTPException as e:
-        raise e
-    except Exception as exc:
-        raise HTTPException(
-            status_code=500,
-            detail=UNEXPECTED_ERROR_MESSAGE
-        ) from exc
+    # try:
+    return add_driver_location(
+        session,
+        location.driver_id,
+        location.latitude,
+        location.longitude
+    )
 
 
 @router.delete(
     "/location/remove",
-    response_model=LocationRemoveResponse,
-    responses={
-        404: {"model": LocationRemoveResponse},
-        500: {"model": ErrorResponse}
-    }
+    status_code=204
 )
 async def remove_location(
     driver_id: int = Query(
@@ -105,16 +76,4 @@ async def remove_location(
     """
     Removes a driver's location by ID.
     """
-    try:
-        remove_driver_location(session, driver_id)
-        return {
-            "success": True,
-            "message": "Location removed successfully"
-        }
-    except HTTPException as e:
-        raise e
-    except Exception as exc:
-        raise HTTPException(
-            status_code=500,
-            detail=UNEXPECTED_ERROR_MESSAGE
-        ) from exc
+    return remove_driver_location(session, driver_id)

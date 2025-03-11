@@ -13,14 +13,16 @@ func PingDrivers(driverID int, reqID int, pickupLocation string, destination str
 
 		driverConn, exists := ClientManager.ActiveDrivers[driverID]
 		if !exists {
-			fmt.Println("Driver not found for ID", driverID)
+			fmt.Print(fmt.Errorf("driver with ID %d not found for pinging", driverID))
 			return
 		}
 		eventData := map[string]any{
-			"event":            "new-trip-request",
-			"req_id":           reqID,
-			"pickup_location":  pickupLocation,
-			"destination":      destination,
+			"event": "new-trip-request",
+			"data": map[string]any{
+				"req_id":          reqID,
+				"pickup_location": pickupLocation,
+				"destination":     destination,
+			},
 		}
 
 		eventMessage, err := json.Marshal(eventData)
@@ -31,9 +33,9 @@ func PingDrivers(driverID int, reqID int, pickupLocation string, destination str
 		// Send the event to the driver
 		err = driverConn.WriteMessage(websocket.TextMessage, eventMessage)
 		if err != nil {
-			fmt.Println("Failed to send message to driver", driverID, ":", err)
+			fmt.Println("Failed to ping the driver", driverID, ":", err)
 		} else {
-			fmt.Println("Event sent to driver", driverID)
+			fmt.Println("Ping sent to driver", driverID)
 		}
 }
 
@@ -42,15 +44,20 @@ func SendBidFromDriver(payload Schemas.BidFromDriver) (error){
 	riderID := TripManager.ActiveTripRequest[payload.ReqID].ClientID
 	riderConn, exists := ClientManager.ActiveRiders[riderID]
 	if !exists {
-		fmt.Println("Driver not found for ID",  riderID)
-		// return error
+		err := fmt.Errorf("rider with ID %d not found for sending bid from driver", riderID)
+		fmt.Println(err)
+		return err
 	}
 
 	eventData := map[string]any{
-		"event":     "bid-from-driver",
-		"req_id":    payload.ReqID,
-		"driver_id": payload.DriverID,
-		"amount":    payload.Amount,
+		"event": "bid-from-driver",
+		"data": map[string]any{
+			"req_id":    payload.ReqID,
+			"driver_id": payload.DriverID,
+			"amount":    payload.Amount,
+			"name":      payload.Name,
+			"mobile":    payload.Mobile,
+		},
 	}
 	
 	// Marshal event data into JSON
@@ -72,9 +79,11 @@ func SendBidFromDriver(payload Schemas.BidFromDriver) (error){
 func SendBidFromClient(payload Schemas.BidFromClient) (error){
 	// Prepare the event data
 	eventData := map[string]any{
-		"event":     "bid-from-client",
-		"req_id":    payload.ReqID,
-		"amount":    payload.Amount,
+		"event": "bid-from-client",
+		"data": map[string]any{
+			"req_id": payload.ReqID,
+			"amount": payload.Amount,
+		},
 	}
 	// Marshal event data into JSON
 	eventMessage, err := json.Marshal(eventData)
@@ -106,14 +115,16 @@ func SendTripConfirmation(payload Schemas.TripConfirmResponse)(error){
 		// return error
 	}
 	eventData := map[string]any{
-		"event":          "trip-confirmed",
-		"trip_id":         payload.TripID,
-		"rider_id":        payload.RiderID,
-		"driver_id":       payload.DriverID,
-		"pickup_location": payload.PickupLocation,
-		"destination":     payload.Destination,
-		"fare":            payload.Fare,
-		"status":          payload.Status,
+		"event": "trip-confirmed",
+		"data": map[string]any{
+			"trip_id":         payload.TripID,
+			"rider_id":        payload.RiderID,
+			"driver_id":       payload.DriverID,
+			"pickup_location": payload.PickupLocation,
+			"destination":     payload.Destination,
+			"fare":            payload.Fare,
+			"status":          payload.Status,
+		},
 	}
 	eventMessage, err := json.Marshal(eventData)
 	if err != nil {

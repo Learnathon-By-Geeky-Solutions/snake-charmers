@@ -16,13 +16,14 @@ type LocationUpdate struct {
 type TripCheckout struct {
 	RequestBase   `mapstructure:",squash"`
 	driverBase    `mapstructure:",squash"`
-	DriverDetails `mapstructure:",squash"`
+	// DriverDetails `mapstructure:",squash"`
 }
 
 // BidFromDriver represents a bid from a driver
 type BidFromDriver struct {
 	RequestBase `mapstructure:",squash"`
 	driverBase  `mapstructure:",squash"`
+	DriverDetails `mapstructure:",squash"`
 	Amount      int `json:"amount" mapstructure:"amount"`
 }
 
@@ -49,9 +50,9 @@ type TripConfirm struct {
 
 // TripConfirmResponse represents the response for a confirmed trip
 type TripConfirmResponse struct {
-	TripID     `mapstructure:",squash"`
 	tripBase   `mapstructure:",squash"`
 	driverBase `mapstructure:",squash"`
+	TripID     int    `json:"trip_id" mapstructure:"trip_id"`
 	Fare       int    `json:"fare" mapstructure:"fare"`
 	Status     string `json:"status" mapstructure:"status"`
 }

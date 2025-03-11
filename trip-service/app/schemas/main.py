@@ -50,7 +50,7 @@ class TripCreate(BaseModel):
     destination: str = Field(..., min_length=1, 
         description="Destination cannot be empty"
     )
-    fare: float = Field(..., gt=0, description="Fare must be greater than 0")
+    fare: int = Field(..., gt=0, description="Fare must be greater than 0")
     status: str = Field(..., min_length=1, description="Trip status cannot be empty")
 
     @classmethod
@@ -61,9 +61,9 @@ class TripCreate(BaseModel):
             raise ValueError("Field cannot be an empty string")
         return value
 
-    class Config:
-        """Config class for Pydantic."""
-        extra = "forbid"
+    # class Config:
+    #     """Config class for Pydantic."""
+    #     extra = "allow"
 
 
 class TripResponse(TripCreate):

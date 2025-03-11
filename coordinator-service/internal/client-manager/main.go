@@ -5,6 +5,8 @@ import (
 	"sync"
 	"github.com/mitchellh/mapstructure"
 	"github.com/gorilla/websocket"
+	"coordinator-service/internal/trip-manager"
+
 )
 
 type ClientInfo struct {
@@ -30,9 +32,11 @@ func AddClient(conn *websocket.Conn, payload any) {
 	mutex.Lock()
 	clients[conn] = data
 	if data.Role == "driver" {
+		fmt.Println("A driver connected. ")
 		ActiveDrivers[data.ID] = conn
 		fmt.Println("driver joined:", conn.RemoteAddr())
 	} else if data.Role == "rider" {
+		fmt.Println("A rider connected. ")
 		ActiveRiders[data.ID] = conn
 		fmt.Println("rider joined:", conn.RemoteAddr())
 	}
@@ -46,7 +50,9 @@ func RemoveClient(conn *websocket.Conn) {
 	client, exists := clients[conn]
 	if exists {
 		if client.Role == "driver" {
+			go TripManager.RequestLocationRemoval(client.ID)
 			delete(ActiveDrivers, client.ID)
+
 		} else {
 			delete(ActiveRiders, client.ID)
 		}

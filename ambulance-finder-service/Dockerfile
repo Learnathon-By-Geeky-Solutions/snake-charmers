@@ -40,8 +40,8 @@ COPY ./models ./app/models
 
 # Development Stage
 FROM base AS dev
-USER myuser
 EXPOSE 8000
+USER myuser
 # CMD ["python", "-m", "app.main"]
 
 
@@ -55,4 +55,4 @@ COPY ./conftest.py ./tests
 
 ENV PYTHONPATH=.
 
-USER myuser
+# USER myuser

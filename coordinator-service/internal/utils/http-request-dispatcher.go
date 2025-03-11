@@ -61,5 +61,5 @@ func MakeRequest(method, url string, payload any) ([]byte, *int, error) {
 		log.Println("Error reading response body:", err)
 		return nil, nil, err
 	}
-	return body, nil, nil
+	return body, &res.StatusCode, nil
 }

@@ -55,4 +55,4 @@ COPY ./conftest.py ./tests
 
 ENV PYTHONPATH=.
 
-USER myuser
+# USER myuser
