@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import { useDispatch } from "react-redux";
 import handleLogin from '../../controllers/Login';
+import { useNavigate } from 'react-router-dom';
 
 
 function UserLogin() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const [role, setRole] = useState('User'); // Default role is "User"
   const [phoneOrEmail, setPhoneOrEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -19,8 +22,10 @@ function UserLogin() {
         password,
         user_type: (role === 'User' ? 'rider' : 'driver'),
       },
-      dispatch
+      dispatch,
+      navigate
     )
+
   };
 
   return (

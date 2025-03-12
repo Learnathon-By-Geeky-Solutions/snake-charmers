@@ -1,7 +1,21 @@
-import { Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import logo from '../../assets/images/Logo2.png';
+import { useSelector, useDispatch } from 'react-redux';
+import { deleteUser } from '../../store/slices/user-slice';
+// import userSlice from '../../store/slices/user-slice';// Assuming you have a logout action
 
 function Navbar() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const { role, name } = useSelector(state => state.user); // Assuming auth state has role and username
+  const isLoggedIn = role !== '';
+  
+  const handleLogout = () => {
+    dispatch(deleteUser());
+    navigate('/')
+  };
+
   return (
     <div className="navbar bg-black shadow-md p-4 h-20"> {/* Fixed navbar height */}
       <div className="navbar-start">
@@ -40,16 +54,34 @@ function Navbar() {
         </ul>
       </div>
       <div className="navbar-end flex gap-2">
-        <Link to="/signup">
-          <button className="btn bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
-            Sign Up
-          </button>
-        </Link>
-        <Link to="/login">
-          <button className="btn bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600">
-            Login
-          </button>
-        </Link>
+        {isLoggedIn ? (
+          <>
+            <div className="flex items-center mr-2">
+              <span className="text-white font-medium">
+                {name || `${role.charAt(0).toUpperCase() + role.slice(1)}`}
+              </span>
+            </div>
+            <button 
+              onClick={handleLogout}
+              className="btn bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
+            >
+              Logout
+            </button>
+          </>
+        ) : (
+          <>
+            <Link to="/signup">
+              <button className="btn bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
+                Sign Up
+              </button>
+            </Link>
+            <Link to="/login">
+              <button className="btn bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600">
+                Login
+              </button>
+            </Link>
+          </>
+        )}
       </div>
     </div>
   );

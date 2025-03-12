@@ -1,7 +1,6 @@
 import { setUser } from "../store/slices/user-slice";
 
-
-const handleLogin = async (values, dispatch) => {
+const handleLogin = async (values, dispatch, navigate) => {
     try {
         let response = await fetch('http://localhost:7000/api/auth/login',
             {
@@ -18,6 +17,12 @@ const handleLogin = async (values, dispatch) => {
         if (statusCode == 200){
             console.log("Login successfull")
             dispatch(setUser(response));
+            
+            if(response.role == 'rider'){
+                navigate('/ride_request');
+            }else{
+                navigate('/available_ride')
+            }    
         }
         else if (statusCode == 401) {
             console.log("Invalid Credentials")
