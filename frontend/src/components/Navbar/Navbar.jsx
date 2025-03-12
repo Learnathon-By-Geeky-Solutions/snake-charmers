@@ -3,7 +3,7 @@ import logo from '../../assets/images/Logo2.png';
 import { useSelector, useDispatch } from 'react-redux';
 import { deleteUser } from '../../store/slices/user-slice';
 // Icons for user roles
-import { FaAmbulance, FaUser } from 'react-icons/fa'; // Import icons from react-icons
+import { FaAmbulance, FaUser } from 'react-icons/fa'; // Using ambulance icon instead of car
 
 function Navbar() {
   const dispatch = useDispatch();
@@ -11,18 +11,20 @@ function Navbar() {
 
   const { role, name } = useSelector(state => state.user);
   const isLoggedIn = role !== '';
+  const isDriver = role === 'driver';
+  const isRider = role === 'rider';
   
   const handleLogout = () => {
     dispatch(deleteUser());
     navigate('/')
   };
 
-  // Function to render the appropriate icon based on role
+  // Function to render the appropriate icon based on role with increased size
   const getRoleIcon = () => {
-    if (role === 'driver') {
-      return <FaAmbulance className="text-red-400 mr-2" />; // Yellow car icon for drivers
-    } else if (role === 'rider') {
-      return <FaUser className="text-blue-400 mr-2" />; // Blue user icon for riders
+    if (isDriver) {
+      return <FaAmbulance className="text-red-400 mr-2 text-lg" size={25} />; // Larger red ambulance icon
+    } else if (isRider) {
+      return <FaUser className="text-blue-400 mr-2 text-lg" size={20} />; // Larger blue user icon
     }
     return null;
   };
@@ -57,18 +59,28 @@ function Navbar() {
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1 text-white">
           <li><Link to="/">Home</Link></li>
-          <li>
-            <Link to="/ride_request">Request Ride</Link>
-          </li>
-          <li><Link to="/available_ride">Available Ride</Link></li>
+          
+          {/* Show "Request Ride" only for riders or when not logged in */}
+          {(!isLoggedIn || isRider) && (
+            <li>
+              <Link to="/ride_request">Request Ride</Link>
+            </li>
+          )}
+          
+          {/* Show "Available Ride" only for drivers or when not logged in */}
+          {(!isLoggedIn || isDriver) && (
+            <li>
+              <Link to="/available_ride">Available Ride</Link>
+            </li>
+          )}
         </ul>
       </div>
       <div className="navbar-end flex gap-2">
         {isLoggedIn ? (
           <>
-            <div className="flex items-center mr-2 bg-gray-800 px-3 py-1 rounded-lg">
+            <div className="flex items-center mr-2 bg-gray-800 px-3 py-2 rounded-lg">
               {getRoleIcon()}
-              <span className="text-white font-medium">
+              <span className="text-white font-medium text-base">
                 {name || `${role.charAt(0).toUpperCase() + role.slice(1)}`}
               </span>
             </div>
