@@ -1,42 +1,139 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import ShowAvailableTrip from "../ShowAvailableTrip/ShowAvailableTrip";
+import GoogleMap from "../Map/Map";
 import DetailAvailableTrip from "../DetailAvailableTrip/DetailAvailableTrip";
+import { useLocation } from "../Geolocation/Geolocation";
+import UpdateLocation from "../../controllers/UpdateLocation";
+
+import { FaToggleOff, FaSpinner, FaCar } from "react-icons/fa";
 
 const AvailableRide = () => {
+  const [isAvailable, setIsAvailable] = useState(false);
+  const [hasRequests, setHasRequests] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+
+  const { coordinates, error } = useLocation({
+    trackPeriodically: true,       // Periodic updates
+    isActive: isAvailable,         // Only when driver is available
+    interval: 30000,               // Every 30 seconds
+    onLocationUpdate: UpdateLocation
+  });
+
+
+  const toggleAvailability = () => {
+    const newStatus = !isAvailable;
+    setIsAvailable(newStatus);
+
+    if (newStatus) {
+      setIsSearching(true);
+      setHasRequests(false);
+
+      setTimeout(() => {
+        setIsSearching(false);
+        setHasRequests(true);
+      }, 5000);
+    } else {
+      setIsSearching(false);
+      setHasRequests(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
-      
-      {/* Wrapper for all components */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-5xl">
-        
-        {/* Left Side - Image */}
-        <div className="flex justify-center">
-          <img
-            src="/src/assets/images/driverPage 1.png"
-            alt="Driver at Work"
-            className="w-[300px] h-[300px] md:w-[400px] md:h-[400px] rounded-lg shadow-lg"
-          />
+    <div className="min-h-screen bg-gray-100 flex flex-col">
+      {/* Header */}
+      <div className="bg-white shadow-md p-4 mb-4">
+        <div className="max-w-5xl mx-auto flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <FaCar className="text-blue-600 text-xl" />
+            <div>
+              <h2 className="font-semibold text-lg">Driver Dashboard</h2>
+              <p className="text-sm text-gray-600">
+                You're currently {isAvailable ? "online" : "offline"}
+              </p>
+            </div>
+          </div>
+
+          {/* Availability Toggle */}
+          <div className="flex items-center space-x-2">
+            <span
+              className={`text-sm font-medium ${
+                isAvailable ? "text-gray-600" : "text-red-500"
+              }`}
+            >
+              {isAvailable ? "Available" : "Unavailable"}
+            </span>
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                className="sr-only peer"
+                checked={isAvailable}
+                onChange={toggleAvailability}
+              />
+              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content Layout */}
+      <div className="flex-grow px-4 pb-6">
+        <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {/* Left Column - Driver Image */}
+          <div className="bg-white p-4 rounded-lg shadow-md flex justify-center items-center h-80 w-full">
+            <img
+              src="/src/assets/images/driverPage 1.png"
+              alt="Driver at Work"
+              className="w-full h-full object-cover rounded-lg"
+            />
+          </div>
+
+          {/* Right Column - Status Messages or Requests */}
+          <div className="bg-white p-6 rounded-lg shadow-md flex flex-col items-center justify-center h-80 w-full">
+            {/* When offline, show offline message */}
+            {!isAvailable && (
+              <>
+                <div className="text-amber-500 text-5xl mb-4">
+                  <FaToggleOff />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                  You're currently offline
+                </h3>
+                <p className="text-gray-600 text-center">
+                  Set your status to available to start receiving ride requests
+                  from patients in need.
+                </p>
+              </>
+            )}
+
+            {/* When searching for rides */}
+            {isAvailable && isSearching && !hasRequests && (
+              <>
+                <FaSpinner className="animate-spin text-blue-500 text-4xl mb-4" />
+                <p className="text-lg font-medium text-gray-700">
+                  Searching for ride requests...
+                </p>
+                <p className="text-sm text-gray-500 mt-2">
+                  Please wait while we find patients in need
+                </p>
+              </>
+            )}
+
+            {/* When there are ride requests */}
+            {isAvailable && hasRequests && (
+              <div className="bg-white rounded-lg shadow-md overflow-hidden w-full">
+                <ShowAvailableTrip />
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* Right Side - Available Trips */}
-        <ShowAvailableTrip />
-
-        {/* Left Side - Google Map */}
-        <div className="flex justify-center">
-          <iframe
-            title="Google Map"
-            width="400"
-            height="600"
-            className="rounded-lg shadow-lg"
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3651.9025243794027!2d90.39945271538538!3d23.750895984589494!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755bfe69b9a52e5%3A0x9c1a85a6d3f75823!2sDhaka!5e0!3m2!1sen!2sbd!4v1649757295978!5m2!1sen!2sbd"
-            allowFullScreen=""
-            loading="lazy"
-          ></iframe>
+        {/* Bottom Section - Google Map */}
+        <div className="max-w-5xl mx-auto mt-4">
+          <div className="bg-white rounded-lg shadow-md overflow-hidden h-64 lg:h-96 w-full">
+            <GoogleMap className="w-full h-full" />
+          </div>
         </div>
-
-        {/* Right Side - Trip Fare Details */}
-        <DetailAvailableTrip />
-
+        {/* <Geolocation/> */}
       </div>
     </div>
   );
