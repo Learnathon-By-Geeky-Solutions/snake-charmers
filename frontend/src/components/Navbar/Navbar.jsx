@@ -2,13 +2,14 @@ import { useNavigate, Link } from 'react-router-dom';
 import logo from '../../assets/images/Logo2.png';
 import { useSelector, useDispatch } from 'react-redux';
 import { deleteUser } from '../../store/slices/user-slice';
-// import userSlice from '../../store/slices/user-slice';// Assuming you have a logout action
+// Icons for user roles
+import { FaAmbulance, FaUser } from 'react-icons/fa'; // Import icons from react-icons
 
 function Navbar() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { role, name } = useSelector(state => state.user); // Assuming auth state has role and username
+  const { role, name } = useSelector(state => state.user);
   const isLoggedIn = role !== '';
   
   const handleLogout = () => {
@@ -16,8 +17,18 @@ function Navbar() {
     navigate('/')
   };
 
+  // Function to render the appropriate icon based on role
+  const getRoleIcon = () => {
+    if (role === 'driver') {
+      return <FaAmbulance className="text-red-400 mr-2" />; // Yellow car icon for drivers
+    } else if (role === 'rider') {
+      return <FaUser className="text-blue-400 mr-2" />; // Blue user icon for riders
+    }
+    return null;
+  };
+
   return (
-    <div className="navbar bg-black shadow-md p-4 h-20"> {/* Fixed navbar height */}
+    <div className="navbar bg-black shadow-md p-4 h-20">
       <div className="navbar-start">
         <div className="dropdown">
           <ul
@@ -35,12 +46,11 @@ function Navbar() {
             <li><Link to="/contact">Contact</Link></li>
           </ul>
         </div>
-        {/* Slightly increased logo size without affecting navbar */}
         <Link to="/" className="flex items-center gap-2">
           <img 
             src={logo} 
             alt="Life Ride Logo" 
-            className="h-16 w-17 max-h-full object-fill scale-110" // Increased size without affecting navbar
+            className="h-16 w-17 max-h-full object-fill scale-110"
           />
         </Link>
       </div>
@@ -56,7 +66,8 @@ function Navbar() {
       <div className="navbar-end flex gap-2">
         {isLoggedIn ? (
           <>
-            <div className="flex items-center mr-2">
+            <div className="flex items-center mr-2 bg-gray-800 px-3 py-1 rounded-lg">
+              {getRoleIcon()}
               <span className="text-white font-medium">
                 {name || `${role.charAt(0).toUpperCase() + role.slice(1)}`}
               </span>
