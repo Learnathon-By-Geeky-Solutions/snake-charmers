@@ -46,7 +46,8 @@ jobs:
                 done
 
                 echo "SERVICE_CHANGED=$SERVICE_CHANGED" >> $GITHUB_ENV
-                
+        - name: Check if coverage-reports exists
+          run: ls -la location-service/
         - name: Run unit tests
           if: env.SERVICE_CHANGED != 'none'
           env:
