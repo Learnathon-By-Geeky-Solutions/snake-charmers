@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { setLocationUpdateState } from '../../store/slices/location-update-state-slice';
+import store from '../../store';
 /**
  * Gets the current coordinates
  * @returns {Promise<{latitude: number, longitude: number}>} Coordinates
@@ -46,6 +47,7 @@ const useLocation = ({
   trackPeriodically = false,
   isActive = true,
   interval = 30000,
+  id,
   onLocationUpdate = null
 } = {}) => {
   const [coordinates, setCoordinates] = useState(null);
@@ -64,11 +66,22 @@ const useLocation = ({
       
       // If a callback was provided, call it with the new coordinates
       if (onLocationUpdate && typeof onLocationUpdate === 'function') {
-        await onLocationUpdate(coords);
-        console.log(coords)
-        dispatch(setLocationUpdateState())
+
+        const isAdded = store.getState().locationUpdateState.isAdded;
+        console.log("Here isAdded is ", isAdded);
+        let msg = {
+          name: (isAdded === true ? "update-location" : "add-location"),
+          data: {
+            driver_id: id,
+            latitude: coords.latitude,
+            longitude: coords.longitude
+          }
+        }
+        let ok = await onLocationUpdate(msg);
+        if(ok === true){
+          dispatch(setLocationUpdateState());
+        }    
       }
-      
       return coords;
     } catch (err) {
       setError(err.message);

@@ -3,7 +3,7 @@ from fastapi import HTTPException
 from app.models.main import DriverLocation
 from geoalchemy2.functions import ST_GeomFromText
 
-INTERNAL_SERVER_ERROR_MSG = "Internal server error"
+INTERNAL_SERVER_ERROR_MSG = HTTPException(status_code=500, detail="Internal server error")
 
 
 def add_driver_location(
@@ -31,6 +31,7 @@ def add_driver_location(
         raise
     
     except Exception as exc:
+        print(exc)
         session.rollback()
         raise INTERNAL_SERVER_ERROR_MSG from exc
 

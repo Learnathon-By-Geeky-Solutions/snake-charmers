@@ -4,6 +4,10 @@ import GoogleMap from "../Map/Map";
 import DetailAvailableTrip from "../DetailAvailableTrip/DetailAvailableTrip";
 import { useLocation } from "../Geolocation/Geolocation";
 import UpdateLocation from "../../controllers/UpdateLocation";
+import { unsetLocationUpdateState } from "../../store/slices/location-update-state-slice";
+import { useDispatch, useSelector } from "react-redux";
+import {ConnectToserver, DisconnectFromServer } from "../../controllers/websocket/handler";
+import { SendMessage } from "../../controllers/websocket/handler";
 
 import { FaToggleOff, FaSpinner, FaCar } from "react-icons/fa";
 
@@ -11,14 +15,26 @@ const AvailableRide = () => {
   const [isAvailable, setIsAvailable] = useState(false);
   const [hasRequests, setHasRequests] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
+  const { id, role } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
 
   const { coordinates, error } = useLocation({
     trackPeriodically: true,       // Periodic updates
     isActive: isAvailable,         // Only when driver is available
-    interval: 30000,               // Every 30 seconds
-    onLocationUpdate: UpdateLocation
+    interval: 5000,
+    id,               // Every 30 seconds
+    onLocationUpdate: SendMessage
   });
 
+  useEffect(()=>{
+    if(!isAvailable){
+      console.log("dispatching");
+      dispatch(unsetLocationUpdateState());
+      DisconnectFromServer()
+    }else{
+      ConnectToserver(id, role)
+    }
+  }, [isAvailable])
 
   const toggleAvailability = () => {
     const newStatus = !isAvailable;
