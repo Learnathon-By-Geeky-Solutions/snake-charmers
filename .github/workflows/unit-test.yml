@@ -58,8 +58,9 @@ jobs:
             DRIVER_PASSWORD_2: ${{ secrets.DRIVER_PASSWORD_2 }}
 
           run: |
-            docker compose -f ${{ env.SERVICE_CHANGED }}/docker-compose.dev.yml up --build --abort-on-container-exit ${{ env.SERVICE_CHANGED }}-test
-              
+              mkdir ${{ env.SERVICE_CHANGED }}/coverage-reports
+              docker compose -f ${{ env.SERVICE_CHANGED }}/docker-compose.dev.yml up --build --abort-on-container-exit ${{ env.SERVICE_CHANGED }}-test
+
 
         - name: Debug Coverage Report
           if: env.SERVICE_CHANGED != 'none'
