@@ -1,6 +1,11 @@
 name: Unit Tests
 on:
-  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - test/locations
 
 jobs:
   unit-tests:
@@ -41,7 +46,8 @@ jobs:
                 done
 
                 echo "SERVICE_CHANGED=$SERVICE_CHANGED" >> $GITHUB_ENV
-                
+        - name: Check if coverage-reports exists
+          run: ls -la location-service/
         - name: Run unit tests
           if: env.SERVICE_CHANGED != 'none'
           env:
@@ -52,8 +58,9 @@ jobs:
             DRIVER_PASSWORD_2: ${{ secrets.DRIVER_PASSWORD_2 }}
 
           run: |
-            docker compose -f ${{ env.SERVICE_CHANGED }}/docker-compose.dev.yml up --build --abort-on-container-exit ${{ env.SERVICE_CHANGED }}-test
-              
+              mkdir ${{ env.SERVICE_CHANGED }}/coverage-reports
+              docker compose -f ${{ env.SERVICE_CHANGED }}/docker-compose.dev.yml up --build --abort-on-container-exit ${{ env.SERVICE_CHANGED }}-test
+
 
         - name: Debug Coverage Report
           if: env.SERVICE_CHANGED != 'none'
