@@ -1,7 +1,7 @@
 import React from "react";
-import PuffLoader from "react-spinners/PuffLoader";
 import AlignDriverInfo from "../AlignDriverInfo/AlignDriverInfo";
 import Fare from "../Fare/Fare";
+import { PuffLoaderComponent } from "../PuffLoader/PuffLoader";
 
 const DriverSearch = () => {
   return (
@@ -11,15 +11,7 @@ const DriverSearch = () => {
         {/* Upper Section: Puff Loader (Left) and Image (Right) */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 items-center w-full">
           {/* Left Side - Puff Loader in Styled Card */}
-          <div className="flex justify-center">
-            <div className="bg-black text-white p-5 rounded-lg shadow-lg w-96 h-96 flex flex-col justify-center items-center">
-              <p className="text-lg font-semibold mb-2 text-center">
-                Searching for nearby drivers
-              </p>
-              <PuffLoader size={90} color="#FFFFFF" />
-            </div>
-          </div>
-
+          <PuffLoaderComponent/>
           {/* Right Side - Ride Request Image */}
           <div className="flex justify-center">
             <img
