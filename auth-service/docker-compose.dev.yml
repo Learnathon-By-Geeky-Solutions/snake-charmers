@@ -10,8 +10,8 @@ services:
     environment:
       DATABASE_URL: ${DATABASE_URL}
     volumes:
-      - .:/app
-      - /app/app/models
+      - .:/auth-service
+      - /auth-service/app/models
     command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
 
   auth-service-test:
@@ -28,7 +28,9 @@ services:
       DRIVER_PASSWORD_2: ${DRIVER_PASSWORD_2}
 
     volumes:
-      - /app/app/models
-      - /app/tests
-      - ./:/app/  # Mount the whole current directory to /app in the container
-    command: ["pytest", "-v", "--cov=app", "--cov-report=xml:/app/coverage-reports/coverage.xml", "tests/unittest"]
+      - /auth-service/app/models
+      - /auth-service/tests
+      - ./:/auth-service 
+    command: >
+      sh -c "pytest -v --cov=app --cov-report=xml:coverage.xml tests/unittest &&
+           sed -i 's|/auth-service/app|auth-service/app|g' coverage.xml"

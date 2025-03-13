@@ -48,36 +48,37 @@ def create_user(session: Session, user_data: dict):
         user_data["mobile"],
     )
 
-    if email_exists:
-        raise HTTPException(
-            status_code=409,
-            detail="This email is already registered. Use a different email."
-        )
-    if mobile_exists:
-        raise HTTPException(
-            status_code=409,
-            detail="This mobile number is already registered. Use a different mobile."
-        )
-
-    hashed_password = hash_password(user_data["password"])
-
-    if user_data["user_type"] == "driver":
-        new_user = Driver(
-            name=user_data["name"],
-            mobile=user_data["mobile"],
-            email=user_data["email"],
-            password=hashed_password,
-        )
-    elif user_data["user_type"] == "rider":
-        new_user = Rider(
-            name=user_data["name"],
-            mobile=user_data["mobile"],
-            email=user_data["email"],
-            password=hashed_password,
-        )
-    else:
-        raise HTTPException(status_code=400, detail="Invalid user type")
     try:
+        if email_exists:
+            raise HTTPException(
+                status_code=409,
+                detail="This email is already registered. Use a different email."
+            )
+        if mobile_exists:
+            raise HTTPException(
+                status_code=409,
+                detail="This mobile number is already registered. Use a different mobile."
+            )
+
+        hashed_password = hash_password(user_data["password"])
+
+        if user_data["user_type"] == "driver":
+            new_user = Driver(
+                name=user_data["name"],
+                mobile=user_data["mobile"],
+                email=user_data["email"],
+                password=hashed_password,
+            )
+        elif user_data["user_type"] == "rider":
+            new_user = Rider(
+                name=user_data["name"],
+                mobile=user_data["mobile"],
+                email=user_data["email"],
+                password=hashed_password,
+            )
+        else:
+            raise HTTPException(status_code=400, detail="Invalid user type")
+
         session.add(new_user)
         session.commit()
         session.refresh(new_user)
@@ -86,13 +87,10 @@ def create_user(session: Session, user_data: dict):
             "message": f"{user_data["user_type"]} {new_user.name} registered successfully",
         }
 
-    except HTTPException:
-        session.rollback()
-        raise
-    
     except Exception as exc:
+        print(exc)
         session.rollback()
-        raise INTERNAL_SERVER_ERROR from exc
+        raise 
   
 
 def authenticate_user(
@@ -127,8 +125,10 @@ def authenticate_user(
             )
         else:
             raise HTTPException(status_code=400, detail="Invalid user type")
+
         if not user or not verify_password(password, user.password):
             raise HTTPException(status_code=401, detail="Invalid credentials")
+
         return {
             "success": True,
             "name": user.name,
@@ -140,11 +140,8 @@ def authenticate_user(
             "user_type": user_type,
         }
 
-    except HTTPException:
-        session.rollback()
-        raise
-    
     except Exception as exc:
+        print(exc)
         session.rollback()
-        raise INTERNAL_SERVER_ERROR from exc
+        raise 
 

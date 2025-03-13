@@ -24,7 +24,7 @@ FROM python:3.13.2-alpine AS base
 RUN adduser -D myuser
 
 # Set the working directory in the container
-WORKDIR /app
+WORKDIR /trip-service
 
 # Copy the virtual environment from the build stage
 COPY --from=build /opt/venv /opt/venv
@@ -49,7 +49,6 @@ EXPOSE 8000
 FROM base AS test
 COPY ./pytest.ini .
 COPY ./trip-service/tests ./tests
-COPY ./trip-service/coverage-reports ./coverage-reports
 COPY ./conftest.py ./tests
 
 ENV PYTHONPATH=.

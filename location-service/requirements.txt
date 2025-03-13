@@ -1,6 +1,7 @@
 alembic==1.14.1
 annotated-types==0.7.0
 anyio==4.8.0
+bcrypt==3.2.2
 certifi==2024.12.14
 click==8.1.8
 dnspython==2.7.0
