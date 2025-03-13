@@ -30,9 +30,14 @@ func HandleTripRequest(conn *websocket.Conn, payload map[string]any) {
 		TripManager.InitiateTripRequest(res1.ReqID, data.RiderID)
 		res2, ok := TripManager.RequestAmbulances(data)
 		if !ok {
+			fmt.Printf("Error sending the request to the ambulance finder service.\n")
 			EventEmitter.SendErrorMessage(conn)
+			TripManager.RequestTripRequestRemoval(res1.ReqID)
 		} else {
-			print(res2)
+			// print(res2)
+			if len(res2) == 0 {
+				fmt.Printf("No ambulance found nearby..");
+			}
 			for _, driver := range res2 {
 				fmt.Printf("Pinging the driver with ID %d\n", driver.DriverID)
 				go EventEmitter.PingDrivers(driver.DriverID, res1.ReqID, data.PickupLocation, data.Destination)

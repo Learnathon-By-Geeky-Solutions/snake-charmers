@@ -68,7 +68,6 @@ const useLocation = ({
       if (onLocationUpdate && typeof onLocationUpdate === 'function') {
 
         const isAdded = store.getState().locationUpdateState.isAdded;
-        console.log("Here isAdded is ", isAdded);
         let msg = {
           name: (isAdded === true ? "update-location" : "add-location"),
           data: {
