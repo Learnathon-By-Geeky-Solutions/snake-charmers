@@ -1,6 +1,7 @@
 from typing import Optional
 from sqlmodel import SQLModel, Field, Column, Integer, ForeignKey
 from geoalchemy2 import Geography
+from sqlalchemy import PrimaryKeyConstraint
 
 DRIVER_ID_FK = "driver.driver_id"
 
@@ -75,11 +76,15 @@ class TripRequest(SQLModel, table=True):
 
 
 class EngagedDriver(SQLModel, table=True):
+
+    __table_args__ = (
+        PrimaryKeyConstraint("req_id", "driver_id"),
+    )
+
     req_id: int = Field(
         sa_column=Column(
             Integer,
             ForeignKey("triprequest.req_id", ondelete="CASCADE"),
-            primary_key=True,
             index=True
         )
     )
@@ -87,7 +92,6 @@ class EngagedDriver(SQLModel, table=True):
         sa_column=Column(
             Integer,
             ForeignKey(DRIVER_ID_FK, ondelete="CASCADE"),
-            primary_key=True,
             index=True
         )
     )
