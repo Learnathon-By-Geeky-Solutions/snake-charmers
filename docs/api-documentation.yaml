@@ -20,8 +20,8 @@ paths:
             schema:
               type: object
               properties:
-                id:
-                  type: string
+                driver_id:
+                  type: int
                 latitude:
                   type: number
                 longitude:
@@ -68,8 +68,8 @@ paths:
             schema:
               type: object
               properties:
-                id:
-                  type: string
+                driver_id:
+                  type: int
                 socket_id:
                   type: string
                 latitude:
@@ -113,13 +113,13 @@ paths:
         - Location Service
       summary: Remove driver location
       parameters:
-        - name: id
+        - name: driver_id
           in: query
           required: true
           schema:
-            type: string
+            type: int
       responses:
-        '200':
+        '204':
           description: Location removed successfully
           content:
             application/json:

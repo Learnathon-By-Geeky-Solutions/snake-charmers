@@ -7,11 +7,14 @@ const locationUpdateStateSlice = createSlice({
     },
     reducers: {
         setLocationUpdateState: (state, action) => {
-           state.isAdded = true
+           state.isAdded = true;
         },
+        unsetLocationUpdateState: (state, action) => {
+            state.isAdded = false;
+        }
     
     },
 });
 
-export const { setLocationUpdateState } = locationUpdateStateSlice.actions;
+export const { setLocationUpdateState, unsetLocationUpdateState } = locationUpdateStateSlice.actions;
 export default locationUpdateStateSlice.reducer;
