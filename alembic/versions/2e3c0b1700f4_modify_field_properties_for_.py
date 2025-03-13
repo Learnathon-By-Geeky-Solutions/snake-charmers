@@ -7,7 +7,6 @@ Create Date: 2025-03-12 17:44:58.291448
 """
 from alembic import op
 import sqlalchemy as sa
-from geoalchemy2 import Geography
 
 # revision identifiers, used by Alembic.
 revision = '2e3c0b1700f4'
