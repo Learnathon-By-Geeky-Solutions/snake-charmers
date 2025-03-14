@@ -109,7 +109,7 @@ const WebSocketController = (function() {
               }
               
               log(`Received: ${event.data}`, 'received', logFunction);
-              options.onMessage(parsedMessage, event);
+              options.onMessage(parsedMessage /*, options.dispatch*/);
             } catch (error) {
               log(`Error processing message: ${error.message}`, 'system', logFunction);
             }

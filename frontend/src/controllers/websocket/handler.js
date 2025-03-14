@@ -1,6 +1,8 @@
 import WebSocketController from "./ConnectionManger";
+import { addTripReq } from "../../store/slices/trip-request-slice";
+import store from "../../store";
 
-const ConnectToserver = async(id, role) => {
+const ConnectToserver = async(id, role /*, dispatch*/) => {
     try{
         let connect = await WebSocketController.connect({
             logFunction: (message, type) => console.log(`[${type}] ${message}`),
@@ -15,7 +17,8 @@ const ConnectToserver = async(id, role) => {
             onOpen: () => console.log('Connected successfully'),
             onClose: (event) => console.log('Connection closed', event),
             onError: (error) => console.error('Error occurred', error),
-            onMessage: (message) => HandleIncomingMessage(message)
+            onMessage: (message) => HandleIncomingMessage(message),
+            // dispatch
         });
         // return connect;
     }catch(err){
@@ -49,9 +52,14 @@ const SendMessage = async (msg) =>{
     return ok;
 }
 
-function HandleIncomingMessage(message) {
+function HandleIncomingMessage(message /*,dispatch*/) {
     // Process incoming messages
     console.log('Processing message:', message);
+    const name = message.event;
+    if(name == "new-trip-request"){
+        console.log("Dispatching...")
+        store.dispatch(addTripReq(message.data));
+    }
 }
 
 export {ConnectToserver, DisconnectFromServer, SendMessage, HandleIncomingMessage}
