@@ -7,21 +7,23 @@ import { unsetLocationUpdateState } from "../../store/slices/location-update-sta
 import { useDispatch, useSelector } from "react-redux";
 import {ConnectToserver, DisconnectFromServer } from "../../controllers/websocket/handler";
 import { SendMessage } from "../../controllers/websocket/handler";
+import store from "../../store";
 
 import { FaToggleOff, FaSpinner, FaCar } from "react-icons/fa";
 
 const AvailableRide = () => {
   const [isAvailable, setIsAvailable] = useState(false);
-  const [hasRequests, setHasRequests] = useState(false);
+  // const [hasRequests, setHasRequests] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const { id, role } = useSelector((state) => state.user);
+  const totalIncomingRequests = useSelector((state) => state.tripRequests.length);
   const dispatch = useDispatch();
 
   const { coordinates, error } = useLocation({
     trackPeriodically: true,       // Periodic updates
     isActive: isAvailable,         // Only when driver is available
-    interval: 5000,
-    id,               // Every 5 seconds
+    interval: 10000,
+    id,               
     onLocationUpdate: SendMessage
   });
 
@@ -30,10 +32,8 @@ const AvailableRide = () => {
       console.log("dispatching");
       dispatch(unsetLocationUpdateState());
       DisconnectFromServer()
-    }else{
-      if(id !== 0){
-        ConnectToserver(id, role)
-      }
+    }else if(id != 0){
+        ConnectToserver(id, role, dispatch)
     }
   }, [isAvailable])
 
@@ -43,15 +43,15 @@ const AvailableRide = () => {
 
     if (newStatus) {
       setIsSearching(true);
-      setHasRequests(false);
+      // setHasRequests(false);
 
-      setTimeout(() => {
-        setIsSearching(false);
-        setHasRequests(true);
-      }, 5000);
+      // setTimeout(() => {
+      //   setIsSearching(false);
+      //   setHasRequests(true);
+      // }, 5000);
     } else {
       setIsSearching(false);
-      setHasRequests(false);
+      // setHasRequests(false);
     }
   };
 
@@ -94,23 +94,31 @@ const AvailableRide = () => {
         </div>
       </div>
 
-      {/* Main Content Layout - NARROWER CONTAINER */}
+      {/* Main Content Layout - Two columns side by side */}
       <div className="flex-grow px-4 pb-6">
         <div className="max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {/* Left Column - Driver Image */}
-          <div className="bg-white p-4 rounded-lg shadow-md flex justify-center items-center h-80 w-full overflow-hidden">
-            <img
-              src="/src/assets/images/driverPage 1.png"
-              alt="Driver at Work"
-              className="w-full h-full object-cover rounded-lg"
-            />
+          {/* Left Column - Driver Image and Map stacked vertically */}
+          <div className="flex flex-col gap-4">
+            {/* Driver Image */}
+            <div className="bg-white p rounded-lg shadow-md flex justify-center items-center h-84 w-full overflow-hidden">
+              <img
+                src="/src/assets/images/driverPage 1.png"
+                alt="Driver at Work"
+                className="w-full h-full object-cover rounded-lg"
+              />
+            </div>
+            
+            {/* Google Map */}
+            <div className="bg-white rounded-lg shadow-md overflow-hidden h-64 w-full border border-gray-200">
+              <GoogleMap className="w-full h-full" />
+            </div>
           </div>
 
-          {/* Right Column - Status Messages or Requests */}
-          <div className="bg-white p-6 rounded-lg shadow-md flex flex-col items-center justify-center h-80 w-full">
+          {/* Right Column - Trip Details (full height) */}
+          <div className="bg-white p rounded-lg shadow-md flex flex-col h-full w-full">
             {/* When offline, show offline message */}
             {!isAvailable && (
-              <>
+              <div className="flex flex-col items-center justify-center h-full">
                 <div className="text-amber-500 text-5xl mb-4">
                   <FaToggleOff />
                 </div>
@@ -121,12 +129,12 @@ const AvailableRide = () => {
                   Set your status to available to start receiving ride requests
                   from patients in need.
                 </p>
-              </>
+              </div>
             )}
 
             {/* When searching for rides */}
-            {isAvailable && isSearching && !hasRequests && (
-              <>
+            {isAvailable && isSearching && totalIncomingRequests === 0 && (
+              <div className="flex flex-col items-center justify-center h-full">
                 <FaSpinner className="animate-spin text-blue-500 text-4xl mb-4" />
                 <p className="text-lg font-medium text-gray-700">
                   Searching for ride requests...
@@ -134,22 +142,15 @@ const AvailableRide = () => {
                 <p className="text-sm text-gray-500 mt-2">
                   Please wait while we find patients in need
                 </p>
-              </>
+              </div>
             )}
 
-            {/* When there are ride requests */}
-            {isAvailable && hasRequests && (
-              <div className="bg-white rounded-lg shadow-sm overflow-hidden w-full">
+            {/* When there are ride requests - Full container size */}
+            {isAvailable && totalIncomingRequests > 0 && (
+              <div className="h-full w-full overflow-y-auto">
                 <ShowAvailableTrip />
               </div>
             )}
-          </div>
-        </div>
-
-        {/* Bottom Section - Google Map */}
-        <div className="max-w-4xl mx-auto mt-4">
-          <div className="bg-white rounded-lg shadow-md overflow-hidden h-64 lg:h-96 w-full border border-gray-200">
-            <GoogleMap className="w-full h-full" />
           </div>
         </div>
       </div>
