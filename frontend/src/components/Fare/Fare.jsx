@@ -1,13 +1,34 @@
 import React from "react";
 
-const Fare = ({ currentFare }) => {
+const Fare = ({ currentFare, onFareChange }) => {
+  const handleDecrease = () => {
+    if (currentFare >= 100) {
+      onFareChange(currentFare - 100);
+    }
+  };
+
+  const handleIncrease = () => {
+    onFareChange(currentFare + 100);
+  };
+
   return (
-    <div className="bg-black text-white p-2 rounded-lg text-center w-full shadow-md">
-      <p className="font-bold text-sm">Raise Fare</p>
-      <p className="text-sm font-semibold">Current Fare: {currentFare}</p>
+    <div className="bg-gray-800 text-white p-3 text-center w-full">
+      <p className="font-bold text-green-400">Raise Fare</p>
+      <p className="text-sm font-semibold my-1">Current Fare: ₹{currentFare}</p>
       <div className="flex justify-between mt-2">
-        <button className="bg-green-700 px-6 py-2 rounded-md text-sm">-100</button>
-        <button className="bg-green-700 px-6 py-2 rounded-md text-sm">+100</button>
+        <button 
+          onClick={handleDecrease} 
+          className="bg-green-600 px-6 py-2 rounded-md text-sm transition-colors duration-200 disabled:opacity-50"
+          disabled={currentFare < 100}
+        >
+          -100
+        </button>
+        <button 
+          onClick={handleIncrease} 
+          className="bg-green-600 px-6 py-2 rounded-md text-sm transition-colors duration-200"
+        >
+          +100
+        </button>
       </div>
     </div>
   );
