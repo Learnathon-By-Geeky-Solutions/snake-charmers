@@ -16,8 +16,8 @@ const AlignDriverInfo = ({ name, phone }) => {
       </div>
 
       <div className="flex justify-between mt-2">
-        <button className="bg-green-600 px-6 py-2 rounded-md text-sm">Accept</button>
-        <button className="bg-red-600 px-6 py-2 rounded-md text-sm">Decline</button>
+        <button className="bg-green-600 px-6 py-2 rounded-md text-sm hover:bg-green-500 transition duration-300">Accept</button>
+        <button className="bg-red-600 px-6 py-2 rounded-md text-sm hover:bg-red-500 transition duration-300">Decline</button>
       </div>
     </div>
   );
