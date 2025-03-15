@@ -1,27 +1,65 @@
 ---
 layout: default
 ---
-<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
-
-  <header class="post-header">
-    <h1 class="post-title p-name" itemprop="name headline">{{ page.title | escape }}</h1>
-    <p class="post-meta">
-      <time class="dt-published" datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header style="margin-bottom: 2.5rem; position: relative;">
+    <h1 style="font-size: 2.5rem; margin-bottom: 1rem; color: #000; font-weight: 700; line-height: 1.2;">
+      {{ page.title | escape }}
+    </h1>
+    
+    <div style="display: flex; align-items: center; color: #666; margin-bottom: 1.5rem;">
+      <time datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished" style="display: flex; align-items: center;">
+        <svg width="16" height="16" viewBox="0 0 24 24" style="margin-right: 0.5rem;" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
         {%- assign date_format = site.minima.date_format | default: "%b %-d, %Y" -%}
         {{ page.date | date: date_format }}
       </time>
+      
       {%- if page.author -%}
-        • <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span class="p-author h-card" itemprop="name">{{ page.author }}</span></span>
-      {%- endif -%}</p>
+      <span style="margin: 0 1rem; color: #ccc;">|</span>
+      <span style="display: flex; align-items: center;" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <svg width="16" height="16" viewBox="0 0 24 24" style="margin-right: 0.5rem;" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+        <span itemprop="name">{{ page.author }}</span>
+      </span>
+      {%- endif -%}
+      
+      {%- if page.categories.size > 0 -%}
+      <span style="margin: 0 1rem; color: #ccc;">|</span>
+      <span style="display: flex; align-items: center;">
+        <svg width="16" height="16" viewBox="0 0 24 24" style="margin-right: 0.5rem;" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+          <line x1="7" y1="7" x2="7.01" y2="7"></line>
+        </svg>
+        {% for category in page.categories %}
+        <span style="margin-right: 0.5rem;">{{ category }}</span>{% unless forloop.last %},{% endunless %}
+        {% endfor %}
+      </span>
+      {%- endif -%}
+    </div>
+    
+    <div style="height: 4px; width: 60px; background-color: #000; margin-bottom: 2rem;"></div>
+    
+    {%- if page.featured_image -%}
+    <div style="margin: 2rem 0; border-radius: 8px; overflow: hidden;">
+      <img src="{{ page.featured_image | relative_url }}" alt="{{ page.title }}" style="display: block !important; width: 100%; height: auto; border-radius: 8px;">
+    </div>
+    {%- endif -%}
   </header>
 
-  <div class="post-content e-content" itemprop="articleBody">
+  <style>
+    h2 {
+      font-size: 2rem;
+      font-weight: 600;
+      margin-top: 2rem;
+    }
+  </style>
+
+  <div itemprop="articleBody">
     {{ content }}
   </div>
-
-  {%- if site.disqus.shortname -%}
-    {%- include disqus_comments.html -%}
-  {%- endif -%}
-
-  <a class="u-url" href="{{ page.url | relative_url }}" hidden></a>
 </article>

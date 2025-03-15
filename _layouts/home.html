@@ -2,46 +2,96 @@
 layout: default
 ---
 
-<div class="home" style="padding: 20px; font-family: Arial, sans-serif; background-color: #f9f9f9;">
+<div class="home">
   {%- if page.title -%}
-    <h1 class="page-heading">{{ page.title }}</h1>
+    <h1 style="font-size: 2.5rem; margin-bottom: 1.5rem; color: #000; font-weight: 700; border-bottom: 3px solid #000; padding-bottom: 0.5rem; display: inline-block;">{{ page.title }}</h1>
   {%- endif -%}
 
-    <section style="margin-top: 10px; padding: 10px; background-color: #fff; border-radius: 1px;">
-
-      <h3>Welcome to Our Blog!</h3>
-      <p>Explore a variety of topics related to technology, programming, and more. Stay updated with our latest posts and insights.</p>
+  <section style="margin-bottom: 3rem; padding: 2rem; background-color: #000; color: #fff; border-radius: 8px; position: relative; overflow: hidden;">
+    <div style="position: absolute; top: 0; right: 0; width: 150px; height: 150px; background: radial-gradient(circle at center, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 70%);"></div>
+    
+    <h2 style="font-size: 2rem; margin-top: 0;">Welcome to Our Developer Blog</h2>
+    <p style="font-size: 1.1rem; margin-bottom: 1.5rem; max-width: 80%;">Explore our journey building with FastAPI. Discover insights, code snippets, and development stories as we document our progress.</p>
+    
+    <a href="#latest-posts" style="display: inline-block; background-color: #fff; color: #000; padding: 0.75rem 1.5rem; text-decoration: none; border-radius: 4px; font-weight: 600; transition: transform 0.2s;">Read Latest Posts</a>
   </section>
 
   {{ content }}
 
   {%- if site.posts.size > 0 -%}
-    <h2 class="post-list-heading" style="color: #333; border-bottom: 2px solid #ccc; padding-bottom: 5px;">{{ page.list_title | default: "Posts" }}</h2>
-    <ul class="post-list">
-      {%- for post in site.posts -%}
-      <li>
-        {%- assign date_format = site.minima.date_format | default: "%b %-d, %Y" -%}
-        <span class="post-meta">{{ post.date | date: date_format }}</span>
-        <h3>
-          <a class="post-link" href="{{ post.url | relative_url }}">
-            {{ post.title | escape }}
-          </a>
-        </h3>
-        {%- if site.show_excerpts -%}
-          {{ post.excerpt }}
-        {%- endif -%}
-      </li>
-      {%- endfor -%}
-    </ul>
-
-    <!-- <p class="rss-subscribe" style="margin-top: 20px; font-weight: bold;">subscribe <a href="{{ "/feed.xml" | relative_url }}">via RSS</a></p> -->
+    <h2 id="latest-posts" style="font-size: 2rem; margin: 2rem 0 1.5rem; color: #000; font-weight: 700; position: relative; padding-bottom: 0.5rem;">
+      {{ page.list_title | default: "Latest Posts" }}
+      <span style="position: absolute; bottom: 0; left: 0; width: 60px; height: 3px; background-color: #000;"></span>
+    </h2>
     
-    <footer style="margin-top: 40px; font-size: 0.9em; color: #777;">
-        Thank you for visiting our blog! Check out our project on <a href="https://github.com/Learnathon-By-Geeky-Solutions/snake-charmers" target="_blank">GitHub</a>.
-    </footer>
-    <footer style="margin-top: 40px; font-size: 0.9em; color: #777;">
-        © 2023 Your Blog Name. All rights reserved.
-    </footer>
-  {%- endif -%}
+    <div class="post-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem;">
+      {%- for post in site.posts limit:6 -%}
+      <div class="post-card" style="background-color: #fff; border-radius: 8px; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: 1px solid #eee;">
+        {%- assign date_format = site.minima.date_format | default: "%b %-d, %Y" -%}
+        
+        <div style="padding: 1.5rem;">
+          <span style="font-size: 0.9rem; color: #666; display: block; margin-bottom: 0.5rem;">{{ post.date | date: date_format }}</span>
+          <h3 style="font-size: 1.3rem; margin: 0 0 1rem; line-height: 1.3;">
+            <a href="{{ post.url | relative_url }}" style="color: #000; text-decoration: none; transition: color 0.2s;">{{ post.title | escape }}</a>
+          </h3>
+          
+          {%- if site.show_excerpts -%}
+            <p style="color: #444; margin-bottom: 1rem; font-size: 0.95rem;">{{ post.excerpt | strip_html | truncatewords: 30 }}</p>
+          {%- endif -%}
+          
+          <a href="{{ post.url | relative_url }}" style="color: #000; text-decoration: none; font-weight: 600; display: inline-block; position: relative;">
+            Read More
+            <span style="display: block; position: absolute; bottom: -3px; left: 0; width: 100%; height: 2px; background-color: #000; transform: scaleX(0); transition: transform 0.2s; transform-origin: left;"></span>
+          </a>
+        </div>
+      </div>
+      {%- endfor -%}
+    </div>
 
+    {%- if site.posts.size > 6 -%}
+    <div style="text-align: center; margin-top: 2.5rem;">
+      <a href="{{ site.baseurl }}/archive/" style="display: inline-block; background-color: #000; color: #fff; padding: 0.75rem 1.5rem; text-decoration: none; border-radius: 4px; font-weight: 600; transition: background-color 0.2s;">View All Posts</a>
+    </div>
+    {%- endif -%}
+    
+    <div style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #eee; text-align: center;">
+      <p style="font-size: 1.1rem; color: #333; margin-bottom: 1rem;">Thank you for visiting our blog!</p>
+      <p style="color: #666;">
+        Check out our project on 
+        <a href="https://github.com/Learnathon-By-Geeky-Solutions/snake-charmers" target="_blank" style="color: #000; font-weight: 600; text-decoration: none; border-bottom: 1px solid #000;">GitHub</a>
+      </p>
+    </div>
+  {%- endif -%}
 </div>
+
+<script>
+  // Simple hover effects
+  document.addEventListener('DOMContentLoaded', function() {
+    const postCards = document.querySelectorAll('.post-card');
+    
+    postCards.forEach(card => {
+      card.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-5px)';
+        this.style.boxShadow = '0 8px 16px rgba(0,0,0,0.1)';
+      });
+      
+      card.addEventListener('mouseleave', function() {
+        this.style.transform = 'translateY(0)';
+        this.style.boxShadow = '0 2px 8px rgba(0,0,0,0.05)';
+      });
+    });
+    
+    const readMoreLinks = document.querySelectorAll('.post-card a');
+    readMoreLinks.forEach(link => {
+      link.addEventListener('mouseenter', function() {
+        const line = this.querySelector('span');
+        if (line) line.style.transform = 'scaleX(1)';
+      });
+      
+      link.addEventListener('mouseleave', function() {
+        const line = this.querySelector('span');
+        if (line) line.style.transform = 'scaleX(0)';
+      });
+    });
+  });
+</script>

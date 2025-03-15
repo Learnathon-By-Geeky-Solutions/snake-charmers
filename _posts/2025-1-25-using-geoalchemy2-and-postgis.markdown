@@ -1,17 +1,17 @@
 ---
 layout: post
 title: "Using GeoAlchemy2 and PostGIS for Geospatial Data"
-date: 2023-10-05 00:00:00 +0000
+date: 2025-1-25 00:00:00 +0000
 categories: geospatial postgis geoalchemy2
 ---
 
 In this blog, we will explore how GeoAlchemy2 and PostGIS work together to handle geospatial data in PostgreSQL. Geospatial data is crucial for applications that require location-based information, and these tools provide powerful capabilities for storing and querying such data.
 
-### Understanding GeoAlchemy2 and PostGIS
+## Understanding GeoAlchemy2 and PostGIS
 
 GeoAlchemy2 is an extension of SQLAlchemy that allows for the use of geospatial data types and functions in Python applications. PostGIS is a spatial database extender for PostgreSQL that adds support for geographic objects, enabling location queries to be run in SQL.
 
-### Example: Storing Latitude and Longitude in PostgreSQL
+## Example: Storing Latitude and Longitude in PostgreSQL
 
 To demonstrate how to convert latitude and longitude into a PostgreSQL database using GeoAlchemy2 and PostGIS, follow these steps:
 
@@ -57,7 +57,7 @@ To demonstrate how to convert latitude and longitude into a PostgreSQL database 
    session.commit()
    ```
 
-### Conclusion
+## Conclusion
 
 GeoAlchemy2 and PostGIS provide a robust framework for managing geospatial data in PostgreSQL. By following the steps outlined in this post, you can easily store and query geospatial information in your applications.
 

@@ -1,14 +1,26 @@
 ---
 layout: default
 ---
-<article class="post">
-
-  <header class="post-header">
-    <h1 class="post-title">{{ page.title | escape }}</h1>
+<article class="page">
+  <header style="margin-bottom: 2.5rem; position: relative;">
+    <h1 style="font-size: 2.5rem; margin-bottom: 0.5rem; color: #000; font-weight: 700; position: relative; display: inline-block;">
+      {{ page.title | escape }}
+      <span style="position: absolute; bottom: -10px; left: 0; width: 60px; height: 3px; background-color: #000;"></span>
+    </h1>
+    
+    {%- if page.subtitle -%}
+    <p style="font-size: 1.2rem; color: #666; margin-top: 1rem;">{{ page.subtitle }}</p>
+    {%- endif -%}
   </header>
 
-  <div class="post-content">
+  <div class="page-content" style="font-size: 1.05rem; line-height: 1.7;">
     {{ content }}
   </div>
-
+  
+  <div style="margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid #eee;">
+    <a href="{{ site.baseurl }}/" style="color: #000; text-decoration: none; display: inline-flex; align-items: center; font-weight: 600;">
+      <span style="display: inline-block; margin-right: 0.5rem; transform: rotate(180deg);">➔</span>
+      Back to Home
+    </a>
+  </div>
 </article>
