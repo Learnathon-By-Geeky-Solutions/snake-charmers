@@ -4,7 +4,7 @@ import { FaRoute } from "react-icons/fa";
 import {useSelector, useDispatch} from 'react-redux'
 import { removeTripReq } from "../../store/slices/trip-request-slice";
 
-const ShowAvailableTrip = () => {
+const IncomingTrips = () => {
   // Sample state for trips - in a real app, this would likely come from props or API
   const trips = useSelector(state => state.tripRequests);
   const dispatch = useDispatch();
@@ -14,6 +14,15 @@ const ShowAvailableTrip = () => {
     dispatch(removeTripReq(reqID))
   };
 
+  // useEffect(() => {
+  //   // Cleanup function runs when component unmounts
+  //   return () => {
+  //     // Remove each trip request when unmounting
+  //     trips.forEach(trip => {
+  //       dispatch(removeTripReq(trip.req_id));
+  //     });
+  //   };
+  // }, []); 
 
   return (
     <div className="w-full h-[710px] bg-gray-400 rounded-lg shadow-lg flex flex-col items-center overflow-hidden">
@@ -31,9 +40,9 @@ const ShowAvailableTrip = () => {
           trips.map((trip, index) => (
             <div key={trip.req_id} className={index < trips.length - 1 ? "mb-2" : ""}>
               <TripDetails 
-                tripNumber={trip.req_id}
-                pickup={trip.pickup_location}
-                dropoff={trip.destination}
+                req_id={trip.req_id}
+                pickup_location={trip.pickup_location}
+                destination={trip.destination}
                 // fare={trip.fare}
                 // passenger={trip.passenger}
                 onExpire={() => handleTripExpire(trip.req_id)}
@@ -57,4 +66,4 @@ const ShowAvailableTrip = () => {
   );
 };
 
-export default ShowAvailableTrip;
+export default IncomingTrips;

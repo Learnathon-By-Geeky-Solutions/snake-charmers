@@ -1,23 +1,24 @@
 import React, { useState, useEffect } from "react";
-import ShowAvailableTrip from "../ShowAvailableTrip/ShowAvailableTrip";
+import IncomingTrips from "../IncomingTrips/IncomingTrips";
 import GoogleMap from "../Map/Map";
-import DetailAvailableTrip from "../DetailAvailableTrip/DetailAvailableTrip";
 import { useLocation } from "../Geolocation/Geolocation";
 import { unsetLocationUpdateState } from "../../store/slices/location-update-state-slice";
 import { useDispatch, useSelector } from "react-redux";
 import {ConnectToserver, DisconnectFromServer } from "../../controllers/websocket/handler";
 import { SendMessage } from "../../controllers/websocket/handler";
-import store from "../../store";
+import TripCheckout from "../TripCheckout/TripCheckout";
 
 import { FaToggleOff, FaSpinner, FaCar } from "react-icons/fa";
 
-const AvailableRide = () => {
+const DriverDashboard = () => {
   const [isAvailable, setIsAvailable] = useState(false);
   // const [hasRequests, setHasRequests] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const { id, role } = useSelector((state) => state.user);
   const totalIncomingRequests = useSelector((state) => state.tripRequests.length);
+  const {isCheckedOut} = useSelector((state) => state.checkout);
   const dispatch = useDispatch();
+
 
   const { coordinates, error } = useLocation({
     trackPeriodically: true,       // Periodic updates
@@ -36,6 +37,7 @@ const AvailableRide = () => {
         ConnectToserver(id, role, dispatch)
     }
   }, [isAvailable])
+
 
   const toggleAvailability = () => {
     const newStatus = !isAvailable;
@@ -134,7 +136,7 @@ const AvailableRide = () => {
 
             {/* When searching for rides */}
             {isAvailable && isSearching && totalIncomingRequests === 0 && (
-              <div className="flex flex-col items-center justify-center h-full">
+              <div className="flex flex-col items-center justify-center h-full"> 
                 <FaSpinner className="animate-spin text-blue-500 text-4xl mb-4" />
                 <p className="text-lg font-medium text-gray-700">
                   Searching for ride requests...
@@ -142,14 +144,20 @@ const AvailableRide = () => {
                 <p className="text-sm text-gray-500 mt-2">
                   Please wait while we find patients in need
                 </p>
+              
               </div>
             )}
 
             {/* When there are ride requests - Full container size */}
             {isAvailable && totalIncomingRequests > 0 && (
-              <div className="h-full w-full overflow-y-auto">
-                <ShowAvailableTrip />
-              </div>
+              isCheckedOut ? 
+                <TripCheckout/>
+                :
+                (
+                  <div className="h-full w-full overflow-y-auto">
+                    <IncomingTrips />
+                  </div>
+                )
             )}
           </div>
         </div>
@@ -158,4 +166,4 @@ const AvailableRide = () => {
   );
 };
 
-export default AvailableRide;
+export default DriverDashboard;

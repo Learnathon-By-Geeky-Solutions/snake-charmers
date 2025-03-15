@@ -79,7 +79,7 @@ func SendBidFromDriver(payload Schemas.BidFromDriver) (error){
 func SendBidFromClient(payload Schemas.BidFromClient) (error){
 	// Prepare the event data
 	eventData := map[string]any{
-		"event": "bid-from-client",
+		"event": "bid-from-rider",
 		"data": map[string]any{
 			"req_id": payload.ReqID,
 			"amount": payload.Amount,

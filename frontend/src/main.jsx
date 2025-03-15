@@ -14,7 +14,8 @@ import OverallSignup from './components/OverallSignup/OverallSignup';
 import UserLogin from './components/UserLogin/UserLogin';
 import RideRequest from './components/RideRequest/RideRequest';
 import DriverSearch from './components/DriverSearch/DriverSearch';
-import AvailableRide from './components/AvailableRide/AvailableRide';
+// import AvailableRide from './components/AvailableRide/AvailableRide';
+import DriverDashboard from './components/DriverDashboard/DriverDashboard';
 import RiderReview from './components/RiderReview/RiderReview';
 // import TripConfirmed from './components/TripConfirmed/TripConfirmed';
 import OngoingTrip from './components/OngoingTrip/OngoingTrip';
@@ -50,7 +51,7 @@ const router = createBrowserRouter([
       }, 
       {
         path: '/available_ride',
-        element: <AvailableRide></AvailableRide>
+        element: <DriverDashboard></DriverDashboard>
       }, 
       {
         path: '/rider_review',
