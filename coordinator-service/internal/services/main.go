@@ -20,6 +20,7 @@ func HandleTripRequest(conn *websocket.Conn, payload map[string]any) {
 		return
 	}
 	fmt.Printf("Trip requested by Rider with id %d\n", data.RiderID)
+	fmt.Print(data)
 	res1, ok := TripManager.SendTripRequest(data)
 	if !ok {
 		fmt.Printf("Error sending the trip request to the trip-service\n")
@@ -40,7 +41,7 @@ func HandleTripRequest(conn *websocket.Conn, payload map[string]any) {
 			}
 			for _, driver := range res2 {
 				fmt.Printf("Pinging the driver with ID %d\n", driver.DriverID)
-				go EventEmitter.PingDrivers(driver.DriverID, res1.ReqID, data.PickupLocation, data.Destination)
+				go EventEmitter.PingDrivers(driver.DriverID, res1.ReqID, data.PickupLocation, data.Destination, data.Fare)
 			}
 		}
 	}

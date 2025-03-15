@@ -3,14 +3,17 @@ import WaitingRiderReview from "../WaitingRiderReview/WaitingRiderReview";
 import { useDispatch, useSelector } from "react-redux";
 import { setRiderResponse } from "../../store/slices/rider-response-slice";
 import { SendMessage } from "../../controllers/websocket/handler";
-
+import store from "../../store";
 
 const FareDetails = () => {
   const dispatch = useDispatch();
-  const { isWaiting, fare } = useSelector(state => state.riderResponse);
+  const { fare, isWaiting } = useSelector(state => state.riderResponse);
   const {id, name, mobile} = useSelector(state => state.user);
   const { req_id } = useSelector(state => state.tripCheckout)
   const [amount, setAmount] = useState(0);
+
+  console.log(fare);
+  console.log("store is ", store.getState().riderResponse);
 
   const handleAskClick = () => {
     dispatch(setRiderResponse({ isWaiting: true }));
@@ -27,9 +30,9 @@ const FareDetails = () => {
     // need to implement retry here if failed
   }; 
 
-  useEffect(()=>{
-    return () => {dispatch(setRiderResponse({isWaiting: false}))};
-  }, [])
+  // useEffect(()=>{
+  //   return () => {dispatch(setRiderResponse({isWaiting: false}))};
+  // }, [])
 
   return (
     <div className="bg-black text-white w-[300px] h-full md:w-full rounded-lg shadow-lg flex flex-col items-center justify-between">

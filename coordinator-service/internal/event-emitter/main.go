@@ -9,7 +9,7 @@ import(
 	
 )
 
-func PingDrivers(driverID int, reqID int, pickupLocation string, destination string) {
+func PingDrivers(driverID int, reqID int, pickupLocation string, destination string, fare int) {
 
 		driverConn, exists := ClientManager.ActiveDrivers[driverID]
 		if !exists {
@@ -22,6 +22,7 @@ func PingDrivers(driverID int, reqID int, pickupLocation string, destination str
 				"req_id":          reqID,
 				"pickup_location": pickupLocation,
 				"destination":     destination,
+				"fare":            fare,
 			},
 		}
 

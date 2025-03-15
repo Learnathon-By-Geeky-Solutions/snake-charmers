@@ -4,6 +4,7 @@ package Schemas
 type TripRequest struct {
 	tripBase     `mapstructure:",squash"`
 	locationBase `mapstructure:",squash"`
+	Fare        int `json:"fare" mapstructure:"fare"`
 }
 
 // LocationUpdate represents a driver's location update
