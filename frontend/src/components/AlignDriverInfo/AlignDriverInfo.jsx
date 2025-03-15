@@ -1,23 +1,36 @@
 import React from "react";
-import { FaUserCircle } from "react-icons/fa";
+import { FaUserCircle, FaStar, FaPhone } from "react-icons/fa";
 
-const AlignDriverInfo = ({ name, phone }) => {
+const AlignDriverInfo = ({ name, mobile, req_id, amount }) => {
   return (
-    <div className="bg-black text-white w-full p-2 rounded-lg shadow-md">
+    <div className="bg-white rounded-xl p-4 shadow-md border border-gray-100 hover:shadow-lg transition-all duration-300">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <FaUserCircle className="text-2xl" />
+        <div className="flex items-center gap-3">
+          <div className="bg-indigo-100 p-2 rounded-full">
+            <FaUserCircle className="text-3xl text-indigo-600" />
+          </div>
           <div>
-            <p className="font-semibold text-sm">Name: {name}</p>
-            <p className="text-sm">Phone no: {phone}</p>
+            <div className="flex items-center gap-2">
+              <p className="font-semibold text-gray-800">{name}</p>
+              <div className="flex items-center bg-green-100 px-2 py-0.5 rounded text-xs text-green-700">
+                <FaStar className="text-yellow-500 mr-1" /> 4.8
+              </div>
+            </div>
+            <div className="flex items-center text-gray-600 text-sm mt-1">
+              <FaPhone className="text-xs mr-1" /> {mobile}
+            </div>
           </div>
         </div>
-        <p className="font-bold text-green-400 text-sm">Fair</p>
+        <div className="text-right">
+          <p className="font-bold text-indigo-600 text-lg">₹{amount}</p>
+          <p className="text-xs text-gray-500">Fixed price</p>
+        </div>
       </div>
 
-      <div className="flex justify-between mt-2">
-        <button className="bg-green-600 px-6 py-2 rounded-md text-sm hover:bg-green-500 transition duration-300">Accept</button>
-        <button className="bg-red-600 px-6 py-2 rounded-md text-sm hover:bg-red-500 transition duration-300">Decline</button>
+      <div className="mt-3">
+        <button className="bg-gradient-to-r from-indigo-600 to-indigo-700 w-full py-2.5 rounded-lg text-white font-medium text-sm hover:from-indigo-700 hover:to-indigo-800 transition duration-300 flex items-center justify-center gap-2">
+          Accept Ride
+        </button>
       </div>
     </div>
   );

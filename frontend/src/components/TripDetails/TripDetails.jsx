@@ -5,8 +5,9 @@ import { changeCheckoutStatus } from "../../store/slices/checkout-status-slice";
 import { settripCheckout } from "../../store/slices/trip-checkout-slice";
 import { useDispatch, useSelector } from "react-redux";
 import { SendMessage } from "../../controllers/websocket/handler";
+import { setRiderResponse } from "../../store/slices/rider-response-slice";
 
-const TripDetails = ({ req_id , pickup_location, destination, /*fare, passenger, */ onExpire, expiryTime = 30 }) => {
+const TripDetails = ({ req_id , pickup_location, destination, fare, /*, passenger, */ onExpire, expiryTime = 30 }) => {
   const driver_id = useSelector(state => state.user.id);
   const [timeLeft, setTimeLeft] = useState(expiryTime);
   const [isExpiring, setIsExpiring] = useState(false);
@@ -16,8 +17,10 @@ const TripDetails = ({ req_id , pickup_location, destination, /*fare, passenger,
     dispatch(settripCheckout({
       req_id,
       pickup_location,
-      destination
+      destination,
+      fare
     }))
+    dispatch(setRiderResponse({fare}))
     SendMessage({
       name: "checkout-trip",
       data:{
@@ -80,7 +83,7 @@ const TripDetails = ({ req_id , pickup_location, destination, /*fare, passenger,
             <FaClock className="mr-1" /> {timeLeft}s
           </span>
         </div>
-        {/* <p className="text-green-400 font-bold">₹{fare}</p> */}
+        <p className="text-green-400 font-bold">₹{fare}</p>
       </div>
       
       <div className="mt-2 text-sm">

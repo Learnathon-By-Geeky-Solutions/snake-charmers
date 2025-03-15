@@ -43,7 +43,7 @@ const IncomingTrips = () => {
                 req_id={trip.req_id}
                 pickup_location={trip.pickup_location}
                 destination={trip.destination}
-                // fare={trip.fare}
+                fare={trip.fare}
                 // passenger={trip.passenger}
                 onExpire={() => handleTripExpire(trip.req_id)}
                 expiryTime={30} // 30 seconds timer

@@ -2,6 +2,8 @@ import WebSocketController from "./ConnectionManger";
 import { addTripReq } from "../../store/slices/trip-request-slice";
 import store from "../../store";
 import { setRiderResponse } from "../../store/slices/rider-response-slice";
+import { addDriverResponse } from "../../store/slices/driver-response-slice";
+import { setRiderWaitingStatus } from "../../store/slices/rider-waiting-status-slice";
 
 const ConnectToserver = async(id, role /*, dispatch*/) => {
     try{
@@ -62,8 +64,13 @@ function HandleIncomingMessage(message /*,dispatch*/) {
         store.dispatch(addTripReq(message.data));
     }
     if(name == "bid-from-rider"){
-        console.log("Dispatching bid from client...")
+        console.log("Dispatching bid from rider...")
         store.dispatch(setRiderResponse({fare: message.data.amount}))
+    }
+    if(name == "bid-from-driver"){
+        console.log("Dispatching bid from driver...")
+        store.dispatch(addDriverResponse(message.data));
+        store.dispatch(setRiderWaitingStatus({isWaiting: false}))
     }
 }
 

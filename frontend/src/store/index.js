@@ -5,6 +5,8 @@ import tripRequests from './slices/trip-request-slice.js';
 import riderResponse from './slices/rider-response-slice.js';
 import checkout from './slices/checkout-status-slice.js';
 import tripCheckout from './slices/trip-checkout-slice.js';
+import riderWaitingStatus from './slices/rider-waiting-status-slice.js';
+import driverResponses from './slices/driver-response-slice.js';
 
 const store = configureStore({
     reducer: {
@@ -13,7 +15,9 @@ const store = configureStore({
         tripRequests,
         riderResponse,
         checkout,
-        tripCheckout
+        tripCheckout,
+        riderWaitingStatus,
+        driverResponses
     },
     // middleware: (getDefaultMiddleware) =>
     //     getDefaultMiddleware({

@@ -4,8 +4,12 @@ from app.schemas.main import NearbyDriversRequest
 from app.models.main import DriverLocation, Driver, EngagedDriver
 from fastapi import HTTPException
 from sqlalchemy.orm import aliased
+from fastapi import HTTPException, status
 
-
+INTERNAL_SERVER_ERROR = HTTPException(
+    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+    detail="Internal Server Error"
+)
 
 class AmbulanceService:
     @staticmethod
