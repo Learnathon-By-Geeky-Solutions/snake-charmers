@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="{{ page.lang | default: site.lang | default: "en" }}" style="font-family: Arial, sans-serif; margin: 0; padding: 0;">
+
+  {%- include head.html -%}
+
+  <body>
+
+    {%- include header.html -%}
+
+    <main class="page-content" aria-label="Content" style="padding: 20px;">
+      <div class="wrapper" style="max-width: 800px; margin: auto;">
+        {{ content }}
+      </div>
+    </main>
+
+    <footer style="margin-top: 40px; font-size: 0.9em; color: #777;">
+        © 2023 Your Blog Name. All rights reserved.
+    </footer>
+
+  </body>
+
+</html>

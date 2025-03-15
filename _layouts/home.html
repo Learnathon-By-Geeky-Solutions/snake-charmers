@@ -1,0 +1,47 @@
+---
+layout: default
+---
+
+<div class="home" style="padding: 20px; font-family: Arial, sans-serif; background-color: #f9f9f9;">
+  {%- if page.title -%}
+    <h1 class="page-heading">{{ page.title }}</h1>
+  {%- endif -%}
+
+    <section style="margin-top: 10px; padding: 10px; background-color: #fff; border-radius: 1px;">
+
+      <h3>Welcome to Our Blog!</h3>
+      <p>Explore a variety of topics related to technology, programming, and more. Stay updated with our latest posts and insights.</p>
+  </section>
+
+  {{ content }}
+
+  {%- if site.posts.size > 0 -%}
+    <h2 class="post-list-heading" style="color: #333; border-bottom: 2px solid #ccc; padding-bottom: 5px;">{{ page.list_title | default: "Posts" }}</h2>
+    <ul class="post-list">
+      {%- for post in site.posts -%}
+      <li>
+        {%- assign date_format = site.minima.date_format | default: "%b %-d, %Y" -%}
+        <span class="post-meta">{{ post.date | date: date_format }}</span>
+        <h3>
+          <a class="post-link" href="{{ post.url | relative_url }}">
+            {{ post.title | escape }}
+          </a>
+        </h3>
+        {%- if site.show_excerpts -%}
+          {{ post.excerpt }}
+        {%- endif -%}
+      </li>
+      {%- endfor -%}
+    </ul>
+
+    <!-- <p class="rss-subscribe" style="margin-top: 20px; font-weight: bold;">subscribe <a href="{{ "/feed.xml" | relative_url }}">via RSS</a></p> -->
+    
+    <footer style="margin-top: 40px; font-size: 0.9em; color: #777;">
+        Thank you for visiting our blog! Check out our project on <a href="https://github.com/Learnathon-By-Geeky-Solutions/snake-charmers" target="_blank">GitHub</a>.
+    </footer>
+    <footer style="margin-top: 40px; font-size: 0.9em; color: #777;">
+        © 2023 Your Blog Name. All rights reserved.
+    </footer>
+  {%- endif -%}
+
+</div>
