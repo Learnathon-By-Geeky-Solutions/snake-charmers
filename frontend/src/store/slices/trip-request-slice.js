@@ -5,10 +5,11 @@ const tripRequestSlice = createSlice({
     initialState: [],
     reducers: {
         addTripReq: (state, action) => {
-            console.log("adding trip req..");
+            console.log('adding trip request');
             state.unshift(action.payload);
         },
         removeTripReq: (state, action) => {
+            console.log('removing trip request');
             return state.filter(trip => trip.req_id !== action.payload);
         },
     },

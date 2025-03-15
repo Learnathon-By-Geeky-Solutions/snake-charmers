@@ -1,6 +1,7 @@
 import WebSocketController from "./ConnectionManger";
 import { addTripReq } from "../../store/slices/trip-request-slice";
 import store from "../../store";
+import { setRiderResponse } from "../../store/slices/rider-response-slice";
 
 const ConnectToserver = async(id, role /*, dispatch*/) => {
     try{
@@ -57,8 +58,12 @@ function HandleIncomingMessage(message /*,dispatch*/) {
     console.log('Processing message:', message);
     const name = message.event;
     if(name == "new-trip-request"){
-        console.log("Dispatching...")
+        console.log("Dispatching new trip request...")
         store.dispatch(addTripReq(message.data));
+    }
+    if(name == "bid-from-rider"){
+        console.log("Dispatching bid from client...")
+        store.dispatch(setRiderResponse({fare: message.data.amount}))
     }
 }
 

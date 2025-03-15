@@ -1,11 +1,31 @@
 // TripDetails.jsx
 import React, { useState, useEffect } from "react";
 import { FaMapMarkerAlt, FaUser, FaMoneyBillWave, FaClock } from "react-icons/fa";
+import { changeCheckoutStatus } from "../../store/slices/checkout-status-slice";
+import { settripCheckout } from "../../store/slices/trip-checkout-slice";
+import { useDispatch, useSelector } from "react-redux";
+import { SendMessage } from "../../controllers/websocket/handler";
 
-const TripDetails = ({ tripNumber, pickup, dropoff, /*fare, passenger, */ onExpire, expiryTime = 30 }) => {
+const TripDetails = ({ req_id , pickup_location, destination, /*fare, passenger, */ onExpire, expiryTime = 30 }) => {
+  const driver_id = useSelector(state => state.user.id);
   const [timeLeft, setTimeLeft] = useState(expiryTime);
   const [isExpiring, setIsExpiring] = useState(false);
-
+  const dispatch = useDispatch();
+  const handleCheckout = () =>{
+    dispatch(changeCheckoutStatus());
+    dispatch(settripCheckout({
+      req_id,
+      pickup_location,
+      destination
+    }))
+    SendMessage({
+      name: "checkout-trip",
+      data:{
+        req_id,
+        driver_id
+      }
+    })
+  }
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeLeft(prevTime => {
@@ -55,7 +75,7 @@ const TripDetails = ({ tripNumber, pickup, dropoff, /*fare, passenger, */ onExpi
       
       <div className="flex justify-between items-center pt-2">
         <div className="flex items-center">
-          <p className="text-lg font-semibold">Trip #{tripNumber}</p>
+          <p className="text-lg font-semibold">Trip #{req_id}</p>
           <span className="ml-2 text-xs flex items-center text-gray-400">
             <FaClock className="mr-1" /> {timeLeft}s
           </span>
@@ -66,11 +86,11 @@ const TripDetails = ({ tripNumber, pickup, dropoff, /*fare, passenger, */ onExpi
       <div className="mt-2 text-sm">
         <div className="flex items-center mb-1">
           <FaMapMarkerAlt className="text-red-500 mr-2" />
-          <p>Pickup: {pickup}</p>
+          <p>Pickup: {pickup_location}</p>
         </div>
         <div className="flex items-center mb-1">
           <FaMapMarkerAlt className="text-green-500 mr-2" />
-          <p>Dropoff: {dropoff}</p>
+          <p>Dropoff: {destination}</p>
         </div>
         <div className="flex items-center mb-2">
           <FaUser className="text-blue-400 mr-2" />
@@ -79,7 +99,10 @@ const TripDetails = ({ tripNumber, pickup, dropoff, /*fare, passenger, */ onExpi
       </div>
       
       <div className="flex justify-between mt-3">
-        <button className="bg-green-600 hover:bg-green-500 px-4 py-1.5 rounded text-sm transition-colors duration-200">
+        <button 
+          className="bg-green-600 hover:bg-green-500 px-4 py-1.5 rounded text-sm transition-colors duration-200"
+          onClick={handleCheckout}
+        >
           Checkout
         </button>
         <button className="bg-red-600 hover:bg-red-500 px-4 py-1.5 rounded text-sm transition-colors duration-200">

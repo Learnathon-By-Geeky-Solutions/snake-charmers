@@ -46,9 +46,9 @@ func ProcessEvents(conn *websocket.Conn, message []byte) {
 			Services.HandleBidFromDriver(conn, event.Data)
 			fmt.Println("place-bid-driver:", event.Data)
 
-		case "place-bid-client":
+		case "place-bid-rider":
 			Services.HandleBidFromClient(conn, event.Data)
-			fmt.Println("place-bid-client:", event.Data)
+			fmt.Println("place-bid-rider:", event.Data)
 
 		case "confirm-trip":
 			Services.HandleTripConfirmation(conn, event.Data)
