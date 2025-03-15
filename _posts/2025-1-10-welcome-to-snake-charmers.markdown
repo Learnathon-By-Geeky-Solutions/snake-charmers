@@ -9,7 +9,7 @@ categories: ambulance healthcare
 
 Hello and welcome to the Snake Charmers development blog! We're thrilled to share our journey in building **LifeRide** - a platform designed to revolutionize ambulance services through technology.
 
-![LifeRide Logo](../images/ambulancelogo1.png)
+<!-- ![LifeRide Logo](../images/ambulancelogo1.png) -->
 
 ## Who We Are
 
