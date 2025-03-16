@@ -26,7 +26,7 @@ const DriverDashboard = () => {
   const { coordinates, error } = useLocation({
     trackPeriodically: true,       // Periodic updates
     isActive: isAvailable,         // Only when driver is available
-    interval: 10000,
+    interval: 30000,
     id,               
     onLocationUpdate: SendMessage
   });
