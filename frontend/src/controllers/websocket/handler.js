@@ -1,9 +1,11 @@
 import WebSocketController from "./ConnectionManger";
-import { addTripReq } from "../../store/slices/trip-request-slice";
+import { addTripReq, clearTripReq } from "../../store/slices/trip-request-slice";
 import store from "../../store";
 import { setRiderResponse } from "../../store/slices/rider-response-slice";
 import { addDriverResponse } from "../../store/slices/driver-response-slice";
 import { setRiderWaitingStatus } from "../../store/slices/rider-waiting-status-slice";
+import { setOngoingTripDetails } from "../../store/slices/ongoing-trip-details-slice";
+import { setIsOnATrip } from "../../store/slices/running-trip-indicator-slice";
 
 const ConnectToserver = async(id, role /*, dispatch*/) => {
     try{
@@ -71,6 +73,14 @@ function HandleIncomingMessage(message /*,dispatch*/) {
         console.log("Dispatching bid from driver...")
         store.dispatch(addDriverResponse(message.data));
         store.dispatch(setRiderWaitingStatus({isWaiting: false}))
+    }
+    if(name == "trip-confirmed"){
+        store.dispatch(setOngoingTripDetails(message.data));
+        store.dispatch(setIsOnATrip({isOnATrip:true}));
+        store.dispatch(clearTripReq());
+    }
+    if(name == "trip-ended"){
+        store.dispatch(setIsOnATrip({isOnATrip:false}));
     }
 }
 

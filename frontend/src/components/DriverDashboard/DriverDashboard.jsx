@@ -18,6 +18,8 @@ const DriverDashboard = () => {
   const { id, role } = useSelector((state) => state.user);
   const totalIncomingRequests = useSelector((state) => state.tripRequests.length);
   const {isCheckedOut} = useSelector((state) => state.checkout);
+  const {isOnATrip} = useSelector(state => state.isOnATrip);
+
   const dispatch = useDispatch();
 
 
@@ -103,14 +105,19 @@ const DriverDashboard = () => {
       <div className="flex-grow flex">
         {/* Left Panel - Map */}
         <div className="w-1/2 p-6 ml-12 flex flex-col">
-          {/* <OngoingTrip/> */}
-          <div className="flex items-center mb-4">
-            <FaMapMarkedAlt className="text-blue-700 text-xl mr-2" />
-            <h3 className="text-xl font-semibold text-gray-800">Current Location</h3>
-          </div>
-          <div className="bg-white rounded-xl shadow-lg overflow-hidden flex-grow border border-gray-200">
-            <GoogleMap className="w-full h-full" />
-          </div>
+          {isOnATrip ? 
+            (<OngoingTrip/>)
+            :
+            (<>
+              <div className="flex items-center mb-4">
+                <FaMapMarkedAlt className="text-blue-700 text-xl mr-2" />
+                <h3 className="text-xl font-semibold text-gray-800">Current Location</h3>
+              </div>
+              <div className="bg-white rounded-xl shadow-lg overflow-hidden flex-grow border border-gray-200">
+                <GoogleMap className="w-full h-full" />
+              </div>
+            </>
+          )}
         </div>
 
         {/* Right Panel - Trip Info */}

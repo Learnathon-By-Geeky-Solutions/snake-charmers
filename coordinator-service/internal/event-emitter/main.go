@@ -136,6 +136,26 @@ func SendTripConfirmation(payload Schemas.TripConfirmResponse)(error){
 	return err
 }
 
+func SendEndTripNotification(riderID int) {
+	riderConn, exists := ClientManager.ActiveRiders[riderID]
+	if !exists {
+		fmt.Println("Rider not found for ID", riderID)
+		return
+	}
+	eventData := map[string]any{
+		"event": "trip-ended",
+	}
+	eventMessage, err := json.Marshal(eventData)
+	if err != nil {
+		fmt.Println("Failed to marshal event data:", err)
+		return
+	}
+	err = riderConn.WriteMessage(websocket.TextMessage, eventMessage)
+	if err != nil {
+		fmt.Println("Failed to send message to rider", riderID, ":", err)
+	}
+}
+
 func NotifyOtherDriver(driverID int)(error){
 	driverConn, exists := ClientManager.ActiveDrivers[driverID]
 	if !exists {

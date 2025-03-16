@@ -6,14 +6,14 @@ const tripCheckoutSlice = createSlice({
         req_id: 0,
         pickup_location: '',
         destination: '',
-        fare: ''
+        fare: 0
     },
     reducers: {
         settripCheckout: (state, action) => {
-            state.req_id =  action.payload.req_id;
-            state.pickup_location = action.payload.pickup_location;
-            state.destination = action.payload.destination;
-            state.fare = action.payload.fare
+            state.req_id = action.payload?.req_id ?? state.req_id;
+            state.pickup_location = action.payload?.pickup_location ?? state.pickup_location;
+            state.destination = action.payload?.destination ?? state.destination;
+            state.fare = action.payload?.fare ?? state.fare;
         },
     },
 });

@@ -8,6 +8,7 @@ import { PuffLoaderComponent } from "../PuffLoader/PuffLoader";
 import { setRiderWaitingStatus } from "../../store/slices/rider-waiting-status-slice";
 import DriverResponse from "../DriverResponse/DriverResponse";
 import RideSearchForm from "../RideSearchForm/RideSearchForm";
+import OngoingTrip from '../OngoingTrip/OngoingTrip'
 
 const RideRequestPage = () => {
   // const navigate = useNavigate();
@@ -20,10 +21,16 @@ const RideRequestPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const {id, role} = useSelector(state => state.user);
   const [coords, setCoords] = useState({})
-  const [isOnATrip, setIsOnATrip] = useState(false)
-  // const {isWaiting} = useSelector(state => state.riderWaitingStatus);
+  const [isRequested, setIsRequested] = useState(false)
+  const {isOnATrip} = useSelector(state => state.isOnATrip);
   const dispatch = useDispatch();
 
+  useEffect(()=>{
+    if(isOnATrip){
+      setIsRequested(false);
+      setIsLoading(false);
+    }
+  }, [isOnATrip])
 
   useEffect(() => {
     const fetchCoordinates = async () => {
@@ -66,7 +73,7 @@ const RideRequestPage = () => {
     //   return;
     // }
     
-    setIsOnATrip(true);
+    setIsRequested(true);
     dispatch(setRiderWaitingStatus({isWaiting: true}));
     setIsLoading(true);
     setError("");
@@ -116,8 +123,9 @@ const RideRequestPage = () => {
           />
 
           {/* Right Side - Ride Request Image */}
-          {isOnATrip ? (
+          {isRequested ? (
             (  <DriverResponse 
+                pickup_location = {pickupLocation}
                 destination = {dropoffLocation}
                 fare = {fare}
               />
@@ -138,6 +146,7 @@ const RideRequestPage = () => {
           pickupLocation={pickupLocation}  
           dropoffLocation={dropoffLocation}
         />
+        {isOnATrip && <OngoingTrip/>}
       </div>
     </div>
   );
