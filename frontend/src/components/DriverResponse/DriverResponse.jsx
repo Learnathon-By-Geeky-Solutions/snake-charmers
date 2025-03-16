@@ -6,7 +6,7 @@ import { FaTaxi, FaPlus, FaMinus, FaPaperPlane, FaLocationArrow, FaRegClock } fr
 import { PuffLoaderComponent } from "../PuffLoader/PuffLoader";
 import { clearDriverResponses } from "../../store/slices/driver-response-slice";
 
-export const DriverResponse = ({destination, fare}) => {
+export const DriverResponse = ({pickup_location, destination, fare}) => {
   const drivers = useSelector(state => state.driverResponses);
   const dispatch = useDispatch();
   // State for current fare amount
@@ -100,7 +100,10 @@ export const DriverResponse = ({destination, fare}) => {
                     name={driver.name} 
                     mobile={driver.mobile} 
                     req_id={driver.req_id}
-                    amount={driver.amount}
+                    fare={driver.amount}
+                    driver_id={driver.driver_id}
+                    pickup_location={pickup_location}
+                    destination={destination}
                   />
                 </div>
               ))}

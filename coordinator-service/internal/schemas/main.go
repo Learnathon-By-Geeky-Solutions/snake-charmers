@@ -58,6 +58,11 @@ type TripConfirmResponse struct {
 	Status     string `json:"status" mapstructure:"status"`
 }
 
+type EndTrip struct {
+	TripID     int    `json:"trip_id" mapstructure:"trip_id"`
+	RiderID        int    `json:"rider_id" mapstructure:"rider_id"`
+}
+
 // Driver represents a driver's details
 type Driver struct {
 	driverBase    `mapstructure:",squash"`

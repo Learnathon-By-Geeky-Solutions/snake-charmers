@@ -172,7 +172,7 @@ func HandleTripConfirmation(conn *websocket.Conn, payload map[string]any) {
 }
 
 func HandleEndTrip(conn *websocket.Conn, payload map[string]any) {
-	var data Schemas.TripID
+	var data Schemas.EndTrip
 	err := Utils.DecodeMapToStruct(payload, &data)
 	if err != nil {
 		fmt.Println(DecodingError, err)
@@ -184,4 +184,5 @@ func HandleEndTrip(conn *websocket.Conn, payload map[string]any) {
 		EventEmitter.SendErrorMessage(conn)	
 	}
 	fmt.Printf("Request to the Trip service for ending trip sent successfully\n")
+	EventEmitter.SendEndTripNotification(data.RiderID)
 }

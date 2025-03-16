@@ -14,16 +14,16 @@ const FareDetails = () => {
   const [amount, setAmount] = useState(0);
 
   
-  const handleAskClick = () => {
+  const handleAskClick = (type) => {
     dispatch(setRiderResponse({ isWaiting: true }));
     SendMessage({
       name: 'place-bid-driver',
-      data:{
+      data: {
         driver_id: id,
         req_id,
         name,
         mobile,
-        amount: parseInt(amount)
+        amount: (type == "ask" ? parseInt(amount) : fare)
       }
     })
     // need to implement retry here if failed
@@ -72,14 +72,17 @@ const FareDetails = () => {
         />
         <button 
           className="bg-purple-600 w-full py-2 rounded mb-4"
-          onClick={handleAskClick}
+          onClick={() => {handleAskClick("ask")}}
         >
           Ask
         </button>
         
         {/* Confirm & Decline Buttons */}
         <div className="flex justify-between w-full">
-          <button className="bg-green-600 px-6 py-2 rounded-md w-[48%]">
+          <button 
+            className="bg-green-600 px-6 py-2 rounded-md w-[48%]"
+            onClick={() => {handleAskClick("confirm")}}
+          >
             Confirm
           </button>
           <button 

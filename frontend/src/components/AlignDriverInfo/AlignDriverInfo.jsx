@@ -1,7 +1,41 @@
 import React from "react";
 import { FaUserCircle, FaStar, FaPhone } from "react-icons/fa";
+import { SendMessage } from "../../controllers/websocket/handler";
+import { useSelector, useDispatch } from "react-redux";
+import { clearDriverResponses } from "../../store/slices/driver-response-slice";
+import { setIsOnATrip } from "../../store/slices/running-trip-indicator-slice";
+import { setOngoingTripDetails } from "../../store/slices/ongoing-trip-details-slice";
 
-const AlignDriverInfo = ({ name, mobile, req_id, amount }) => {
+const AlignDriverInfo = ({ name, mobile, req_id, fare, driver_id, pickup_location, destination }) => {
+
+  const rider_id = useSelector(state => state.user.id);
+  const dispatch = useDispatch();
+
+  const handleAccept = ()=> {
+    
+    dispatch(clearDriverResponses());
+    dispatch(setIsOnATrip({isOnATrip: true}));
+    dispatch(setOngoingTripDetails({
+      driver_name: name,
+      driver_mobile: mobile,
+      pickup_location,
+      destination,
+      fare,
+      status: "ongoing"
+    }))
+    SendMessage({
+      name: 'confirm-trip',
+      data: {
+        req_id,
+        rider_id,
+        driver_id,
+        pickup_location,
+        destination,
+        fare,
+        status: "ongoing"
+      }
+    });
+  }
   return (
     <div className="bg-white rounded-xl p-4 shadow-md border border-gray-100 hover:shadow-lg transition-all duration-300">
       <div className="flex items-center justify-between">
@@ -22,13 +56,17 @@ const AlignDriverInfo = ({ name, mobile, req_id, amount }) => {
           </div>
         </div>
         <div className="text-right">
-          <p className="font-bold text-indigo-600 text-lg">₹{amount}</p>
+          <p className="font-bold text-indigo-600 text-lg">₹{fare}</p>
           <p className="text-xs text-gray-500">Fixed price</p>
         </div>
       </div>
 
       <div className="mt-3">
-        <button className="bg-gradient-to-r from-indigo-600 to-indigo-700 w-full py-2.5 rounded-lg text-white font-medium text-sm hover:from-indigo-700 hover:to-indigo-800 transition duration-300 flex items-center justify-center gap-2">
+        <button 
+          className="bg-gradient-to-r from-indigo-600 to-indigo-700 w-full py-2.5 rounded-lg text-white font-medium text-sm hover:from-indigo-700 hover:to-indigo-800 transition duration-300 flex items-center justify-center gap-2"
+          onClick={handleAccept}
+        >
+          
           Accept Ride
         </button>
       </div>
