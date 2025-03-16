@@ -26,7 +26,8 @@ def add_driver_location(
         session.commit()
         return {"success": True}
 
-    except HTTPException:
+    except HTTPException as e:
+        print(e)
         session.rollback()
         raise
     

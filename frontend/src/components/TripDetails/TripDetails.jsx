@@ -101,16 +101,20 @@ const TripDetails = ({ req_id , pickup_location, destination, fare, /*, passenge
         </div>
       </div>
       
-      <div className="flex justify-between mt-3">
+      <div className="flex justify-center mt-3">
         <button 
-          className="bg-green-600 hover:bg-green-500 px-4 py-1.5 rounded text-sm transition-colors duration-200"
+          className="bg-green-600 w-full hover:bg-green-500 px-4 py-1.5 rounded text-sm transition-colors duration-200"
           onClick={handleCheckout}
         >
           Checkout
         </button>
-        <button className="bg-red-600 hover:bg-red-500 px-4 py-1.5 rounded text-sm transition-colors duration-200">
+        {/* <button 
+          className="bg-red-600 hover:bg-red-500 px-4 py-1.5 rounded text-sm transition-colors duration-200"
+          
+        >
+          
           Decline
-        </button>
+        </button> */}
       </div>
     </div>
   );

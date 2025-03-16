@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useDebugValue, useEffect, useState } from "react";
 import WaitingRiderReview from "../WaitingRiderReview/WaitingRiderReview";
 import { useDispatch, useSelector } from "react-redux";
 import { setRiderResponse } from "../../store/slices/rider-response-slice";
 import { SendMessage } from "../../controllers/websocket/handler";
-import store from "../../store";
+import { changeCheckoutStatus } from "../../store/slices/checkout-status-slice";
+import { clearTripReq } from "../../store/slices/trip-request-slice";
 
 const FareDetails = () => {
   const dispatch = useDispatch();
@@ -12,9 +13,7 @@ const FareDetails = () => {
   const { req_id } = useSelector(state => state.tripCheckout)
   const [amount, setAmount] = useState(0);
 
-  console.log(fare);
-  console.log("store is ", store.getState().riderResponse);
-
+  
   const handleAskClick = () => {
     dispatch(setRiderResponse({ isWaiting: true }));
     SendMessage({
@@ -30,6 +29,17 @@ const FareDetails = () => {
     // need to implement retry here if failed
   }; 
 
+  const handleDecline = () =>{
+    dispatch(changeCheckoutStatus());    
+    dispatch(clearTripReq());
+    SendMessage({
+      name: 'decline-trip',
+      data:{
+        req_id,
+        driver_id: id
+      }
+    })
+  }
   // useEffect(()=>{
   //   return () => {dispatch(setRiderResponse({isWaiting: false}))};
   // }, [])
@@ -72,7 +82,10 @@ const FareDetails = () => {
           <button className="bg-green-600 px-6 py-2 rounded-md w-[48%]">
             Confirm
           </button>
-          <button className="bg-red-600 px-6 py-2 rounded-md w-[48%]">
+          <button 
+            className="bg-red-600 px-6 py-2 rounded-md w-[48%]"
+            onClick={handleDecline}
+          >
             Decline
           </button>
         </div>
