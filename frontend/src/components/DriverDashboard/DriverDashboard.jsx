@@ -7,13 +7,14 @@ import { useDispatch, useSelector } from "react-redux";
 import {ConnectToserver, DisconnectFromServer } from "../../controllers/websocket/handler";
 import { SendMessage } from "../../controllers/websocket/handler";
 import TripCheckout from "../TripCheckout/TripCheckout";
+import OngoingTrip from '../OngoingTrip/OngoingTrip'
 
-import { FaToggleOff, FaSpinner, FaCar } from "react-icons/fa";
+import { FaToggleOff, FaSpinner, FaCar, FaAmbulance, FaUserMd, FaMapMarkedAlt } from "react-icons/fa";
 
 const DriverDashboard = () => {
   const [isAvailable, setIsAvailable] = useState(false);
   // const [hasRequests, setHasRequests] = useState(false);
-  const [isSearching, setIsSearching] = useState(false);
+  // const [isSearching, setIsSearching] = useState(false);
   const { id, role } = useSelector((state) => state.user);
   const totalIncomingRequests = useSelector((state) => state.tripRequests.length);
   const {isCheckedOut} = useSelector((state) => state.checkout);
@@ -44,7 +45,7 @@ const DriverDashboard = () => {
     setIsAvailable(newStatus);
 
     if (newStatus) {
-      setIsSearching(true);
+      // setIsSearching(true);
       // setHasRequests(false);
 
       // setTimeout(() => {
@@ -52,114 +53,148 @@ const DriverDashboard = () => {
       //   setHasRequests(true);
       // }, 5000);
     } else {
-      setIsSearching(false);
+      // setIsSearching(false);
       // setHasRequests(false);
     }
   };
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
-      {/* Header */}
-      <div className="bg-white shadow-md p-4 mb-4 border-b border-gray-200">
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="bg-blue-600 rounded-full p-2">
-              <FaCar className="text-white text-xl" />
+      {/* Header - Sleek design with status indicator */}
+      <div className="bg-white shadow-md border-b border-gray-200">
+        <div className="max-w-7xl mx-auto py-4 px-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="bg-red-600 rounded-full p-3 shadow-md">
+                <FaAmbulance className="text-white text-2xl" />
+              </div>
+              <div>
+                <h2 className="font-bold text-2xl text-gray-800">Emergency Response</h2>
+                <p className="text-gray-500 text-sm flex items-center">
+                  <span className={`inline-block w-3 h-3 rounded-full m-2 ${isAvailable ? "bg-green-500" : "bg-red-500"}`}></span>
+                  Driver Status: {isAvailable ? "Active" : "Offline"}
+                </p>
+              </div>
             </div>
-            <div>
-              <h2 className="font-semibold text-lg">Driver Dashboard</h2>
-              <p className="text-sm text-gray-600">
-                You're currently {isAvailable ? "online" : "offline"}
-              </p>
-            </div>
-          </div>
 
-          {/* Availability Toggle */}
-          <div className="flex items-center space-x-2">
-            <span
-              className={`text-sm font-medium ${
-                isAvailable ? "text-green-600" : "text-red-500"
-              }`}
-            >
-              {isAvailable ? "Available" : "Unavailable"}
-            </span>
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                className="sr-only peer"
-                checked={isAvailable}
-                onChange={toggleAvailability}
-              />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
-            </label>
+            {/* Availability Toggle - Enhanced */}
+            <div className="flex items-center space-x-4">
+              <div className="flex flex-col items-end">
+                <span className="text-sm text-gray-500 mb-1">Driver Availability</span>
+                <span className={`text-sm font-medium ${isAvailable ? "text-green-600" : "text-red-500"}`}>
+                  {isAvailable ? "Available for Emergencies" : "Currently Offline"}
+                </span>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="sr-only peer"
+                  checked={isAvailable}
+                  onChange={toggleAvailability}
+                />
+                <div className="w-16 h-8 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-green-600"></div>
+              </label>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Main Content Layout - Two columns side by side */}
-      <div className="flex-grow px-4 pb-6">
-        <div className="max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {/* Left Column - Driver Image and Map stacked vertically */}
-          <div className="flex flex-col gap-4">
-            {/* Driver Image */}
-            <div className="bg-white p rounded-lg shadow-md flex justify-center items-center h-84 w-full overflow-hidden">
-              <img
-                src="/src/assets/images/driverPage 1.png"
-                alt="Driver at Work"
-                className="w-full h-full object-cover rounded-lg"
-              />
-            </div>
-            
-            {/* Google Map */}
-            <div className="bg-white rounded-lg shadow-md overflow-hidden h-64 w-full border border-gray-200">
-              <GoogleMap className="w-full h-full" />
-            </div>
+      {/* Main Content - Full height with sidebar layout */}
+      <div className="flex-grow flex">
+        {/* Left Panel - Map */}
+        <div className="w-1/2 p-6 ml-12 flex flex-col">
+          {/* <OngoingTrip/> */}
+          <div className="flex items-center mb-4">
+            <FaMapMarkedAlt className="text-blue-700 text-xl mr-2" />
+            <h3 className="text-xl font-semibold text-gray-800">Current Location</h3>
           </div>
+          <div className="bg-white rounded-xl shadow-lg overflow-hidden flex-grow border border-gray-200">
+            <GoogleMap className="w-full h-full" />
+          </div>
+        </div>
 
-          {/* Right Column - Trip Details (full height) */}
-          <div className="bg-white p rounded-lg shadow-md flex flex-col h-full w-full">
+        {/* Right Panel - Trip Info */}
+        <div className="w-1/2 p-6 mr-12 flex flex-col">
+          <div className="flex items-center mb-4">
+            <FaUserMd className="text-blue-700 text-xl mr-2" />
+            <h3 className="text-xl font-semibold text-gray-800">Patient Requests</h3>
+          </div>
+          <div className="bg-white rounded-xl shadow-lg flex-grow">
             {/* When offline, show offline message */}
             {!isAvailable && (
-              <div className="flex flex-col items-center justify-center h-full">
-                <div className="text-amber-500 text-5xl mb-4">
-                  <FaToggleOff />
+              <div className="flex flex-col items-center justify-center h-full p-8">
+                <div className="bg-gray-100 rounded-full p-6 mb-6">
+                  <FaToggleOff className="text-red-500 text-6xl" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                  You're currently offline
+                <h3 className="text-2xl font-bold text-gray-800 mb-3">
+                  Driver Mode: Offline
                 </h3>
-                <p className="text-gray-600 text-center">
-                  Set your status to available to start receiving ride requests
-                  from patients in need.
+                <p className="text-gray-600 text-center max-w-md">
+                  Toggle your availability to start receiving emergency transport requests from patients in need.
                 </p>
+                <button 
+                  onClick={toggleAvailability}
+                  className="mt-6 px-6 py-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition-colors font-medium"
+                >
+                  Go Online Now
+                </button>
               </div>
             )}
 
             {/* When searching for rides */}
-            {isAvailable && isSearching && totalIncomingRequests === 0 && (
-              <div className="flex flex-col items-center justify-center h-full"> 
-                <FaSpinner className="animate-spin text-blue-500 text-4xl mb-4" />
-                <p className="text-lg font-medium text-gray-700">
-                  Searching for ride requests...
+            {isAvailable && totalIncomingRequests === 0 && (
+              <div className="flex flex-col items-center justify-center h-full p-8"> 
+                <div className="relative mb-6">
+                  <div className="w-20 h-20 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                    <FaAmbulance className="text-blue-700 text-xl" />
+                  </div>
+                </div>
+                <p className="text-xl font-medium text-gray-700 mb-3">
+                  On Standby for Emergencies
                 </p>
-                <p className="text-sm text-gray-500 mt-2">
-                  Please wait while we find patients in need
+                <p className="text-gray-500 text-center max-w-md">
+                  Your ambulance is ready to respond. We'll alert you as soon as a patient needs emergency transport.
                 </p>
-              
+                <div className="mt-6 flex items-center text-sm text-green-600">
+                  <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
+                  Active and monitoring incoming requests
+                </div>
               </div>
             )}
 
-            {/* When there are ride requests - Full container size */}
+            {/* When there are ride requests */}
             {isAvailable && totalIncomingRequests > 0 && (
               isCheckedOut ? 
                 <TripCheckout/>
                 :
                 (
-                  <div className="h-full w-full overflow-y-auto">
-                    <IncomingTrips />
+                  <div className="h-full flex flex-col">
+                    <div className="p-4 border-b border-gray-200">
+                      <div className="flex justify-between items-center">
+                        <h3 className="text-lg font-semibold text-gray-800">
+                          Incoming Patient Requests
+                        </h3>
+                        <span className="px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm font-medium">
+                          {totalIncomingRequests} {totalIncomingRequests === 1 ? 'Request' : 'Requests'}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex-grow overflow-y-auto p-4">
+                      <IncomingTrips />
+                    </div>
                   </div>
                 )
             )}
           </div>
+        </div>
+      </div>
+
+      {/* Status Bar */}
+      <div className="bg-gray-800 text-white py-2 px-6">
+        <div className="max-w-7xl mx-auto flex justify-between items-center">
+          <div className="text-sm">Driver ID: {id} • Role: {role}</div>
+          <div className="text-sm">Emergency Dispatch: +1-800-AMBULANCE</div>
         </div>
       </div>
     </div>

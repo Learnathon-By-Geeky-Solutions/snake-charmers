@@ -147,6 +147,7 @@ def authenticate_user(
         raise
     
     except Exception as exc:
+        print(exc)
         session.rollback()
         raise INTERNAL_SERVER_ERROR from exc
 
