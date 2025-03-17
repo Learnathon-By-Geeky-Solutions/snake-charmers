@@ -1,3 +1,10 @@
+---
+layout: page
+title: About
+permalink: /about/
+---
+
+
 # LifeRide 🚑
 
 [![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com/)
