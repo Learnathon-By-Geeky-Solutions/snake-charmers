@@ -60,7 +60,7 @@ permalink: /about/
 </td>
 <!-- <td width="50%">
 
-<img src="public/images/architecture-diagram.png" alt="LifeRide System Architecture" width="100%">
+<img src="images/architecture-diagram.png" alt="LifeRide System Architecture" width="100%">
 
 </td> -->
 </tr>
@@ -142,7 +142,7 @@ LifeRide is a comprehensive web-based platform designed to revolutionize emergen
 ## 🏗 System Architecture
 
 ### Architecture Diagram
-![Architecture Diagram](public/images/architecture-diagram.png)
+![Architecture Diagram](images/architecture-diagram.png)
 
 ### Services Overview
 
@@ -158,7 +158,7 @@ Our platform uses a microservices architecture with the following key components
 
 ### System Flow Diagram
 
-![System Flow Diagram](public/images/sysflow.png)
+![System Flow Diagram](images/sysflow.png)
 
 #### Operational Flow Explained
 
@@ -184,7 +184,7 @@ Our platform uses a microservices architecture with the following key components
 
 The ER diagram illustrates our relational database structure, showing the relationships between users, drivers, trips, and other key entities.
 
-![ER Diagram](public/images/ER_Diagram.png)
+![ER Diagram](images/ER_Diagram.png)
 
 ## 📘 API Documentation
 
