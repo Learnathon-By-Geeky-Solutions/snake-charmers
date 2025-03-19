@@ -22,11 +22,10 @@ const DriverDashboard = () => {
 
   const dispatch = useDispatch();
 
-
-  const { coordinates, error } = useLocation({
+  useLocation({
     trackPeriodically: true,       // Periodic updates
     isActive: isAvailable,         // Only when driver is available
-    interval: 30000,
+    interval: 15000,
     id,               
     onLocationUpdate: SendMessage
   });
@@ -36,8 +35,8 @@ const DriverDashboard = () => {
       console.log("dispatching");
       dispatch(unsetLocationUpdateState());
       DisconnectFromServer()
-    }else if(id != 0){
-        ConnectToserver(id, role, dispatch)
+    } else if (id != 0) {
+        ConnectToserver(id, role, dispatch);
     }
   }, [isAvailable])
 

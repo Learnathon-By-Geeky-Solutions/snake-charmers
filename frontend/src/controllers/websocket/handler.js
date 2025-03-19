@@ -6,6 +6,7 @@ import { addDriverResponse } from "../../store/slices/driver-response-slice";
 import { setRiderWaitingStatus } from "../../store/slices/rider-waiting-status-slice";
 import { setOngoingTripDetails } from "../../store/slices/ongoing-trip-details-slice";
 import { setIsOnATrip } from "../../store/slices/running-trip-indicator-slice";
+import { changeCheckoutStatus } from "../../store/slices/checkout-status-slice";
 
 const ConnectToserver = async(id, role /*, dispatch*/) => {
     try{
@@ -78,6 +79,7 @@ function HandleIncomingMessage(message /*,dispatch*/) {
         store.dispatch(setOngoingTripDetails(message.data));
         store.dispatch(setIsOnATrip({isOnATrip:true}));
         store.dispatch(clearTripReq());
+        store.dispatch(changeCheckoutStatus());
     }
     if(name == "trip-ended"){
         store.dispatch(setIsOnATrip({isOnATrip:false}));

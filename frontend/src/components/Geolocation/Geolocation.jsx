@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { setLocationUpdateState } from '../../store/slices/location-update-state-slice';
 import store from '../../store';
+import WebSocketController from '../../controllers/websocket/ConnectionManger';
 /**
  * Gets the current coordinates
  * @returns {Promise<{latitude: number, longitude: number}>} Coordinates
@@ -76,10 +77,17 @@ const useLocation = ({
             longitude: coords.longitude
           }
         }
-        let ok = await onLocationUpdate(msg);
-        if(ok === true){
-          dispatch(setLocationUpdateState());
-        }    
+        
+        if(isAdded) onLocationUpdate(msg);
+        else{
+          // wait for the connection to  be established firsst
+          setTimeout(async () => {
+            let ok = await onLocationUpdate(msg);
+            if (ok === true) {
+              dispatch(setLocationUpdateState());
+            }
+          }, 2000);
+        }
       }
       return coords;
     } catch (err) {
