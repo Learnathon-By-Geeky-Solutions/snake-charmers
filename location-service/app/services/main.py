@@ -25,16 +25,11 @@ def add_driver_location(
         session.add(driver_location)
         session.commit()
         return {"success": True}
-
-    except HTTPException as e:
-        print(e)
-        session.rollback()
-        raise
     
     except Exception as exc:
         print(exc)
         session.rollback()
-        raise INTERNAL_SERVER_ERROR_MSG from exc
+        raise 
 
 def update_driver_location(
         session: Session,
@@ -59,14 +54,11 @@ def update_driver_location(
         session.merge(driver_location)
         session.commit()
         return {"success": True}
-
-    except HTTPException:
-        session.rollback()
-        raise
     
     except Exception as exc:
+        print(exc)
         session.rollback()
-        raise INTERNAL_SERVER_ERROR from exc
+        raise 
 
 def remove_driver_location(
         session: Session,
@@ -90,10 +82,8 @@ def remove_driver_location(
         session.commit()
         return {"success": True}
         
-    except HTTPException:
-        session.rollback()
-        raise
     
     except Exception as exc:
+        print(exc)
         session.rollback()
-        raise INTERNAL_SERVER_ERROR from exc
+        raise 
