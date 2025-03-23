@@ -8,7 +8,7 @@ RUN apk update && apk add --no-cache bash build-base libffi-dev
 WORKDIR /app
 
 # Copy the requirements files
-COPY ./ambulance-finder-service/requirements.txt .
+COPY ./auth-service/requirements.txt .
 RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 RUN pip install --no-cache-dir -r requirements.txt
@@ -24,14 +24,14 @@ FROM python:3.13.2-alpine AS base
 RUN adduser -D myuser
 
 # Set the working directory in the container
-WORKDIR /ambulance-finder-service
+WORKDIR /auth-service
 
 # Copy the virtual environment from the build stage
 COPY --from=build /opt/venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 # Copy the application code
-COPY ./ambulance-finder-service/app ./app
+COPY ./auth-service/app ./app
 COPY ./models ./app/models
 
 
@@ -47,7 +47,7 @@ EXPOSE 8000
 # Test Stage
 FROM base AS test
 COPY ./pytest.ini .
-COPY ./ambulance-finder-service/tests ./tests
+COPY ./auth-service/tests ./tests
 COPY ./conftest.py ./tests
 
 ENV PYTHONPATH=.

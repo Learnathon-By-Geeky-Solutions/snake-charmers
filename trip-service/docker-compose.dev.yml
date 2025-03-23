@@ -1,25 +1,25 @@
 services:
-  ambulance-finder-service:
+  trip-service:
     build:
       context: ..
-      dockerfile: ./ambulance-finder-service/Dockerfile
+      dockerfile: ./trip-service/Dockerfile
       target: dev 
-    container_name: ambulance-finder-service
+    container_name: trip-service
     ports:
-      - "7000:8000"
+      - "10000:8000"
     environment:
       DATABASE_URL: ${DATABASE_URL}
     volumes:
-      - .:/ambulance-finder-service
-      - /ambulance-finder-service/app/models
+      - .:/trip-service
+      - /trip-service/app/models
     command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
 
-  ambulance-finder-service-test:
+  trip-service-test:
     build:
       context: ..
-      dockerfile: ./ambulance-finder-service/Dockerfile
+      dockerfile: ./trip-service/Dockerfile
       target: test
-    container_name: ambulance-finder-service-test
+    container_name: trip-service-test
     environment:
       DATABASE_URL: ${DATABASE_URL}
       RIDER_PASSWORD_1: ${RIDER_PASSWORD_1}
@@ -28,9 +28,9 @@ services:
       DRIVER_PASSWORD_2: ${DRIVER_PASSWORD_2}
 
     volumes:
-      - /ambulance-finder-service/app/models
-      - /ambulance-finder-service/tests
-      - ./:/ambulance-finder-service 
+      - /trip-service/app/models
+      - /trip-service/tests
+      - ./:/trip-service 
     command: >
       sh -c "pytest -v --cov=app --cov-report=xml:coverage.xml tests/unittest &&
-           sed -i 's|/ambulance-finder-service/app|ambulance-finder-service/app|g' coverage.xml"
+           sed -i 's|/trip-service/app|trip-service/app|g' coverage.xml"
