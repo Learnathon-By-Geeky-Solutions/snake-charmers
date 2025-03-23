@@ -1,83 +1,152 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { FaMapMarkerAlt } from "react-icons/fa";
+import GoogleMap from "../Map/Map";
+import { ConnectToserver, SendMessage, DisconnectFromServer } from "../../controllers/websocket/handler";
+import { getCoordinates } from "../Geolocation/Geolocation";
+import { PuffLoaderComponent } from "../PuffLoader/PuffLoader";
+import { setRiderWaitingStatus } from "../../store/slices/rider-waiting-status-slice";
+import DriverResponse from "../DriverResponse/DriverResponse";
+import RideSearchForm from "../RideSearchForm/RideSearchForm";
+import OngoingTrip from '../OngoingTrip/OngoingTrip'
 
 const RideRequestPage = () => {
-  const navigate = useNavigate(); // ✅ Hook for navigation
+  // const navigate = useNavigate();
+  
+  // State to track input values
+  const [dropoffLocation, setDropoffLocation] = useState("");
+  const [pickupLocation, setPickupLocation] = useState("");
+  const [error, setError] = useState("");    
+  const [fare, setFare] = useState();
+  const [isLoading, setIsLoading] = useState(false);
+  const {id, role} = useSelector(state => state.user);
+  const [coords, setCoords] = useState({})
+  const [isRequested, setIsRequested] = useState(false)
+  const {isOnATrip} = useSelector(state => state.isOnATrip);
+  const dispatch = useDispatch();
 
-  const handleSearch = () => {
-    navigate("/driver_search"); // ✅ Redirects to /driver_search
+  useEffect(()=>{
+    if(isOnATrip){
+      setIsRequested(false);
+      setIsLoading(false);
+    }
+  }, [isOnATrip])
+
+  useEffect(() => {
+    const fetchCoordinates = async () => {
+      try {
+        const { latitude, longitude } = await getCoordinates();
+        console.log(latitude, longitude);
+        setCoords({latitude, longitude});
+
+      } catch (error) {
+        console.error("Error getting coordinates:", error);
+      }
+    };
+    fetchCoordinates();
+    if(id !== 0) {
+      ConnectToserver(id, role);
+    }
+    // Cleanup function to disconnect when component unmounts
+    return () => {
+      DisconnectFromServer();
+    };
+  }, []);
+
+
+
+  // Check if all fields have valid values
+  const isFormValid = 
+    pickupLocation.trim() !== "" && 
+    dropoffLocation.trim() !== "" && 
+    fare !== "" && 
+    !isNaN(parseInt(fare)) && 
+    parseInt(fare) > 0;
+
+
+  // Handle form submission
+  const handleSearch = async () => {
+    // Double-check validation (defensive programming)
+    
+    // if (!isFormValid) {
+    //   setError("Please enter both pickup and dropoff locations");
+    //   return;
+    // }
+    
+    setIsRequested(true);
+    dispatch(setRiderWaitingStatus({isWaiting: true}));
+    setIsLoading(true);
+    setError("");
+
+    try {
+      const response = await SendMessage({
+        name: "request-trip",
+        data:{
+          rider_id: id, 
+          pickup_location: pickupLocation,
+          fare: parseInt(fare),
+          destination: dropoffLocation,
+          latitude: coords.latitude,
+          longitude: coords.longitude
+        }
+      })
+      // setIsSearching(true);
+      
+    } catch (err) {
+      // Handle API errors
+      setError(err.message || "Failed to request ride. Please try again.");
+      setIsLoading(false);
+    }
   };
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center p-8">
       
       {/* Container for Form, Image, and Map */}
-      <div className="flex flex-col items-center w-full max-w-4xl space-y-6">
+      <div className="flex flex-col items-center w-full max-w-4xl space-y-20">
         
         {/* Upper Section (Form + Image) */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center w-full">
           
           {/* Left Side - Centered Ride Search Form */}
-          <div className="flex justify-center">
-            <div className="bg-white p-6 rounded-lg shadow-lg w-80 h-80 flex flex-col justify-center">
-              <h2 className="text-2xl font-semibold mb-4 text-center">Get a Ride</h2>
-              <div className="space-y-3">
-                {/* Pickup Location */}
-                <div className="flex items-center space-x-2 border border-gray-300 p-3 rounded-md">
-                  <FaMapMarkerAlt className="text-blue-600" />
-                  <input
-                    type="text"
-                    placeholder="Pickup location"
-                    className="w-full focus:outline-none"
-                  />
-                </div>
-
-                {/* Dropoff Location */}
-                <div className="flex items-center space-x-2 border border-gray-300 p-3 rounded-md">
-                  <FaMapMarkerAlt className="text-red-600" />
-                  <input
-                    type="text"
-                    placeholder="Dropoff location"
-                    className="w-full focus:outline-none"
-                  />
-                </div>
-
-                {/* Search Button (Navigates to /driver_search) */}
-                <button
-                  onClick={handleSearch} // ✅ Calls handleSearch on click
-                  className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700"
-                >
-                  Search
-                </button>
-              </div>
-            </div>
-          </div>
+          <RideSearchForm
+            pickupLocation={pickupLocation}
+            dropoffLocation={dropoffLocation}
+            setPickupLocation={setPickupLocation}
+            setDropoffLocation={setDropoffLocation}
+            handleSearch={handleSearch}
+            isFormValid={isFormValid}
+            isLoading={isLoading}
+            error={error}
+            fare={fare}
+            setFare={setFare}
+          />
 
           {/* Right Side - Ride Request Image */}
-          <div className="flex justify-center">
-            <img
-              src="/src/assets/images/driverPageRequest 1.png"
-              alt="Ride Request"
-              className="w-80 h-80 rounded-lg shadow-lg"
-            />
-          </div>
-
+          {isRequested ? (
+            (  <DriverResponse 
+                pickup_location = {pickupLocation}
+                destination = {dropoffLocation}
+                fare = {fare}
+              />
+            )
+          ) : (
+            <div className="flex justify-center">
+              <img
+                src="/src/assets/images/driverPageRequest 1.png"
+                alt="Ride Request"
+                className="w-80 h-80 rounded-lg shadow-lg"
+              />
+            </div>
+          )}
         </div>
 
         {/* Google Map (Aligned with Image & Form) */}
-        <div className="w-full flex justify-center">
-          <iframe
-            title="Google Map"
-            width="90%"
-            height="400"
-            className="rounded-lg shadow-2xl"
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3689.126991404184!2d91.807229414965!3d22.356851185285853!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30ad27582ff5c2ef%3A0x3e696c9b6b4d962c!2sChittagong%2C%20Bangladesh!5e0!3m2!1sen!2sbd!4v1649761307864!5m2!1sen!2sbd"
-            allowFullScreen=""
-            loading="lazy"
-          ></iframe>
-        </div>
-
+        <GoogleMap 
+          pickupLocation={pickupLocation}  
+          dropoffLocation={dropoffLocation}
+        />
+        {isOnATrip && <OngoingTrip/>}
       </div>
     </div>
   );

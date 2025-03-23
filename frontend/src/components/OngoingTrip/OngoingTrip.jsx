@@ -1,16 +1,37 @@
 import React from "react";
 import OngoingTripDetails from "../OngoingTripDetails/OngoingTripDetails";
-
+import { SendMessage } from "../../controllers/websocket/handler";
+import { useSelector, useDispatch } from "react-redux";
+import { setIsOnATrip } from "../../store/slices/running-trip-indicator-slice";
 const OngoingTrip = () => {
+
+  const {trip_id, rider_id} = useSelector(state => state.ongoingTripDetails)
+  const {role} = useSelector(state => state.user);
+  const dispatch = useDispatch();
+
+  const handleEndTrip = ()=>{
+    dispatch(setIsOnATrip({isOnATrip: false}));
+    SendMessage({
+      name: "end-trip",
+      data:{
+        trip_id,
+        rider_id
+      }
+    })
+  }
   return (
     <div className="min-h-screen bg-gray-200 flex flex-col items-center justify-center p-6">
-      
       {/* Top Banner */}
       <div className="w-full max-w-3xl flex justify-between items-center bg-black text-white p-3 rounded-lg shadow-md">
         <p className="text-lg font-semibold">On a Trip</p>
-        <button className="bg-red-600 px-6 py-2 rounded-md text-white shadow-md">
+        {role === "driver" &&
+          <button 
+            className="bg-red-600 px-6 py-2 rounded-md text-white shadow-md"
+            onClick={handleEndTrip}
+          >
           End Trip
-        </button>
+          </button>
+        }
       </div>
 
       {/* Google Map */}
@@ -28,14 +49,7 @@ const OngoingTrip = () => {
 
       {/* Trip Details Component */}
       <div className="mt-4 flex justify-center w-2/3">
-        <OngoingTripDetails
-          source="Hathazari"
-          destination="Agrabad"
-          riderName="Kamal"
-          riderPhone="018382384"
-          driverName="Rahim"
-          driverPhone="0172920102"
-        />
+        <OngoingTripDetails/>
       </div>
 
     </div>

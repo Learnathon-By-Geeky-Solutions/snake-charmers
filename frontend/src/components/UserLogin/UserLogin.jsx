@@ -1,16 +1,31 @@
 import { useState } from 'react';
+import { useDispatch } from "react-redux";
+import handleLogin from '../../controllers/Login';
+import { useNavigate } from 'react-router-dom';
+
 
 function UserLogin() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const [role, setRole] = useState('User'); // Default role is "User"
-  const [email, setEmail] = useState('');
+  const [phoneOrEmail, setPhoneOrEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(`Logging in as ${role}`);
-    console.log('Email:', email);
+    console.log('Phone or Email:', phoneOrEmail);
     console.log('Password:', password);
-    // Add login logic here
+    handleLogin({
+        phone_or_email: phoneOrEmail,
+        password,
+        user_type: (role === 'User' ? 'rider' : 'driver'),
+      },
+      dispatch,
+      navigate
+    )
+
   };
 
   return (
@@ -48,15 +63,15 @@ function UserLogin() {
               htmlFor="email"
               className="block text-sm font-medium text-gray-700"
             >
-              Email
+              Email/Mobile
             </label>
             <input
-              type="email"
+              // type="email"
               id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={phoneOrEmail}
+              onChange={(e) => setPhoneOrEmail(e.target.value)}
               className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              placeholder="Enter your email"
+              placeholder="Enter your email or mobile "
               required
             />
           </div>

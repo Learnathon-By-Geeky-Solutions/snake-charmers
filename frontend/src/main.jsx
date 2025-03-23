@@ -1,7 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
-
+import { Provider } from 'react-redux'
 
 import {
   createBrowserRouter,
@@ -14,11 +14,13 @@ import OverallSignup from './components/OverallSignup/OverallSignup';
 import UserLogin from './components/UserLogin/UserLogin';
 import RideRequest from './components/RideRequest/RideRequest';
 import DriverSearch from './components/DriverSearch/DriverSearch';
-import AvailableRide from './components/AvailableRide/AvailableRide';
+// import AvailableRide from './components/AvailableRide/AvailableRide';
+import DriverDashboard from './components/DriverDashboard/DriverDashboard';
 import RiderReview from './components/RiderReview/RiderReview';
-import TripConfirmed from './components/TripConfirmed/TripConfirmed';
+// import TripConfirmed from './components/TripConfirmed/TripConfirmed';
 import OngoingTrip from './components/OngoingTrip/OngoingTrip';
 
+import store from './store/index'
 
 
 const router = createBrowserRouter([
@@ -49,7 +51,7 @@ const router = createBrowserRouter([
       }, 
       {
         path: '/available_ride',
-        element: <AvailableRide></AvailableRide>
+        element: <DriverDashboard></DriverDashboard>
       }, 
       {
         path: '/rider_review',
@@ -68,6 +70,8 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <RouterProvider router={router} />
-  </StrictMode>,
+    <Provider store={store}>
+      <RouterProvider router={router} />
+    </Provider>
+  </StrictMode>
 );

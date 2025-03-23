@@ -1,10 +1,38 @@
 import { useState } from 'react';
+import handleSignUp from '../../controllers/Signup';
 
 const OverallSignup = () => {
   const [role, setRole] = useState('User'); // Default role is "User"
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    mobile: '',
+    password: '',
+    confirmPassword: '',
+  });
+
+  // Handle input change
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [id]: value,
+    }));
+  };
+
+  // Handle form submission
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log('Form Data:', formData);
+    console.log(`Signing up as ${role}`);
+    handleSignUp({
+      ...formData,
+      user_type: (role === 'User' ? 'rider' : 'driver'),
+    })
+  };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center -mt-6"> {/* Removed top margin */}
+    <div className="min-h-screen flex flex-col items-center justify-center -mt-6">
       <div className="w-full max-w-lg bg-white shadow-2xl shadow-black rounded-lg p-7">
         {/* Role selection buttons */}
         <div className="flex justify-center gap-4 mb-6">
@@ -30,15 +58,18 @@ const OverallSignup = () => {
           {role} Signup Here
         </h2>
 
-        <form>
-          {/* Name Field - Label & Input Side by Side */}
+        {/* Form */}
+        <form onSubmit={handleSubmit}>
+          {/* Name Field */}
           <div className="mb-3 flex items-center">
-            <label className="w-32 text-gray-700 text-sm font-bold" htmlFor="username">
+            <label className="w-32 text-gray-700 text-sm font-bold" htmlFor="name">
               Name:
             </label>
             <input
               type="text"
-              id="username"
+              id="name"
+              value={formData.name}
+              onChange={handleChange}
               placeholder={`Enter your ${role.toLowerCase()} name`}
               className="flex-1 px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
@@ -52,20 +83,24 @@ const OverallSignup = () => {
             <input
               type="email"
               id="email"
+              value={formData.email}
+              onChange={handleChange}
               placeholder="Enter your email"
               className="flex-1 px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
-          {/* Contact Number Field */}
+          {/* mobile Number Field */}
           <div className="mb-3 flex items-center">
-            <label className="w-32 text-gray-700 text-sm font-bold" htmlFor="contact">
-              Contact No:
+            <label className="w-32 text-gray-700 text-sm font-bold" htmlFor="mobile">
+              Mobile:
             </label>
             <input
               type="text"
-              id="contact"
-              placeholder="Enter your contact number"
+              id="mobile"
+              value={formData.mobile}
+              onChange={handleChange}
+              placeholder="Enter your mobile number"
               className="flex-1 px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -78,6 +113,8 @@ const OverallSignup = () => {
             <input
               type="password"
               id="password"
+              value={formData.password}
+              onChange={handleChange}
               placeholder="Enter your password"
               className="flex-1 px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
@@ -91,6 +128,8 @@ const OverallSignup = () => {
             <input
               type="password"
               id="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
               placeholder="Confirm your password"
               className="flex-1 px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />

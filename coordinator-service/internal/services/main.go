@@ -20,6 +20,7 @@ func HandleTripRequest(conn *websocket.Conn, payload map[string]any) {
 		return
 	}
 	fmt.Printf("Trip requested by Rider with id %d\n", data.RiderID)
+	fmt.Print(data)
 	res1, ok := TripManager.SendTripRequest(data)
 	if !ok {
 		fmt.Printf("Error sending the trip request to the trip-service\n")
@@ -30,12 +31,17 @@ func HandleTripRequest(conn *websocket.Conn, payload map[string]any) {
 		TripManager.InitiateTripRequest(res1.ReqID, data.RiderID)
 		res2, ok := TripManager.RequestAmbulances(data)
 		if !ok {
+			fmt.Printf("Error sending the request to the ambulance finder service.\n")
 			EventEmitter.SendErrorMessage(conn)
+			TripManager.RequestTripRequestRemoval(res1.ReqID)
 		} else {
-			print(res2)
+			// print(res2)
+			if len(res2) == 0 {
+				fmt.Printf("No ambulance found nearby..");
+			}
 			for _, driver := range res2 {
 				fmt.Printf("Pinging the driver with ID %d\n", driver.DriverID)
-				go EventEmitter.PingDrivers(driver.DriverID, res1.ReqID, data.PickupLocation, data.Destination)
+				go EventEmitter.PingDrivers(driver.DriverID, res1.ReqID, data.PickupLocation, data.Destination, data.Fare)
 			}
 		}
 	}
@@ -166,7 +172,7 @@ func HandleTripConfirmation(conn *websocket.Conn, payload map[string]any) {
 }
 
 func HandleEndTrip(conn *websocket.Conn, payload map[string]any) {
-	var data Schemas.TripID
+	var data Schemas.EndTrip
 	err := Utils.DecodeMapToStruct(payload, &data)
 	if err != nil {
 		fmt.Println(DecodingError, err)
@@ -178,4 +184,5 @@ func HandleEndTrip(conn *websocket.Conn, payload map[string]any) {
 		EventEmitter.SendErrorMessage(conn)	
 	}
 	fmt.Printf("Request to the Trip service for ending trip sent successfully\n")
+	EventEmitter.SendEndTripNotification(data.RiderID)
 }

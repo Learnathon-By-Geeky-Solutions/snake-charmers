@@ -10,7 +10,13 @@ function Home() {
           Ambulance Sharing Platform – Saving Lives, Multiple Rides at a Time
         </h1>
         <p className="text-base text-gray-700 mb-6">
-          Our Ambulance sharing platform is designed to revolutionize emergency medical response. With our services, you can quickly and effortlessly book an Ambulance, ensuring faster response times and life-saving assistance when it matters most. Choose us to enhance your Ambulance experience and make every second count in critical moments. Together, we can save lives.
+          Our Ambulance sharing platform is designed to 
+          revolutionize emergency medical response. 
+          With our services, you can quickly and effortlessly book an 
+          Ambulance, ensuring faster response times and life-saving 
+          assistance when it matters most. Choose us to enhance your 
+          Ambulance experience and make every second count in critical 
+          moments. Together, we can save lives.
         </p>
         <div className="mt-6">
           <Link to="/signup">
