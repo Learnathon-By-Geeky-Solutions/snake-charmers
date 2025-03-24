@@ -34,7 +34,6 @@ function Navbar() {
       <div className="navbar-start">
         <div className="dropdown">
           <ul
-            tabIndex={0}
             className="menu menu-sm dropdown-content bg-light-green-1 rounded-box z-10 mt-3 w-52 p-2 shadow">
             <li><Link to="/">Home</Link></li>
             <li>

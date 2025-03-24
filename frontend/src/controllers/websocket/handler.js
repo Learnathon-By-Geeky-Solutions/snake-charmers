@@ -8,9 +8,9 @@ import { setOngoingTripDetails } from "../../store/slices/ongoing-trip-details-s
 import { setIsOnATrip } from "../../store/slices/running-trip-indicator-slice";
 import { changeCheckoutStatus } from "../../store/slices/checkout-status-slice";
 
-const ConnectToserver = async(id, role /*, dispatch*/) => {
+const ConnectToserver = async(id, role) => {
     try{
-        let connect = await WebSocketController.connect({
+        await WebSocketController.connect({
             logFunction: (message, type) => console.log(`[${type}] ${message}`),
             sendInitialMessage: true,
             initialMessage: { 

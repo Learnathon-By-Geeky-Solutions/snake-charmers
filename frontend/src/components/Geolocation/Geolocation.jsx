@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { setLocationUpdateState } from '../../store/slices/location-update-state-slice';
 import store from '../../store';
-import WebSocketController from '../../controllers/websocket/ConnectionManger';
 /**
  * Gets the current coordinates
  * @returns {Promise<{latitude: number, longitude: number}>} Coordinates

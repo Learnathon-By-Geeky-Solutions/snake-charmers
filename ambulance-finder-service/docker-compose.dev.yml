@@ -6,7 +6,7 @@ services:
       target: dev 
     container_name: ambulance-finder-service
     ports:
-      - "7000:8000"
+      - "8000:8000"
     environment:
       DATABASE_URL: ${DATABASE_URL}
     volumes:

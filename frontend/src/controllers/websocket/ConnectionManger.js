@@ -158,7 +158,6 @@ const WebSocketController = (function() {
         };
         
         // Replace existing onclose with our handler
-        const originalOnClose = socket.onclose;
         socket.onclose = onCloseHandler;
         
         socket.close(code, reason);

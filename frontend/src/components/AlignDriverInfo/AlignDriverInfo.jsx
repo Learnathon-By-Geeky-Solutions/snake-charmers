@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from 'prop-types';
 import { FaUserCircle, FaStar, FaPhone } from "react-icons/fa";
 import { SendMessage } from "../../controllers/websocket/handler";
 import { useSelector, useDispatch } from "react-redux";
@@ -72,6 +73,15 @@ const AlignDriverInfo = ({ name, mobile, req_id, fare, driver_id, pickup_locatio
       </div>
     </div>
   );
+};
+AlignDriverInfo.propTypes = {
+  name: PropTypes.string.isRequired,
+  mobile: PropTypes.string.isRequired,
+  req_id: PropTypes.number.isRequired,
+  fare: PropTypes.number.isRequired,
+  driver_id: PropTypes.number.isRequired,
+  pickup_location: PropTypes.string.isRequired,
+  destination: PropTypes.string.isRequired,
 };
 
 export default AlignDriverInfo;
