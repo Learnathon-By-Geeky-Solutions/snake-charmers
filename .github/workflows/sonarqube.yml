@@ -1,6 +1,10 @@
 name: Sonarqube Analysis
 
 on:
+  pull_request:
+    branches:
+      - main
+    types: [reopened, synchronize, opened]
   push:
     branches:
       - main

@@ -22,7 +22,7 @@ const UpdateLocation = async (coords) => {
                 credentials: 'include'
             })
         let statusCode = response.status;
-        response = await response.json();
+        await response.json();
 
         if (statusCode == 200){
             console.log("Location updated")       

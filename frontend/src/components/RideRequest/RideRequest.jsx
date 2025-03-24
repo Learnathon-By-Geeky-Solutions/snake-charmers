@@ -1,17 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import GoogleMap from "../Map/Map";
 import { ConnectToserver, SendMessage, DisconnectFromServer } from "../../controllers/websocket/handler";
 import { getCoordinates } from "../Geolocation/Geolocation";
-import { PuffLoaderComponent } from "../PuffLoader/PuffLoader";
 import { setRiderWaitingStatus } from "../../store/slices/rider-waiting-status-slice";
 import DriverResponse from "../DriverResponse/DriverResponse";
 import RideSearchForm from "../RideSearchForm/RideSearchForm";
 import OngoingTrip from '../OngoingTrip/OngoingTrip'
 
 const RideRequestPage = () => {
-  // const navigate = useNavigate();
   
   // State to track input values
   const [dropoffLocation, setDropoffLocation] = useState("");
