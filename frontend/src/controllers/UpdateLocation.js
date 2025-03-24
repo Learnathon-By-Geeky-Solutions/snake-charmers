@@ -1,4 +1,3 @@
-// import { setUser } from "../store/slices/user-slice";
 import store from "../store";
 
 const UpdateLocation = async (coords) => {

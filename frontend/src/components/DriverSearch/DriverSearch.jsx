@@ -1,6 +1,4 @@
 import React from "react";
-import AlignDriverInfo from "../AlignDriverInfo/AlignDriverInfo";
-import Fare from "../Fare/Fare";
 import { PuffLoaderComponent } from "../PuffLoader/PuffLoader";
 import { DriverResponse } from "../DriverResponse/DriverResponse";
 

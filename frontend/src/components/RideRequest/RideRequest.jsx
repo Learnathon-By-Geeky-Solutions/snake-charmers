@@ -65,13 +65,7 @@ const RideRequestPage = () => {
 
 
   // Handle form submission
-  const handleSearch = async () => {
-    // Double-check validation (defensive programming)
-    
-    // if (!isFormValid) {
-    //   setError("Please enter both pickup and dropoff locations");
-    //   return;
-    // }
+  const handleSearch = async () => {    
     
     setIsRequested(true);
     dispatch(setRiderWaitingStatus({isWaiting: true}));
@@ -79,7 +73,7 @@ const RideRequestPage = () => {
     setError("");
 
     try {
-      const response = await SendMessage({
+      await SendMessage({
         name: "request-trip",
         data:{
           rider_id: id, 
@@ -90,7 +84,6 @@ const RideRequestPage = () => {
           longitude: coords.longitude
         }
       })
-      // setIsSearching(true);
       
     } catch (err) {
       // Handle API errors
@@ -127,7 +120,7 @@ const RideRequestPage = () => {
             (  <DriverResponse 
                 pickup_location = {pickupLocation}
                 destination = {dropoffLocation}
-                fare = {fare}
+                fare = {parseInt(fare)}
               />
             )
           ) : (

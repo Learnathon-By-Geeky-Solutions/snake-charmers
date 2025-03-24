@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import PropTypes from 'prop-types';
 import AlignDriverInfo from "../AlignDriverInfo/AlignDriverInfo";
 import { useDispatch, useSelector } from "react-redux";
 import { SendMessage } from "../../controllers/websocket/handler";
@@ -179,6 +180,11 @@ export const DriverResponse = ({pickup_location, destination, fare}) => {
       </div>
     </div>
   );
+};
+DriverResponse.propTypes = {
+  pickup_location: PropTypes.string.isRequired,
+  destination: PropTypes.string.isRequired,
+  fare: PropTypes.number.isRequired,
 };
 
 export default DriverResponse;

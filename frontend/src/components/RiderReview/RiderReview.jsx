@@ -1,7 +1,5 @@
 import React from "react";
 import WaitingRiderReview from "../WaitingRiderReview/WaitingRiderReview";
-import TripConfirmed from "../TripConfirmed/TripConfirmed";
-import TripBooked from "../TripBooked/TripBooked";
 
 const RiderReview = () => {
   return (

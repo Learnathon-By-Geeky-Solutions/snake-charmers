@@ -1,5 +1,5 @@
 import { FaMapMarkerAlt, FaMoneyBillWave } from "react-icons/fa";
-import { useState } from "react";
+import PropTypes from 'prop-types';
 
 const RideSearchForm = ({
   pickupLocation, 
@@ -13,6 +13,17 @@ const RideSearchForm = ({
   fare,
   setFare
 }) => {
+  // Extract the button class logic to a separate function
+  const getButtonClass = () => {
+    if (!isFormValid) {
+      return "bg-gray-400 cursor-not-allowed";
+    } else if (isLoading) {
+      return "bg-blue-400";
+    } else {
+      return "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700";
+    }
+  };
+
   return (
     <div className="flex justify-center">
       <div className="bg-gradient-to-br from-white to-gray-50 p-8 rounded-2xl shadow-xl w-96 flex flex-col justify-center border border-gray-100">
@@ -66,13 +77,7 @@ const RideSearchForm = ({
           <button
             onClick={handleSearch}
             disabled={!isFormValid || isLoading}
-            className={`w-full ${
-              !isFormValid 
-                ? "bg-gray-400 cursor-not-allowed" 
-                : isLoading 
-                  ? "bg-blue-400" 
-                  : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
-            } text-white py-3 rounded-xl flex justify-center items-center transition-all duration-300 mt-2 font-medium shadow-md`}
+            className={`w-full ${getButtonClass()} text-white py-3 rounded-xl flex justify-center items-center transition-all duration-300 mt-2 font-medium shadow-md`}
           >
             {isLoading ? (
               <>
@@ -90,6 +95,19 @@ const RideSearchForm = ({
       </div>
     </div>
   );
+};
+
+RideSearchForm.propTypes = {
+  pickupLocation: PropTypes.string.isRequired,
+  dropoffLocation: PropTypes.string.isRequired,
+  setPickupLocation: PropTypes.func.isRequired,
+  setDropoffLocation: PropTypes.func.isRequired,
+  handleSearch: PropTypes.func.isRequired,
+  isFormValid: PropTypes.bool.isRequired,
+  isLoading: PropTypes.bool.isRequired,
+  error: PropTypes.string,
+  fare: PropTypes.number.isRequired,
+  setFare: PropTypes.func.isRequired,
 };
 
 export default RideSearchForm;

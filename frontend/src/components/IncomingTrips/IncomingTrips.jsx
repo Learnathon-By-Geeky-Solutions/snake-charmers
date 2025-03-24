@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import TripDetails from "../TripDetails/TripDetails";
 import { FaRoute } from "react-icons/fa";
 import {useSelector, useDispatch} from 'react-redux'
@@ -13,16 +13,6 @@ const IncomingTrips = () => {
   const handleTripExpire = (reqID) => {
     dispatch(removeTripReq(reqID))
   };
-
-  // useEffect(() => {
-  //   // Cleanup function runs when component unmounts
-  //   return () => {
-  //     // Remove each trip request when unmounting
-  //     trips.forEach(trip => {
-  //       dispatch(removeTripReq(trip.req_id));
-  //     });
-  //   };
-  // }, []); 
 
   return (
     <div className="w-full h-[710px] bg-gray-400 rounded-lg shadow-lg flex flex-col items-center overflow-hidden">
@@ -44,7 +34,6 @@ const IncomingTrips = () => {
                 pickup_location={trip.pickup_location}
                 destination={trip.destination}
                 fare={trip.fare}
-                // passenger={trip.passenger}
                 onExpire={() => handleTripExpire(trip.req_id)}
                 expiryTime={30} // 30 seconds timer
               />

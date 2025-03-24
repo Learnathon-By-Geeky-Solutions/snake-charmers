@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 const Fare = ({ currentFare, onFareChange }) => {
   const handleDecrease = () => {
@@ -32,6 +33,10 @@ const Fare = ({ currentFare, onFareChange }) => {
       </div>
     </div>
   );
+};
+Fare.propTypes = {
+  currentFare: PropTypes.number.isRequired,
+  onFareChange: PropTypes.func.isRequired,
 };
 
 export default Fare;

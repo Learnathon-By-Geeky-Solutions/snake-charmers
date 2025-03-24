@@ -1,4 +1,5 @@
 import PuffLoader from "react-spinners/PuffLoader";
+import PropTypes from 'prop-types';
 
 export const PuffLoaderComponent = ({text}) => {
   return (
@@ -21,6 +22,9 @@ export const PuffLoaderComponent = ({text}) => {
       </div>
     </div>
   );
+};
+PuffLoaderComponent.propTypes = {
+  text: PropTypes.string.isRequired,
 };
 
 export default PuffLoaderComponent;

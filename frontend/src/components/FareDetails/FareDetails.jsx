@@ -1,4 +1,4 @@
-import React, { useDebugValue, useEffect, useState } from "react";
+import React, { useState } from "react";
 import WaitingRiderReview from "../WaitingRiderReview/WaitingRiderReview";
 import { useDispatch, useSelector } from "react-redux";
 import { setRiderResponse } from "../../store/slices/rider-response-slice";
@@ -40,9 +40,7 @@ const FareDetails = () => {
       }
     })
   }
-  // useEffect(()=>{
-  //   return () => {dispatch(setRiderResponse({isWaiting: false}))};
-  // }, [])
+
 
   return (
     <div className="bg-black text-white w-[300px] h-full md:w-full rounded-lg shadow-lg flex flex-col items-center justify-between">

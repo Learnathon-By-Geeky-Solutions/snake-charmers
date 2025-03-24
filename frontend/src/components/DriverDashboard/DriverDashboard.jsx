@@ -4,17 +4,14 @@ import GoogleMap from "../Map/Map";
 import { useLocation } from "../Geolocation/Geolocation";
 import { unsetLocationUpdateState } from "../../store/slices/location-update-state-slice";
 import { useDispatch, useSelector } from "react-redux";
-import {ConnectToserver, DisconnectFromServer } from "../../controllers/websocket/handler";
-import { SendMessage } from "../../controllers/websocket/handler";
+import {ConnectToserver, DisconnectFromServer, SendMessage } from "../../controllers/websocket/handler";
 import TripCheckout from "../TripCheckout/TripCheckout";
 import OngoingTrip from '../OngoingTrip/OngoingTrip'
 
-import { FaToggleOff, FaSpinner, FaCar, FaAmbulance, FaUserMd, FaMapMarkedAlt } from "react-icons/fa";
+import { FaToggleOff, FaAmbulance, FaUserMd, FaMapMarkedAlt } from "react-icons/fa";
 
 const DriverDashboard = () => {
   const [isAvailable, setIsAvailable] = useState(false);
-  // const [hasRequests, setHasRequests] = useState(false);
-  // const [isSearching, setIsSearching] = useState(false);
   const { id, role } = useSelector((state) => state.user);
   const totalIncomingRequests = useSelector((state) => state.tripRequests.length);
   const {isCheckedOut} = useSelector((state) => state.checkout);
@@ -36,7 +33,7 @@ const DriverDashboard = () => {
       dispatch(unsetLocationUpdateState());
       DisconnectFromServer()
     } else if (id != 0) {
-        ConnectToserver(id, role, dispatch);
+        ConnectToserver(id, role);
     }
   }, [isAvailable])
 
@@ -44,19 +41,6 @@ const DriverDashboard = () => {
   const toggleAvailability = () => {
     const newStatus = !isAvailable;
     setIsAvailable(newStatus);
-
-    if (newStatus) {
-      // setIsSearching(true);
-      // setHasRequests(false);
-
-      // setTimeout(() => {
-      //   setIsSearching(false);
-      //   setHasRequests(true);
-      // }, 5000);
-    } else {
-      // setIsSearching(false);
-      // setHasRequests(false);
-    }
   };
 
   return (
@@ -86,7 +70,7 @@ const DriverDashboard = () => {
                   {isAvailable ? "Available for Emergencies" : "Currently Offline"}
                 </span>
               </div>
-              <label className="relative inline-flex items-center cursor-pointer">
+              <label className="relative inline-flex items-center cursor-pointer" aria-label="Toggle Availability">
                 <input
                   type="checkbox"
                   className="sr-only peer"

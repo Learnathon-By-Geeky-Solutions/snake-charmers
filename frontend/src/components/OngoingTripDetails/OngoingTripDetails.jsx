@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 
 const OngoingTripDetails = () => {
   
-  const {pickup_location, destination, fare, status, rider_name, rider_mobile, driver_name, driver_mobile} = useSelector(state => state.ongoingTripDetails);
+  const {pickup_location, destination, fare, rider_name, rider_mobile, driver_name, driver_mobile} = useSelector(state => state.ongoingTripDetails);
   
   return (
     <div className="bg-black w-full max-w-3xl p-6 rounded-lg shadow-lg text-white text-center">
