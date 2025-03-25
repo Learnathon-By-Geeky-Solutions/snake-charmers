@@ -3,7 +3,9 @@ package Services
 import (
 	"fmt"
 	"net/http"
+
 	"github.com/gorilla/websocket"
+
 	"coordinator-service/internal/schemas"
 	"coordinator-service/internal/trip-manager"
 	"coordinator-service/internal/event-emitter"
@@ -12,156 +14,171 @@ import (
 
 const DecodingError = "Error decoding: "
 
+// decodePayload is a generic function to decode payload into a specific struct
+func decodePayload[T any](payload map[string]any, data *T) error {
+	return Utils.DecodeMapToStruct(payload, data)
+}
+
+// handleError logs the error and sends an error message through WebSocket
+func handleError(conn *websocket.Conn, errorMessage string) {
+	fmt.Println(errorMessage)
+	EventEmitter.SendErrorMessage(conn)
+}
+
 func HandleTripRequest(conn *websocket.Conn, payload map[string]any) {
 	var data Schemas.TripRequest
-	err := Utils.DecodeMapToStruct(payload, &data)
-	if err != nil {
-		fmt.Println(DecodingError, err)
+	if err := decodePayload(payload, &data); err != nil {
+		handleError(conn, DecodingError+err.Error())
 		return
 	}
+
 	fmt.Printf("Trip requested by Rider with id %d\n", data.RiderID)
 	fmt.Print(data)
+
 	res1, ok := TripManager.SendTripRequest(data)
 	if !ok {
-		fmt.Printf("Error sending the trip request to the trip-service\n")
-		EventEmitter.SendErrorMessage(conn)
-	} else {
-		fmt.Printf("Successfully sent trip request to the trip-service. Now pinging drivers.\n")
-		
-		TripManager.InitiateTripRequest(res1.ReqID, data.RiderID)
-		res2, ok := TripManager.RequestAmbulances(data)
-		if !ok {
-			fmt.Printf("Error sending the request to the ambulance finder service.\n")
-			EventEmitter.SendErrorMessage(conn)
-			TripManager.RequestTripRequestRemoval(res1.ReqID)
-		} else {
-			// print(res2)
-			if len(res2) == 0 {
-				fmt.Printf("No ambulance found nearby..");
-			}
-			for _, driver := range res2 {
-				fmt.Printf("Pinging the driver with ID %d\n", driver.DriverID)
-				go EventEmitter.PingDrivers(driver.DriverID, res1.ReqID, data.PickupLocation, data.Destination, data.Fare)
-			}
-		}
+		handleError(conn, "Error sending the trip request to the trip-service")
+		return
 	}
+
+	fmt.Printf("Successfully sent trip request to the trip-service. Now pinging drivers.\n")
+	TripManager.InitiateTripRequest(res1.ReqID, data.RiderID)
+
+	if err := processTripRequestDrivers(conn, res1.ReqID, data); err != nil {
+		TripManager.RequestTripRequestRemoval(res1.ReqID)
+	}
+}
+
+func processTripRequestDrivers(conn *websocket.Conn, reqID int, data Schemas.TripRequest) error {
+	res2, ok := TripManager.RequestAmbulances(data)
+	if !ok {
+		handleError(conn, "Error sending the request to the ambulance finder service")
+		return fmt.Errorf("ambulance request failed")
+	}
+
+	if len(res2) == 0 {
+		fmt.Printf("No ambulance found nearby..")
+		return nil
+	}
+
+	for _, driver := range res2 {
+		fmt.Printf("Pinging the driver with ID %d\n", driver.DriverID)
+		go EventEmitter.PingDrivers(driver.DriverID, reqID, data.PickupLocation, data.Destination, data.Fare)
+	}
+
+	return nil
 }
 
 func HandleLocationUpdate(conn *websocket.Conn, payload map[string]any, typ string) {
 	var data Schemas.LocationUpdate
-	err := Utils.DecodeMapToStruct(payload, &data)
-	if err != nil {
-		fmt.Println(DecodingError, err)
+	if err := decodePayload(payload, &data); err != nil {
+		handleError(conn, DecodingError+err.Error())
 		return
 	}
-	var method string
-	if typ == "update" {
-		method = http.MethodPut
-	} else {
+
+	method := http.MethodPut
+	if typ != "update" {
 		method = http.MethodPost
 	}
-	ok := TripManager.RequestLocationUpdate(data, method, typ)
-	if !ok {
-		fmt.Printf("Error while %sing location\n", typ)
-		EventEmitter.SendErrorMessage(conn)
+
+	if ok := TripManager.RequestLocationUpdate(data, method, typ); !ok {
+		handleError(conn, fmt.Sprintf("Error while %sing location", typ))
 		return
 	}
+
 	fmt.Printf("Location %sed successfully\n", typ)
 }
 
 func HandleTripRequestCheckout(conn *websocket.Conn, payload map[string]any) {
 	var data Schemas.TripCheckout
-	err := Utils.DecodeMapToStruct(payload, &data)
-	if err != nil {
-		fmt.Println(DecodingError, err)
+	if err := decodePayload(payload, &data); err != nil {
+		handleError(conn, DecodingError+err.Error())
 		return
 	}
-	ok := TripManager.RequestTripCheckout(data)
-	if !ok {
-		fmt.Printf("Error while engaging the driver having ID %d\n", data.DriverID)
-		EventEmitter.SendErrorMessage(conn)
+
+	if !TripManager.RequestTripCheckout(data) {
+		handleError(conn, fmt.Sprintf("Error while engaging the driver having ID %d", data.DriverID))
 		return
 	}
+
 	fmt.Printf("Driver having the ID %d engaged successfully\n", data.DriverID)
 	TripManager.EngageDriver(data.ReqID, data.DriverID)
 }
 
 func HandleTripRequestDecline(conn *websocket.Conn, payload map[string]any) {
 	var data Schemas.TripDecline
-	err := Utils.DecodeMapToStruct(payload, &data)
-	if err != nil {
-		fmt.Println(DecodingError, err)
+	if err := decodePayload(payload, &data); err != nil {
+		handleError(conn, DecodingError+err.Error())
 		return
 	}
-	ok := TripManager.RequestTripDecline(data)
-	if !ok {
-		fmt.Printf("Error while declining the trip by driver having ID %d\n", data.DriverID)
-		EventEmitter.SendErrorMessage(conn)
-	}else{
-		fmt.Printf("Successfully declined the trip by driver having ID %d.\n", data.DriverID)
-		TripManager.ReleaseDriver(data.ReqID, data.DriverID)
+
+	if !TripManager.RequestTripDecline(data) {
+		handleError(conn, fmt.Sprintf("Error while declining the trip by driver having ID %d", data.DriverID))
+		return
 	}
+
+	fmt.Printf("Successfully declined the trip by driver having ID %d.\n", data.DriverID)
+	TripManager.ReleaseDriver(data.ReqID, data.DriverID)
 }
 
 func HandleBidFromDriver(conn *websocket.Conn, payload map[string]any) {
 	var data Schemas.BidFromDriver
-	err := Utils.DecodeMapToStruct(payload, &data)
-	if err != nil {
-		fmt.Println(DecodingError, err)
+	if err := decodePayload(payload, &data); err != nil {
+		handleError(conn, DecodingError+err.Error())
 		return
 	}
-	err = EventEmitter.SendBidFromDriver(data)
-	if err != nil {
-		fmt.Printf("Error sending bid from driver having ID %d\n", data.DriverID)
-		EventEmitter.SendErrorMessage(conn)
-		return
-	}
-	fmt.Printf("Successfully sent bid from driver having ID %d\n", data.DriverID)
 
+	if err := EventEmitter.SendBidFromDriver(data); err != nil {
+		handleError(conn, fmt.Sprintf("Error sending bid from driver having ID %d", data.DriverID))
+		return
+	}
+
+	fmt.Printf("Successfully sent bid from driver having ID %d\n", data.DriverID)
 }
 
 func HandleBidFromClient(conn *websocket.Conn, payload map[string]any) {
 	var data Schemas.BidFromClient
-	err := Utils.DecodeMapToStruct(payload, &data)
-	if err != nil {
-		fmt.Println(DecodingError, err)
+	if err := decodePayload(payload, &data); err != nil {
+		handleError(conn, DecodingError+err.Error())
 		return
 	}
-	err = EventEmitter.SendBidFromClient(data)
-	if err != nil {
-		fmt.Printf("Error sending bid from client\n")
-		EventEmitter.SendErrorMessage(conn)
-	}
-	fmt.Printf("Successfully sent bid from client\n")
 
+	if err := EventEmitter.SendBidFromClient(data); err != nil {
+		handleError(conn, "Error sending bid from client")
+		return
+	}
+
+	fmt.Printf("Successfully sent bid from client\n")
 }
 
 func HandleTripConfirmation(conn *websocket.Conn, payload map[string]any) {
 	var data Schemas.TripConfirm
-	err := Utils.DecodeMapToStruct(payload, &data)
-	if err != nil {
-		fmt.Println(DecodingError, err)
+	if err := decodePayload(payload, &data); err != nil {
+		handleError(conn, DecodingError+err.Error())
 		return
 	}
+
 	res, ok := TripManager.RequestTripConfirmation(data)
 	if !ok {
-		fmt.Println(fmt.Errorf("error sending trip confirmation request to the trip service"))
-		EventEmitter.SendErrorMessage(conn)
+		handleError(conn, "Error sending trip confirmation request to the trip service")
 		return
 	}
-	err = EventEmitter.SendTripConfirmation(res)
-	if err != nil {
-		fmt.Println(fmt.Errorf("error sending trip confirmation to the driver"))
-		EventEmitter.SendErrorMessage(conn)
-		return        // need to implement retry mechanism here
+
+	if err := EventEmitter.SendTripConfirmation(res); err != nil {
+		handleError(conn, "Error sending trip confirmation to the driver")
+		return
 	}
-	ok = TripManager.RequestTripRequestRemoval(data.ReqID)
-	if !ok {
-		fmt.Println(fmt.Errorf("error sending trip request removal request to the trip service"))
-		EventEmitter.SendErrorMessage(conn)	
-		return        // need to implement retry mechanism here      
+
+	if !TripManager.RequestTripRequestRemoval(data.ReqID) {
+		handleError(conn, "Error sending trip request removal request to the trip service")
+		return
 	}
-	for driverID, _ := range TripManager.ActiveTripRequest[data.ReqID].Drivers {
+
+	notifyOtherDrivers(data)
+}
+
+func notifyOtherDrivers(data Schemas.TripConfirm) {
+	for driverID := range TripManager.ActiveTripRequest[data.ReqID].Drivers {
 		if driverID == data.DriverID {
 			continue
 		}
@@ -173,16 +190,16 @@ func HandleTripConfirmation(conn *websocket.Conn, payload map[string]any) {
 
 func HandleEndTrip(conn *websocket.Conn, payload map[string]any) {
 	var data Schemas.EndTrip
-	err := Utils.DecodeMapToStruct(payload, &data)
-	if err != nil {
-		fmt.Println(DecodingError, err)
+	if err := decodePayload(payload, &data); err != nil {
+		handleError(conn, DecodingError+err.Error())
 		return
 	}
-	ok := TripManager.RequestEndTrip(data.TripID)
-	if !ok {
-		fmt.Println(fmt.Errorf("error while making request for ending the trip to the trip service"))
-		EventEmitter.SendErrorMessage(conn)	
+
+	if !TripManager.RequestEndTrip(data.TripID) {
+		handleError(conn, "Error while making request for ending the trip to the trip service")
+		return
 	}
+
 	fmt.Printf("Request to the Trip service for ending trip sent successfully\n")
 	EventEmitter.SendEndTripNotification(data.RiderID)
 }

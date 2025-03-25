@@ -10,54 +10,62 @@ var mutex = sync.Mutex{}
 var ActiveTripRequest = make(map[int]Schemas.TripDetails)
 
 func InitiateTripRequest(reqID int, clientID int) {
+	mutex.Lock()
+	defer mutex.Unlock()
+
 	ActiveTripRequest[reqID] = Schemas.TripDetails{
 		ClientID: clientID,
-		Drivers:  make(map[int]bool), // Initialize an empty map for drivers
+		Drivers:  make(map[int]bool),
 	}
 	fmt.Println("Trip initiated:", ActiveTripRequest[reqID])
 }
 
-func EngageDriver(reqID int, driverID int){
-	reqDetails, exists := ActiveTripRequest[reqID]
-	if !exists {
+func EngageDriver(reqID int, driverID int) {
+	mutex.Lock()
+	defer mutex.Unlock()
+
+	reqDetails, ok := ActiveTripRequest[reqID]
+	if !ok {
 		fmt.Println("Trip request not found while engaging driver!")
 		return
 	}
-	mutex.Lock()
-	reqDetails.Drivers[driverID] = true // Add driver to the map
-	ActiveTripRequest[reqID] = reqDetails // Update the map entry
-	mutex.Unlock()
+	
+	reqDetails.Drivers[driverID] = true
+	ActiveTripRequest[reqID] = reqDetails
+	
 	fmt.Println("Driver added to trip:", reqDetails.Drivers)
-	// return nil
 }
 
 func ReleaseDriver(reqID int, driverID int) {
-	reqDetails, exists := ActiveTripRequest[reqID]
-	if !exists {
+	mutex.Lock()
+	defer mutex.Unlock()
+
+	reqDetails, ok := ActiveTripRequest[reqID]
+	if !ok {
 		fmt.Println("Trip request not found while releasing the driver!")
 		return
 	}
 
-	_, driverExists := reqDetails.Drivers[driverID]
-	if !driverExists {
+	if _, exists := reqDetails.Drivers[driverID]; !exists {
 		fmt.Println("Driver not found while releasing in this trip!")
 		return
 	}
-	mutex.Lock()
-	delete(reqDetails.Drivers, driverID) // Remove driver from the map
-	ActiveTripRequest[reqID] = reqDetails // Update the map entry
-	mutex.Unlock()
+	
+	delete(reqDetails.Drivers, driverID)
+	ActiveTripRequest[reqID] = reqDetails
+	
 	fmt.Println("Driver removed from trip:", reqDetails.Drivers)
 }
 
 func DeleteTripRequest(reqID int) {
-	_, exists := ActiveTripRequest[reqID]
-	if !exists {
+	mutex.Lock()
+	defer mutex.Unlock()
+
+	if _, ok := ActiveTripRequest[reqID]; !ok {
 		fmt.Println("Trip request not found!")
 		return
 	}
 
-	delete(ActiveTripRequest, reqID) // Remove the trip entry from the map
-
+	delete(ActiveTripRequest, reqID)
 	fmt.Println("Trip request deleted:", reqID)
 }
