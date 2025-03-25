@@ -9,11 +9,6 @@ import (
 	"coordinator-service/internal/services"
 )
 
-// type Event struct {
-// 	Name string  `json:"name"` 
-// 	Data any `json:"data"`
-// }
-
 func ProcessEvents(conn *websocket.Conn, message []byte) {
 	var event Schemas.Event
 	err := json.Unmarshal(message, &event)

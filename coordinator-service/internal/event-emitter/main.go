@@ -1,53 +1,76 @@
 package EventEmitter
-import(
+
+import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/websocket"
 	"coordinator-service/internal/schemas"
 	"coordinator-service/internal/client-manager"
 	"coordinator-service/internal/trip-manager"
-	
 )
 
-func PingDrivers(driverID int, reqID int, pickupLocation string, destination string, fare int) {
+const (
+	MarshalError       = "Failed to marshal event data:"
+	DriverNotFoundMsg  = "driver not found for ID"
+)
 
-		driverConn, exists := ClientManager.ActiveDrivers[driverID]
-		if !exists {
-			fmt.Print(fmt.Errorf("driver with ID %d not found for pinging", driverID))
-			return
-		}
-		eventData := map[string]any{
-			"event": "new-trip-request",
-			"data": map[string]any{
-				"req_id":          reqID,
-				"pickup_location": pickupLocation,
-				"destination":     destination,
-				"fare":            fare,
-			},
-		}
+// sendWebSocketMessage is a generic function to send WebSocket messages
+func sendWebSocketMessage(conn *websocket.Conn, eventData map[string]any) error {
+	eventMessage, err := json.Marshal(eventData)
+	if err != nil {
+		fmt.Println(MarshalError, err)
+		return err
+	}
 
-		eventMessage, err := json.Marshal(eventData)
-		if err != nil {
-			fmt.Println("Failed to marshal event data:", err)
-			return 
-		}
-		// Send the event to the driver
-		err = driverConn.WriteMessage(websocket.TextMessage, eventMessage)
-		if err != nil {
-			fmt.Println("Failed to ping the driver", driverID, ":", err)
-		} else {
-			fmt.Println("Ping sent to driver", driverID)
-		}
+	err = conn.WriteMessage(websocket.TextMessage, eventMessage)
+	if err != nil {
+		fmt.Println("Failed to send WebSocket message:", err)
+		return err
+	}
+	return nil
 }
 
-func SendBidFromDriver(payload Schemas.BidFromDriver) (error){
-	// Prepare the event data
-	riderID := TripManager.ActiveTripRequest[payload.ReqID].ClientID
-	riderConn, exists := ClientManager.ActiveRiders[riderID]
+// getClientConnection retrieves a WebSocket connection based on client type
+func getClientConnection(clientType string, id int) (*websocket.Conn, bool) {
+	switch clientType {
+	case "driver":
+		conn, exists := ClientManager.ActiveDrivers[id]
+		return conn, exists
+	case "rider":
+		conn, exists := ClientManager.ActiveRiders[id]
+		return conn, exists
+	default:
+		return nil, false
+	}
+}
+
+func PingDrivers(driverID int, reqID int, pickupLocation string, destination string, fare int) {
+	driverConn, exists := getClientConnection("driver", driverID)
 	if !exists {
-		err := fmt.Errorf("rider with ID %d not found for sending bid from driver", riderID)
-		fmt.Println(err)
-		return err
+		fmt.Printf("driver with ID %d not found for pinging\n", driverID)
+		return
+	}
+
+	eventData := map[string]any{
+		"event": "new-trip-request",
+		"data": map[string]any{
+			"req_id":          reqID,
+			"pickup_location": pickupLocation,
+			"destination":     destination,
+			"fare":            fare,
+		},
+	}
+
+	if err := sendWebSocketMessage(driverConn, eventData); err == nil {
+		fmt.Println("Ping sent to driver", driverID)
+	}
+}
+
+func SendBidFromDriver(payload Schemas.BidFromDriver) error {
+	riderID := TripManager.ActiveTripRequest[payload.ReqID].ClientID
+	riderConn, exists := getClientConnection("rider", riderID)
+	if !exists {
+		return fmt.Errorf("rider with ID %d not found for sending bid from driver", riderID)
 	}
 
 	eventData := map[string]any{
@@ -60,25 +83,11 @@ func SendBidFromDriver(payload Schemas.BidFromDriver) (error){
 			"mobile":    payload.Mobile,
 		},
 	}
-	
-	// Marshal event data into JSON
-	eventMessage, err := json.Marshal(eventData)
-	if err != nil {
-		fmt.Println("Failed to marshal event data:", err)
-		return err
-	}
-	
-	err = riderConn.WriteMessage(websocket.TextMessage, eventMessage)
-	// Send the event to the rider
-	if err != nil {
-		fmt.Println("Failed to send message to rider", payload.ReqID, ":", err)
-		return err
-	}
-	return nil
+
+	return sendWebSocketMessage(riderConn, eventData)
 }
 
-func SendBidFromClient(payload Schemas.BidFromClient) (error){
-	// Prepare the event data
+func SendBidFromClient(payload Schemas.BidFromClient) error {
 	eventData := map[string]any{
 		"event": "bid-from-rider",
 		"data": map[string]any{
@@ -86,35 +95,37 @@ func SendBidFromClient(payload Schemas.BidFromClient) (error){
 			"amount": payload.Amount,
 		},
 	}
-	// Marshal event data into JSON
-	eventMessage, err := json.Marshal(eventData)
-	if err != nil {
-		fmt.Println("Failed to marshal event data:", err)
-		return err
-	}
-	//send event to the drivers
-	var Err error = nil
-	for driverID,_ := range TripManager.ActiveTripRequest[payload.ReqID].Drivers {
-		driverConn, exists := ClientManager.ActiveDrivers[driverID]
+
+	return broadcastToDrivers(payload.ReqID, eventData)
+}
+
+func broadcastToDrivers(reqID int, eventData map[string]any) error {
+	var lastError error
+	drivers := TripManager.ActiveTripRequest[reqID].Drivers
+
+	for driverID := range drivers {
+		driverConn, exists := getClientConnection("driver", driverID)
 		if !exists {
-			fmt.Println("Driver not found for ID", driverID)
+			fmt.Println(DriverNotFoundMsg, driverID)
 			continue
 		}
-		err = driverConn.WriteMessage(websocket.TextMessage, eventMessage)
-		if err != nil {
-			Err = err
+
+		if err := sendWebSocketMessage(driverConn, eventData); err != nil {
+			lastError = err
 			fmt.Println("Failed to send message to driver", driverID, ":", err)
 		}
 	}
-	return Err
+
+	return lastError
 }
 
-func SendTripConfirmation(payload Schemas.TripConfirmResponse)(error){
-	driverConn, exists := ClientManager.ActiveDrivers[payload.DriverID]
+func SendTripConfirmation(payload Schemas.TripConfirmResponse) error {
+	driverConn, exists := getClientConnection("driver", payload.DriverID)
 	if !exists {
-		fmt.Println("Driver not found for ID", payload.DriverID)
-		// return error
+		fmt.Println(DriverNotFoundMsg, payload.DriverID)
+		return fmt.Errorf(DriverNotFoundMsg+" %d", payload.DriverID)
 	}
+
 	eventData := map[string]any{
 		"event": "trip-confirmed",
 		"data": map[string]any{
@@ -127,64 +138,46 @@ func SendTripConfirmation(payload Schemas.TripConfirmResponse)(error){
 			"status":          payload.Status,
 		},
 	}
-	eventMessage, err := json.Marshal(eventData)
-	if err != nil {
-		fmt.Println("Failed to marshal event data:", err)
-		return err
-	}
-	err = driverConn.WriteMessage(websocket.TextMessage, eventMessage)
-	return err
+
+	return sendWebSocketMessage(driverConn, eventData)
 }
 
 func SendEndTripNotification(riderID int) {
-	riderConn, exists := ClientManager.ActiveRiders[riderID]
+	riderConn, exists := getClientConnection("rider", riderID)
 	if !exists {
 		fmt.Println("Rider not found for ID", riderID)
 		return
 	}
+
 	eventData := map[string]any{
 		"event": "trip-ended",
 	}
-	eventMessage, err := json.Marshal(eventData)
-	if err != nil {
-		fmt.Println("Failed to marshal event data:", err)
-		return
-	}
-	err = riderConn.WriteMessage(websocket.TextMessage, eventMessage)
-	if err != nil {
+
+	if err := sendWebSocketMessage(riderConn, eventData); err != nil {
 		fmt.Println("Failed to send message to rider", riderID, ":", err)
 	}
 }
 
-func NotifyOtherDriver(driverID int)(error){
-	driverConn, exists := ClientManager.ActiveDrivers[driverID]
+func NotifyOtherDriver(driverID int) error {
+	driverConn, exists := getClientConnection("driver", driverID)
 	if !exists {
-		fmt.Println("Driver not found for ID", driverID)
-		// return error
+		fmt.Println(DriverNotFoundMsg, driverID)
+		return fmt.Errorf(DriverNotFoundMsg+" %d", driverID)
 	}
+
 	eventData := map[string]any{
-		"event":  "trip-booked",
+		"event": "trip-booked",
 	}
-	eventMessage, err := json.Marshal(eventData)
-	if err != nil {
-		fmt.Println("Failed to marshal event data:", err)
-		return err
-	}
-	err = driverConn.WriteMessage(websocket.TextMessage, eventMessage)
-	return err
+
+	return sendWebSocketMessage(driverConn, eventData)
 }
 
 func SendErrorMessage(conn *websocket.Conn) {
 	eventData := map[string]any{
-		"event":   "unexpected-error",
+		"event": "unexpected-error",
 	}
-	eventMessage, err := json.Marshal(eventData)
-	if err != nil {
-		fmt.Println("Failed to marshal event data:", err)
-		return
-	}
-	err = conn.WriteMessage(websocket.TextMessage, eventMessage)
-	if err != nil {
-		fmt.Println("Failed to send message to client:", err)
+
+	if err := sendWebSocketMessage(conn, eventData); err != nil {
+		fmt.Println("Failed to send error message to client:", err)
 	}
 }
