@@ -3,8 +3,12 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com/)
 [![Go](https://img.shields.io/badge/Go-00ADD8?style=for-the-badge&logo=go&logoColor=white)](https://golang.org/)
 [![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
+[![Redux Toolkit](https://img.shields.io/badge/Redux%20Toolkit-764ABC?style=for-the-badge&logo=redux&logoColor=white)](https://redux-toolkit.js.org/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![PostGIS](https://img.shields.io/badge/PostGIS-4183C4?style=for-the-badge&logo=postgresql&logoColor=white)](https://postgis.net/)
+[![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
 [![Nginx](https://img.shields.io/badge/Nginx-009639?style=for-the-badge&logo=nginx&logoColor=white)](https://nginx.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 <div align="center">
   <img src="public/images/liferide-banner.svg" alt="LifeRide Banner" width="100%">
@@ -28,8 +32,8 @@
   
   <div align="center">
     <img src="https://img.shields.io/badge/Maintained%3F-Yes-green.svg" alt="Maintenance">
-    <img src="https://img.shields.io/github/license/your-organization/liferide" alt="License">
-    <img src="https://img.shields.io/github/issues/your-organization/liferide" alt="Issues">
+    <img src="https://img.shields.io/github/license/Learnathon-By-Geeky-Solutions/snake-charmers" alt="License">
+    <img src="https://img.shields.io/github/issues/Learnathon-By-Geeky-Solutions/snake-charmers" alt="Issues">
   </div>
 </div>
 
