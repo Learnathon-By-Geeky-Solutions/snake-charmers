@@ -151,8 +151,8 @@ func RequestTripCheckout(payload Schemas.TripCheckout) bool {
 }
 
 // RequestTripDecline handles driver release from a trip
-func RequestTripDecline(payload Schemas.TripDecline) bool {
-	url := fmt.Sprintf("%s/release-driver?driver_id=%d", os.Getenv("TRIP_SERVICE_URL"), payload.DriverID)
+func RequestTripDecline(DriverID int) bool {
+	url := fmt.Sprintf("%s/release-driver?driver_id=%d", os.Getenv("TRIP_SERVICE_URL"), DriverID)
 	
 	config := RequestConfig{
 		URL:     url,

@@ -14,6 +14,17 @@ const ongoingTripDetailsSlice = createSlice({
         rider_mobile: '',
         status: '',
         fare: 0
+        // trip_id: 30,
+        // pickup_location: 'Agrabad',
+        // destination: 'GEC',
+        // driver_id: 5,
+        // rider_id: 10,
+        // driver_name: 'Abdul karim',
+        // rider_name: 'Imdad Raqib',
+        // driver_mobile: '01766666666',
+        // rider_mobile: '01763300364',
+        // status: 'ongoing',
+        // fare: 5000
     },
     reducers: {
         setOngoingTripDetails: (state, action) => {
