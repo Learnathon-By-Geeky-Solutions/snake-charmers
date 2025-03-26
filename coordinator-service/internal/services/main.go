@@ -129,7 +129,7 @@ func HandleTripRequestDecline(conn *websocket.Conn, payload map[string]any) {
 		return
 	}
 
-	if !TripManager.RequestTripDecline(data) {
+	if !TripManager.RequestTripDecline(data.DriverID) {
 		handleError(conn, fmt.Sprintf("Error while declining the trip by driver having ID %d", data.DriverID))
 		return
 	}
@@ -190,7 +190,7 @@ func HandleTripConfirmation(conn *websocket.Conn, payload map[string]any) {
 		handleError(conn, "Error sending trip request removal request to the trip service")
 		return
 	}
-
+	TripManager.DeleteTripRequest(data.ReqID)
 	notifyOtherDrivers(data)
 }
 
@@ -202,7 +202,6 @@ func notifyOtherDrivers(data Schemas.TripConfirm) {
 		fmt.Printf("Notifying other drivers about the trip confirmation\n")
 		go EventEmitter.NotifyOtherDriver(data.DriverID)
 	}
-	TripManager.DeleteTripRequest(data.ReqID)
 }
 
 func HandleEndTrip(conn *websocket.Conn, payload map[string]any) {
