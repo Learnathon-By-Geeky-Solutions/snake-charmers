@@ -258,7 +258,7 @@ docker compose -f docker-compose.dev.yml up --build auth-service-test
 ```
 
 ## 📚 Resources
-
+- [Development Logs](https://learnathon-by-geeky-solutions.github.io/snake-charmers/)
 - [Detailed Project Documentation](docs/)
 - [Development Environment Setup](docs/setup.md)
 - [Contributing Guidelines](CONTRIBUTING.md)
