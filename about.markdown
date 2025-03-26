@@ -41,10 +41,6 @@ permalink: /about/
 
 ## 🏥 About LifeRide
 
-<table>
-<tr>
-<td>
-
 **LifeRide** is revolutionizing emergency medical transportation by leveraging modern technology to save lives. Our platform seamlessly connects patients with the nearest available ambulances through an intuitive interface, providing real-time tracking, transparent pricing, and reliable service when it matters most.
 
 ### Why LifeRide?
@@ -56,14 +52,6 @@ permalink: /about/
 - 💲 **Price Bidding System**: Negotiate fares directly with drivers for non-emergency transport
 - ⭐ **Quality Assurance**: Post-service rating system for continuous improvement
 
-</td>
-<!-- <td width="50%">
-
-<img src="images/architecture-diagram.png" alt="LifeRide System Architecture" width="100%">
-
-</td> -->
-</tr>
-</table>
 
 ### Key Metrics
 
@@ -102,11 +90,34 @@ permalink: /about/
 ## 👥 Team
 
 ### Core Developers
-| Role | Name | GitHub |
-|------|------|--------|
-| **Team Leader** | Imdad Rakib | [![GitHub](https://img.shields.io/badge/GitHub-100000?style=flat&logo=github&logoColor=white)](https://github.com/Imdad-Rakib) |
-| **Developer** | SA-K1B | [![GitHub](https://img.shields.io/badge/GitHub-100000?style=flat&logo=github&logoColor=white)](https://github.com/SA-K1B) |
-| **Developer** | IAmAreza | [![GitHub](https://img.shields.io/badge/GitHub-100000?style=flat&logo=github&logoColor=white)](https://github.com/iAmAreza) |
+
+<table>
+  <thead>
+    <tr>
+      <th>Role</th>
+      <th>Name</th>
+      <th>GitHub</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Team Leader</strong></td>
+      <td>Imdad Rakib</td>
+      <td><a href="https://github.com/Imdad-Rakib"><img src="https://img.shields.io/badge/GitHub-100000?style=flat&logo=github&logoColor=white" alt="GitHub"></a></td>
+    </tr>
+    <tr>
+      <td><strong>Developer</strong></td>
+      <td>SA-K1B</td>
+      <td><a href="https://github.com/SA-K1B"><img src="https://img.shields.io/badge/GitHub-100000?style=flat&logo=github&logoColor=white" alt="GitHub"></a></td>
+    </tr>
+    <tr>
+      <td><strong>Developer</strong></td>
+      <td>IAmAreza</td>
+      <td><a href="https://github.com/iAmAreza"><img src="https://img.shields.io/badge/GitHub-100000?style=flat&logo=github&logoColor=white" alt="GitHub"></a></td>
+    </tr>
+  </tbody>
+</table>
+
 
 ### Project Mentor
 - **Shakil Shahan** - [![GitHub](https://img.shields.io/badge/GitHub-100000?style=flat&logo=github&logoColor=white)](https://github.com/shakil-shahan)

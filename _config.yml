@@ -18,11 +18,11 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 
-title: Snake Charmers Devblogs
-email: your-email@example.com
+title: Snake Charmers Devlogs
+email: imdadraqib@gmail.com
 description: >- # this means to ignore newlines until "baseurl:"
   Welcome to the Snake Charmers Devlogs. Follow our journey and updates here.
-baseurl: "/snake-charmers/"
+baseurl: "/snake-charmers"
 url: "https://learnathon-by-geeky-solutions.github.io/snake-charmers"
 twitter_username: snake_charmers
 github_username:  Learnathon-By-Geeky-Solutions
