@@ -33,6 +33,8 @@ class DriverLocation(SQLModel, table=True):
             index=True
         )
     )
+    latitude: float = Field(nullable=False)
+    longitude: float = Field(nullable=False)
     location: Geography = Field(sa_column=Column(
         Geography(geometry_type="POINT", srid=4326), nullable=False))
     model_config = {
