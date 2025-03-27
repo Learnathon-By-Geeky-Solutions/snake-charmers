@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from app.db import get_session
 from app.services.main import (
+    get_driver_location,
     update_driver_location,
     add_driver_location,
     remove_driver_location
@@ -9,6 +10,7 @@ from app.services.main import (
 from app.schemas.main import (
     UpdateDriverLocationRequest,
     AddDriverLocationRequest,
+    LocationGetResponse,
     LocationUpdateResponse,
     LocationAddResponse,
     LocationRemoveResponse,
@@ -17,7 +19,19 @@ from app.schemas.main import (
 
 router = APIRouter()
 
-UNEXPECTED_ERROR_MESSAGE = "An unexpected error occurred"
+@router.get(
+    "/location/{driver_id}",
+    response_model=LocationGetResponse,
+    status_code=200
+)
+async def get_location(
+    driver_id: int,
+    session: Session = Depends(get_session)
+):
+    """
+    Get a driver's location by ID.
+    """
+    return get_driver_location(session, driver_id)
 
 
 @router.put(
@@ -32,7 +46,6 @@ async def update_location(
     """
     Updates a driver's location based on their ID.
     """
-    # try:
     return update_driver_location(
             session,
             location.driver_id,
@@ -53,7 +66,6 @@ async def add_location(
     """
     Adds a new driver's location.
     """
-    # try:
     return add_driver_location(
         session,
         location.driver_id,
