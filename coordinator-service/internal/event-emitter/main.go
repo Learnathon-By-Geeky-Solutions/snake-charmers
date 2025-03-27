@@ -63,9 +63,27 @@ func PingDrivers(driverID int, reqID int, pickupLocation string, destination str
 		},
 	}
 
-	if err := sendWebSocketMessage(driverConn, eventData); err == nil {
-		fmt.Println("Ping sent to driver", driverID)
+	if err := sendWebSocketMessage(driverConn, eventData); err != nil {
+		fmt.Println("Failed to ping driver with id ", driverID)
+		return
 	}
+	fmt.Println("Ping sent to driver with id ", driverID)
+}
+
+func SendLocationOfDriver(conn *websocket.Conn, latitude float64, longitude float64) {
+	eventData := map[string]any{
+		"event": "driver-location",
+		"data": map[string]any{
+			"latitude":  latitude,
+			"longitude": longitude,
+		},
+	}
+
+	if err := sendWebSocketMessage(conn, eventData); err != nil {
+		fmt.Println("Failed to send location of driver:", err)
+		return
+	}
+	fmt.Println("Sent location of driver to the client")
 }
 
 func SendBidFromDriver(payload Schemas.BidFromDriver) error {

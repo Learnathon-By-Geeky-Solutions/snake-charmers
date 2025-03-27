@@ -25,6 +25,23 @@ func handleError(conn *websocket.Conn, errorMessage string) {
 	EventEmitter.SendErrorMessage(conn)
 }
 
+func HandleGetLocationOfDriver(conn *websocket.Conn, payload map[string]any) {
+	var data Schemas.DriverBase
+	if err := decodePayload(payload, &data); err != nil {
+		handleError(conn, DecodingError+err.Error())
+		return
+	}
+	
+	fmt.Printf("Getting location of driver with ID %d\n", data.DriverID)
+
+	res, ok := TripManager.RequestLocationOfDriver(data.DriverID)
+	if !ok {
+		handleError(conn, "Error getting location of the driver")
+		return
+	}	
+	EventEmitter.SendLocationOfDriver(conn, res.Latitude, res.Longitude)
+}
+
 func HandleTripRequest(conn *websocket.Conn, payload map[string]any) {
 	var data Schemas.TripRequest
 	if err := decodePayload(payload, &data); err != nil {
