@@ -1,5 +1,5 @@
 from typing import Optional
-from sqlmodel import SQLModel, Field, Column, Integer, ForeignKey
+from sqlmodel import SQLModel, Field, Column, Integer, ForeignKey, Float
 from geoalchemy2 import Geography
 from sqlalchemy import PrimaryKeyConstraint
 
@@ -33,10 +33,17 @@ class DriverLocation(SQLModel, table=True):
             index=True
         )
     )
-    latitude: float = Field(nullable=False)
-    longitude: float = Field(nullable=False)
+    # Modify the Field definition
+    latitude: float = Field(
+        sa_column=Column(Float, nullable=False)
+    )
+    
+    longitude: float = Field(
+        sa_column=Column(Float, nullable=False)
+    )
     location: Geography = Field(sa_column=Column(
         Geography(geometry_type="POINT", srid=4326), nullable=False))
+
     model_config = {
         "arbitrary_types_allowed": True
     }
