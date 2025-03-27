@@ -3,27 +3,27 @@ package Schemas
 // TripRequest represents a trip request from a rider
 type TripRequest struct {
 	tripBase     `mapstructure:",squash"`
-	locationBase `mapstructure:",squash"`
+	LocationBase `mapstructure:",squash"`
 	Fare        int `json:"fare" mapstructure:"fare"`
 }
 
 // LocationUpdate represents a driver's location update
 type LocationUpdate struct {
-	driverBase   `mapstructure:",squash"`
-	locationBase `mapstructure:",squash"`
+	DriverBase   `mapstructure:",squash"`
+	LocationBase `mapstructure:",squash"`
 }
 
 // TripCheckout represents trip checkout details
 type TripCheckout struct {
 	RequestBase   `mapstructure:",squash"`
-	driverBase    `mapstructure:",squash"`
+	DriverBase    `mapstructure:",squash"`
 	// DriverDetails `mapstructure:",squash"`
 }
 
 // BidFromDriver represents a bid from a driver
 type BidFromDriver struct {
 	RequestBase `mapstructure:",squash"`
-	driverBase  `mapstructure:",squash"`
+	DriverBase  `mapstructure:",squash"`
 	DriverDetails `mapstructure:",squash"`
 	Amount      int `json:"amount" mapstructure:"amount"`
 }
@@ -37,14 +37,14 @@ type BidFromClient struct {
 // TripDecline represents a trip decline by a driver
 type TripDecline struct {
 	RequestBase `mapstructure:",squash"`
-	driverBase  `mapstructure:",squash"`
+	DriverBase  `mapstructure:",squash"`
 }
 
 // TripConfirm represents a confirmed trip
 type TripConfirm struct {
 	RequestBase `mapstructure:",squash"`
 	tripBase    `mapstructure:",squash"`
-	driverBase  `mapstructure:",squash"`
+	DriverBase  `mapstructure:",squash"`
 	Fare        int    `json:"fare" mapstructure:"fare"`
 	Status      string `json:"status" mapstructure:"status"`
 }
@@ -52,7 +52,7 @@ type TripConfirm struct {
 // TripConfirmResponse represents the response for a confirmed trip
 type TripConfirmResponse struct {
 	tripBase   `mapstructure:",squash"`
-	driverBase `mapstructure:",squash"`
+	DriverBase `mapstructure:",squash"`
 	TripID     int    `json:"trip_id" mapstructure:"trip_id"`
 	Fare       int    `json:"fare" mapstructure:"fare"`
 	Status     string `json:"status" mapstructure:"status"`
@@ -65,7 +65,7 @@ type EndTrip struct {
 
 // Driver represents a driver's details
 type Driver struct {
-	driverBase    `mapstructure:",squash"`
+	DriverBase    `mapstructure:",squash"`
 	DriverDetails `mapstructure:",squash"`
 }
 

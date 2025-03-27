@@ -6,13 +6,13 @@ type RequestBase struct {
 }
 
 
-type locationBase struct {
+type LocationBase struct {
 	Latitude  float64 `json:"latitude" mapstructure:"latitude"`
 	Longitude float64 `json:"longitude" mapstructure:"longitude"`
 }
 
 
-type driverBase struct {
+type DriverBase struct {
 	DriverID int    `json:"driver_id" mapstructure:"driver_id"`
 }
 

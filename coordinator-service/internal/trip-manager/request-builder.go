@@ -54,6 +54,24 @@ func makeServiceRequest(config RequestConfig) (bool, error) {
 	return true, nil
 }
 
+func RequestLocationOfDriver(driverID int) (Schemas.LocationBase, bool) {
+	url := fmt.Sprintf("%s/%d", os.Getenv("LOCATION_SERVICE_URL"), driverID)
+	
+	var location Schemas.LocationBase
+	config := RequestConfig{
+		URL:     url,
+		Method:  http.MethodGet,
+		Target:  &location,
+	}
+
+	ok, err := makeServiceRequest(config)
+	if err != nil || !ok {
+		return Schemas.LocationBase{}, false
+	}
+
+	return location, true
+}
+
 // SendTripRequest creates a new trip request
 func SendTripRequest(payload Schemas.TripRequest) (Schemas.RequestBase, bool) {
 	data := map[string]interface{}{
