@@ -44,7 +44,7 @@ func getClientConnection(clientType string, id int) (*websocket.Conn, bool) {
 	}
 }
 
-func PingDrivers(driverID int, reqID int, pickupLocation string, destination string, fare int) {
+func PingDrivers(driverID int, reqID int, pickupLocation string, destination string, fare int, latitude float64, longitude float64) {
 	driverConn, exists := getClientConnection("driver", driverID)
 	if !exists {
 		fmt.Printf("driver with ID %d not found for pinging\n", driverID)
@@ -58,6 +58,8 @@ func PingDrivers(driverID int, reqID int, pickupLocation string, destination str
 			"pickup_location": pickupLocation,
 			"destination":     destination,
 			"fare":            fare,
+			"latitude":        latitude,
+			"longitude":       longitude,
 		},
 	}
 

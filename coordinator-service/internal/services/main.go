@@ -41,7 +41,7 @@ func HandleTripRequest(conn *websocket.Conn, payload map[string]any) {
 		return
 	}
 
-	fmt.Printf("Successfully sent trip request to the trip-service. Now pinging drivers.\n")
+	fmt.Printf("Successfully sent trip request to the trip-service\n")
 	TripManager.InitiateTripRequest(res1.ReqID, data.RiderID)
 
 	if err := processTripRequestDrivers(conn, res1.ReqID, data); err != nil {
@@ -63,7 +63,7 @@ func processTripRequestDrivers(conn *websocket.Conn, reqID int, data Schemas.Tri
 
 	for _, driver := range res2 {
 		fmt.Printf("Pinging the driver with ID %d\n", driver.DriverID)
-		go EventEmitter.PingDrivers(driver.DriverID, reqID, data.PickupLocation, data.Destination, data.Fare)
+		go EventEmitter.PingDrivers(driver.DriverID, reqID, data.PickupLocation, data.Destination, data.Fare, data.Latitude, data.Longitude)
 	}
 
 	return nil
