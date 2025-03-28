@@ -4,11 +4,10 @@ import GoogleMap from "../Map/Map";
 import { ConnectToserver, SendMessage, DisconnectFromServer } from "../../controllers/websocket/handler";
 import { getCoordinates } from "../Geolocation/Geolocation";
 import { setRiderWaitingStatus } from "../../store/slices/rider-waiting-status-slice";
-import DriverResponse from "../DriverResponse/DriverResponse";
-import RideSearchForm from "../RideSearchForm/RideSearchForm";
 import OngoingTrip from '../OngoingTrip/OngoingTrip'
+import RideRequest from "./RideRequest.jsx/RideRequest";
 
-const RideRequestPage = () => {
+const RiderDashboard = () => {
   
   // State to track input values
   const [dropoffLocation, setDropoffLocation] = useState("");
@@ -40,8 +39,8 @@ const RideRequestPage = () => {
         console.error("Error getting coordinates:", error);
       }
     };
-    fetchCoordinates();
     if(id !== 0) {
+      fetchCoordinates();
       ConnectToserver(id, role);
     }
     // Cleanup function to disconnect when component unmounts
@@ -93,13 +92,12 @@ const RideRequestPage = () => {
     <div className="min-h-screen bg-gray-100 flex flex-col items-center p-8">
       
       {/* Container for Form, Image, and Map */}
-      <div className="flex flex-col items-center w-full max-w-4xl space-y-20">
-        
-        {/* Upper Section (Form + Image) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center w-full">
-          
-          {/* Left Side - Centered Ride Search Form */}
-          <RideSearchForm
+      {isOnATrip ? 
+        <OngoingTrip/> 
+        :
+        <div className="flex flex-col items-center w-full max-w-4xl space-y-20">
+          <RideRequest
+            isRequested={isRequested}
             pickupLocation={pickupLocation}
             dropoffLocation={dropoffLocation}
             setPickupLocation={setPickupLocation}
@@ -111,35 +109,17 @@ const RideRequestPage = () => {
             fare={fare}
             setFare={setFare}
           />
+          {/* Upper Section (Form + Image) */}
 
-          {/* Right Side - Ride Request Image */}
-          {isRequested ? (
-            (  <DriverResponse 
-                pickup_location = {pickupLocation}
-                destination = {dropoffLocation}
-                fare = {parseInt(fare)}
-              />
-            )
-          ) : (
-            <div className="flex justify-center">
-              <img
-                src="/src/assets/images/driverPageRequest 1.png"
-                alt="Ride Request"
-                className="w-80 h-80 rounded-lg shadow-lg"
-              />
-            </div>
-          )}
+          {/* Google Map (Aligned with Image & Form) */}
+          <GoogleMap 
+            pickupLocation={pickupLocation}  
+            dropoffLocation={dropoffLocation}
+          />
         </div>
-
-        {/* Google Map (Aligned with Image & Form) */}
-        <GoogleMap 
-          pickupLocation={pickupLocation}  
-          dropoffLocation={dropoffLocation}
-        />
-        {isOnATrip && <OngoingTrip/>}
-      </div>
+      }
     </div>
   );
 };
 
-export default RideRequestPage;
+export default RiderDashboard;

@@ -106,7 +106,7 @@ RideSearchForm.propTypes = {
   isFormValid: PropTypes.bool.isRequired,
   isLoading: PropTypes.bool.isRequired,
   error: PropTypes.string,
-  fare: PropTypes.number.isRequired,
+  fare: PropTypes.number,
   setFare: PropTypes.func.isRequired,
 };
 

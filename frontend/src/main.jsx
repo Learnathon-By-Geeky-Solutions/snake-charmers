@@ -12,7 +12,7 @@ import ErrorPage from './components/ErrorPage/ErrorPage';
 import Home from './components/Home/Home';
 import OverallSignup from './components/OverallSignup/OverallSignup';
 import UserLogin from './components/UserLogin/UserLogin';
-import RideRequest from './components/RideRequest/RideRequest';
+import RiderDashboard from './components/RiderDashboard/RiderDashboard';
 import DriverSearch from './components/DriverSearch/DriverSearch';
 import DriverDashboard from './components/DriverDashboard/DriverDashboard';
 import RiderReview from './components/RiderReview/RiderReview';
@@ -41,7 +41,7 @@ const router = createBrowserRouter([
       },
       {
         path: '/ride_request',
-        element: <RideRequest></RideRequest>
+        element: <RiderDashboard></RiderDashboard>
       },
       {
         path: '/driver_search',

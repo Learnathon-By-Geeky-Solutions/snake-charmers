@@ -15,6 +15,21 @@ export default {
         'light-green-1': '#42D674',
         'light-green-2':'#80EF80',
       },
+      keyframes: {
+        'moving-line': {
+          '0%': { transform: 'translateX(-100%)' },
+          '100%': { transform: 'translateX(500%)' },
+        },
+        'progress-beam': {
+          '0%': { transform: 'translateX(-100%)' },
+          '100%': { transform: 'translateX(300%)' },
+        }
+      },
+      animation: {
+        'moving-line': 'moving-line 2s linear infinite',
+        'progress-beam': 'progress-beam 2s linear infinite',
+
+      }
     },
   },
   plugins: [daisyui],

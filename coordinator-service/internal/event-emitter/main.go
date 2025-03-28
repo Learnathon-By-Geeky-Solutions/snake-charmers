@@ -139,7 +139,7 @@ func broadcastToDrivers(reqID int, eventData map[string]any) error {
 	return lastError
 }
 
-func SendTripConfirmation(payload Schemas.TripConfirmResponse) error {
+func SendTripConfirmation(payload Schemas.TripConfirm, TripID int) error {
 	driverConn, exists := getClientConnection("driver", payload.DriverID)
 	if !exists {
 		fmt.Println(DriverNotFoundMsg, payload.DriverID)
@@ -149,9 +149,15 @@ func SendTripConfirmation(payload Schemas.TripConfirmResponse) error {
 	eventData := map[string]any{
 		"event": "trip-confirmed",
 		"data": map[string]any{
-			"trip_id":         payload.TripID,
+			"trip_id":         TripID,
 			"rider_id":        payload.RiderID,
 			"driver_id":       payload.DriverID,
+			"rider_mobile":    payload.RiderMobile,
+			"rider_name":      payload.RiderName,
+			"driver_name":     payload.DriverName,
+			"driver_mobile":   payload.DriverMobile,
+			"latitude":        payload.Latitude,
+			"longitude":       payload.Longitude,
 			"pickup_location": payload.PickupLocation,
 			"destination":     payload.Destination,
 			"fare":            payload.Fare,

@@ -21,6 +21,10 @@ type DriverDetails struct {
 	Mobile   string `json:"mobile" mapstructure:"mobile"`
 }
 
+type RiderDetails struct {
+	RiderName  string `json:"rider_name" mapstructure:"rider_name"`
+	RiderMobile string `json:"rider_mobile" mapstructure:"rider_mobile"`
+}
 
 type tripBase struct {
 	RiderID        int    `json:"rider_id" mapstructure:"rider_id"`
