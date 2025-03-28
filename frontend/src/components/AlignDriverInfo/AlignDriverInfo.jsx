@@ -7,9 +7,9 @@ import { clearDriverResponses } from "../../store/slices/driver-response-slice";
 import { setIsOnATrip } from "../../store/slices/running-trip-indicator-slice";
 import { setOngoingTripDetails } from "../../store/slices/ongoing-trip-details-slice";
 
-const AlignDriverInfo = ({ name, mobile, req_id, fare, driver_id, pickup_location, destination }) => {
+const AlignDriverInfo = ({ driver_name, driver_mobile, req_id, fare, driver_id, pickup_location, destination }) => {
 
-  const rider_id = useSelector(state => state.user.id);
+  const {id, name, mobile, latitude, longitude} = useSelector(state => state.user);
   const dispatch = useDispatch();
 
   const handleAccept = ()=> {
@@ -28,12 +28,18 @@ const AlignDriverInfo = ({ name, mobile, req_id, fare, driver_id, pickup_locatio
       name: 'confirm-trip',
       data: {
         req_id,
-        rider_id,
         driver_id,
         pickup_location,
         destination,
         fare,
-        status: "ongoing"
+        latitude,
+        longitude,
+        driver_name,
+        driver_mobile,
+        rider_id: id,
+        rider_name: name,
+        rider_mobile: mobile,
+        status: "ongoing",
       }
     });
   }
@@ -75,8 +81,8 @@ const AlignDriverInfo = ({ name, mobile, req_id, fare, driver_id, pickup_locatio
   );
 };
 AlignDriverInfo.propTypes = {
-  name: PropTypes.string.isRequired,
-  mobile: PropTypes.string.isRequired,
+  driver_name: PropTypes.string.isRequired,
+  driver_mobile: PropTypes.string.isRequired,
   req_id: PropTypes.number.isRequired,
   fare: PropTypes.number.isRequired,
   driver_id: PropTypes.number.isRequired,

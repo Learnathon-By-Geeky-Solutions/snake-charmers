@@ -3,6 +3,8 @@ import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { setLocationUpdateState } from '../../store/slices/location-update-state-slice';
 import store from '../../store';
+import { setUser } from "../../store/slices/user-slice";
+
 /**
  * Gets the current coordinates
  * @returns {Promise<{latitude: number, longitude: number}>} Coordinates
@@ -62,8 +64,9 @@ const useLocation = ({
     try {
       const coords = await getCoordinates();
       setCoordinates(coords);
+      dispatch(setUser({latitude: coords.latitude, longitude: coords.longitude}));
       setLoading(false);
-      
+
       // If a callback was provided, call it with the new coordinates
       if (onLocationUpdate && typeof onLocationUpdate === 'function') {
 

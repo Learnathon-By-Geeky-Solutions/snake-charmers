@@ -98,8 +98,8 @@ export const DriverResponse = ({pickup_location, destination, fare}) => {
               .map((driver) => (
                 <div key={driver.driver_id} className="w-full transform transition-all duration-300 hover:-translate-y-1">
                   <AlignDriverInfo 
-                    name={driver.name} 
-                    mobile={driver.mobile} 
+                    driver_name={driver.name} 
+                    driver_mobile={driver.mobile} 
                     req_id={driver.req_id}
                     fare={driver.amount}
                     driver_id={driver.driver_id}

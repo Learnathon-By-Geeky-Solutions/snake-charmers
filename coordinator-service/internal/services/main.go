@@ -181,7 +181,7 @@ func HandleTripConfirmation(conn *websocket.Conn, payload map[string]any) {
 		return
 	}
 
-	if err := EventEmitter.SendTripConfirmation(res); err != nil {
+	if err := EventEmitter.SendTripConfirmation(data, res.TripID); err != nil {
 		handleError(conn, "Error sending trip confirmation to the driver")
 		return
 	}

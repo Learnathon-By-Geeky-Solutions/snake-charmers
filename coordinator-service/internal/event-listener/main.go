@@ -60,6 +60,7 @@ func ProcessEvents(conn *websocket.Conn, message []byte) {
 		case "get-location-of-driver":
 			Services.HandleGetLocationOfDriver(conn, event.Data)
 			fmt.Println("get-location-of-driver:", event.Data)
+			
 		default:
 			fmt.Println("unknown-event:", event.Name)
 	}

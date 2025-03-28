@@ -17,7 +17,6 @@ type LocationUpdate struct {
 type TripCheckout struct {
 	RequestBase   `mapstructure:",squash"`
 	DriverBase    `mapstructure:",squash"`
-	// DriverDetails `mapstructure:",squash"`
 }
 
 // BidFromDriver represents a bid from a driver
@@ -45,6 +44,10 @@ type TripConfirm struct {
 	RequestBase `mapstructure:",squash"`
 	tripBase    `mapstructure:",squash"`
 	DriverBase  `mapstructure:",squash"`
+	LocationBase `mapstructure:",squash"`
+	RiderDetails `mapstructure:",squash"`
+	DriverName string `json:"driver_name" mapstructure:"driver_name"`
+	DriverMobile string `json:"driver_mobile" mapstructure:"driver_mobile"`
 	Fare        int    `json:"fare" mapstructure:"fare"`
 	Status      string `json:"status" mapstructure:"status"`
 }
