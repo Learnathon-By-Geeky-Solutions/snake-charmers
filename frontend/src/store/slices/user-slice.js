@@ -9,14 +9,11 @@ const userSlice = createSlice({
         mobile: '',
         role: '',
         rating: '',
-        latitude: 0,
-        longitude: 0
-        // latitude: 22.359491,
-        // longitude:  91.833082
+        latitude: 22.356851185285,
+        longitude:  91.807229414965
     },
     reducers: {
         setUser: (state, action) => {
-            console.log("Payload: ", action.payload);
             state.id = action.payload?.id ?? state.id;
             state.name = action.payload?.name ?? state.name;
             state.email = action.payload?.email ?? state.email;
@@ -32,8 +29,8 @@ const userSlice = createSlice({
             state.mobile = '';
             state.role = '';
             state.rating = '';
-            state.latitude = 0;
-            state.longitude = 0;
+            state.latitude = 22.356851185285;
+            state.longitude =  91.807229414965;
         }
     },
 });

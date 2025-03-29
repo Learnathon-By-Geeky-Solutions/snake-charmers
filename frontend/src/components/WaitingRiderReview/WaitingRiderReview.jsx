@@ -3,11 +3,11 @@ import DotLoader from "react-spinners/DotLoader";
 
 const WaitingRiderReview = () => {
   return (
-    <div className="bg-black text-white w-[300px] md:w-[400px] h-96 p-6 rounded-lg shadow-lg flex flex-col justify-center items-center ">
-      <p className="text-lg font-semibold mb-2 text-center">
-        Waiting for rider review
+    <div className="flex flex-col justify-center items-center w-full py-5">
+      <p className="text-lg font-medium mb-6 text-center text-gray-600">
+        Awaiting patient confirmation
       </p>
-      <DotLoader size={80} color="#ffffff" />
+      <DotLoader size={60} color="#2563eb" />
     </div>
   );
 };
