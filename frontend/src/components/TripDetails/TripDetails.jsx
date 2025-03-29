@@ -1,18 +1,16 @@
-// TripDetails.jsx
 import React, { useState, useEffect } from "react";
 import PropTypes from 'prop-types';
-import { FaMapMarkerAlt, FaUser, FaClock } from "react-icons/fa";
+import { FaMapMarkerAlt, FaHeartbeat } from "react-icons/fa";
 import { changeCheckoutStatus } from "../../store/slices/checkout-status-slice";
 import { settripCheckout } from "../../store/slices/trip-checkout-slice";
 import { useDispatch, useSelector } from "react-redux";
 import { SendMessage } from "../../controllers/websocket/handler";
 import { setRiderResponse } from "../../store/slices/rider-response-slice";
 
-const TripDetails = ({ req_id, pickup_location, destination, fare, onExpire, expiryTime = 30 }) => {
+const TripDetails = ({ req_id, pickup_location, destination, latitude, longitude, fare, onExpire, expiryTime = 30 }) => {
   const driver_id = useSelector(state => state.user.id);
   const [timeLeft, setTimeLeft] = useState(expiryTime);
   const [isExpiring, setIsExpiring] = useState(false);
-  const [boxShadow, setBoxShadow] = useState('0 0 0 0 rgba(255, 255, 255, 0)');
   const dispatch = useDispatch();
   
   const handleCheckout = () => {
@@ -21,6 +19,8 @@ const TripDetails = ({ req_id, pickup_location, destination, fare, onExpire, exp
       req_id,
       pickup_location,
       destination,
+      latitude,
+      longitude,
       fare
     }));
     dispatch(setRiderResponse({ fare }));
@@ -33,28 +33,14 @@ const TripDetails = ({ req_id, pickup_location, destination, fare, onExpire, exp
     });
   };
 
-  const handleMouseOver = () => {
-    setBoxShadow('0 0 8px 2px rgba(255, 255, 255, 0.3)');
-  };
-
-  const handleMouseOut = () => {
-    setBoxShadow('0 0 0 0 rgba(255, 255, 255, 0)');
-  };
-
-  const handleBlur = () => {
-    setBoxShadow('0 0 0 0 rgba(255, 255, 255, 0)');
-  };
-
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeLeft(prevTime => {
         if (prevTime <= 1) {
           clearInterval(timer);
-          // Signal to parent component that this trip has expired
           onExpire?.();
           return 0;
         }
-        // When 5 seconds remaining, show visual cue
         if (prevTime <= 6 && !isExpiring) {
           setIsExpiring(true);
         }
@@ -65,20 +51,20 @@ const TripDetails = ({ req_id, pickup_location, destination, fare, onExpire, exp
     return () => clearInterval(timer);
   }, [onExpire, isExpiring]);
 
-  // Calculate width percentage for timer bar
+  // Calculate width percentage for timer
   const timerWidth = `${(timeLeft / expiryTime) * 100}%`;
   
-  // Determine timer bar color based on time left
+  // Determine timer color based on time left
   const getTimerColor = () => {
     if (timeLeft > 20) return "bg-green-500";
-    if (timeLeft > 10) return "bg-yellow-500";
+    if (timeLeft > 10) return "bg-amber-500";
     return "bg-red-500";
   };
 
   return (
-    <div className={`bg-black text-white w-full p-3 rounded-lg transition-all duration-200 hover:scale-[1.01] relative ${isExpiring ? 'animate-pulse' : ''}`}>
-      {/* Timer bar */}
-      <div className="absolute top-0 left-0 w-full h-1 bg-gray-700 rounded-t overflow-hidden">
+    <div className={`bg-white border-l-4 border-l-red-500 border border-gray-200 rounded-lg overflow-hidden shadow-sm transition-all duration-200 ${isExpiring ? 'animate-pulse' : ''}`}>
+      {/* Progress bar */}
+      <div className="h-1 bg-gray-100 w-full">
         <div 
           className={`h-full ${getTimerColor()} transition-all duration-1000 ease-linear`} 
           style={{ width: timerWidth }}
@@ -86,44 +72,43 @@ const TripDetails = ({ req_id, pickup_location, destination, fare, onExpire, exp
         ></div>
       </div>
       
-      <div className="flex justify-between items-center pt-2">
-        <div className="flex items-center">
-          <p className="text-lg font-semibold">Trip #{req_id}</p>
-          <span className="ml-2 text-xs flex items-center text-gray-400">
-            <FaClock className="mr-1" aria-hidden="true" /> {timeLeft}s
-          </span>
+      {/* Content container */}
+      <div className="p-4">
+        {/* Header with emergency badge and timer */}
+        <div className="flex justify-between items-center mb-3">
+          <div className="flex items-center gap-2">
+            <span className="bg-red-50 text-red-600 text-xs font-medium px-2 py-1 rounded-full flex items-center">
+              <FaHeartbeat className="mr-1" /> Emergency #{req_id}
+            </span>
+          </div>
+          <div className="bg-blue-50 text-blue-600 font-medium px-3 py-1 rounded-full text-sm">
+            ₹{fare}
+          </div>
         </div>
-        <p className="text-green-400 font-bold">₹{fare}</p>
-      </div>
-      
-      <div className="mt-2 text-sm">
-        <div className="flex items-center mb-1">
-          <FaMapMarkerAlt className="text-red-500 mr-2" aria-hidden="true" />
-          <p>Pickup: {pickup_location}</p>
+        
+        {/* Trip info */}
+        <div className="space-y-2 mb-4">
+          <div className="flex items-start gap-2">
+            <FaMapMarkerAlt className="text-red-500 mt-1 flex-shrink-0" aria-hidden="true" />
+            <div>
+              <p className="text-xs text-gray-500 mb-0">Patient Location</p>
+              <p className="text-sm text-gray-700 font-medium">{pickup_location}</p>
+            </div>
+          </div>
+          <div className="flex items-start gap-2">
+            <FaMapMarkerAlt className="text-blue-500 mt-1 flex-shrink-0" aria-hidden="true" />
+            <div>
+              <p className="text-xs text-gray-500 mb-0">Medical Facility</p>
+              <p className="text-sm text-gray-700 font-medium">{destination}</p>
+            </div>
+          </div>
         </div>
-        <div className="flex items-center mb-1">
-          <FaMapMarkerAlt className="text-green-500 mr-2" aria-hidden="true" />
-          <p>Dropoff: {destination}</p>
-        </div>
-        <div className="flex items-center mb-2">
-          <FaUser className="text-blue-400 mr-2" aria-hidden="true" />
-          {/* <p>Passenger: {passenger}</p> */}
-        </div>
-      </div>
-      
-      <div className="flex justify-center mt-3">
+        
+        {/* Accept button */}
         <button 
-          className="bg-green-600 w-full hover:bg-green-500 px-4 py-1.5 rounded text-sm transition-colors duration-200"
+          className="w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg text-sm font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
           onClick={handleCheckout}
-          onMouseOver={handleMouseOver}
-          onFocus={handleMouseOver}
-          onMouseOut={handleMouseOut}
-          onBlur={handleBlur}
-          style={{ 
-            boxShadow, 
-            transition: 'all 0.2s ease-in-out'
-          }}
-          aria-label={`Checkout trip ${req_id} from ${pickup_location} to ${destination}`}
+          aria-label={`Accept emergency request ${req_id} from ${pickup_location} to ${destination}`}
         >
           Checkout
         </button>
@@ -137,6 +122,8 @@ TripDetails.propTypes = {
   pickup_location: PropTypes.string.isRequired,
   destination: PropTypes.string.isRequired,
   fare: PropTypes.number.isRequired,
+  latitude: PropTypes.number.isRequired,
+  longitude: PropTypes.number.isRequired,
   onExpire: PropTypes.func,
   expiryTime: PropTypes.number
 };

@@ -15,25 +15,37 @@ const RouteMap = ({ zoom = 13, height = '690px' }) => {
   const driverLocation = useSelector(state => state.driverLocation);
   const ongoingTripDetails = useSelector(state => state.ongoingTripDetails);
   const userData = useSelector(state => state.user);
+  const tripCheckout  = useSelector(state => state.tripCheckout)
+  const {isOnATrip} = useSelector(state => state.isOnATrip);
 
-  console.log(ongoingTripDetails);
+  // console.log(ongoingTripDetails);
   // Memoized source and destination calculations
   const { source, destination } = useMemo(() => {
-    const sourceCoords = role === "driver" 
-      ? [userData.latitude, userData.longitude] 
-      : [driverLocation.latitude, driverLocation.longitude];
+    let sourceCoords;
+    if (role === "driver") {
+      sourceCoords = [userData.latitude, userData.longitude];
+    } else {
+      sourceCoords = [driverLocation.latitude, driverLocation.longitude];
+    }
     
-    const destCoords = role === "driver"
-      ? [ongoingTripDetails.latitude, ongoingTripDetails.longitude]
-      : [userData.latitude, userData.longitude];
-
+    let destCoords;
+    if (role === "driver") {
+      
+      if(isOnATrip){
+        destCoords = [ongoingTripDetails.latitude, ongoingTripDetails.longitude];
+      }else{
+        destCoords = [tripCheckout.latitude, tripCheckout.longitude];
+      }
+    } else {
+      destCoords = [userData.latitude, userData.longitude];
+    }
+  
     return {
       source: sourceCoords,
       destination: destCoords
     };
-  }, [role, userData, driverLocation, ongoingTripDetails]);
+  }, [role, isOnATrip, userData, driverLocation, ongoingTripDetails, tripCheckout]);
 
-  console.log("here ", source, destination);
   // Method to update route and markers
   const updateRoute = useCallback(() => {
     // Remove existing markers
