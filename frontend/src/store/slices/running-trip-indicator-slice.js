@@ -3,8 +3,8 @@ import { createSlice } from '@reduxjs/toolkit';
 const isOnATripSlice = createSlice({
     name: 'isOnATrip',
     initialState: {
-        // isOnATrip: false,
-        isOnATrip: true,
+        isOnATrip: false,
+        // isOnATrip: true,
     },
     reducers: {
         setIsOnATrip: (state, action) => {

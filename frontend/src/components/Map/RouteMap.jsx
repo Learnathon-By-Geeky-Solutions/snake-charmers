@@ -16,6 +16,7 @@ const RouteMap = ({ zoom = 13, height = '690px' }) => {
   const ongoingTripDetails = useSelector(state => state.ongoingTripDetails);
   const userData = useSelector(state => state.user);
 
+  console.log(ongoingTripDetails);
   // Memoized source and destination calculations
   const { source, destination } = useMemo(() => {
     const sourceCoords = role === "driver" 
@@ -32,6 +33,7 @@ const RouteMap = ({ zoom = 13, height = '690px' }) => {
     };
   }, [role, userData, driverLocation, ongoingTripDetails]);
 
+  console.log("here ", source, destination);
   // Method to update route and markers
   const updateRoute = useCallback(() => {
     // Remove existing markers
