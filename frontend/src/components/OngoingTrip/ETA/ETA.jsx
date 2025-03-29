@@ -3,16 +3,29 @@ import { useSelector } from 'react-redux';
 import { useState, useEffect } from 'react';
 import formatETA from '../../../utils/utils';
 
-
 const ETA = () => {
     const source = useSelector(state => state.driverLocation);
     const destination = useSelector(state => state.user);
     const [eta, setEta] = useState(-1);
     const [isLoading, setIsLoading] = useState(false);
+    const [showLastDot, setShowLastDot] = useState(true);
+    
+    useEffect(() => {
+        let blinkInterval;
+        if (isLoading) {
+            blinkInterval = setInterval(() => {
+                setShowLastDot(prev => !prev);
+            }, 500);
+        }
+        
+        return () => {
+            if (blinkInterval) clearInterval(blinkInterval);
+        };
+    }, [isLoading]);
 
     useEffect(() => {
+        setIsLoading(true);
         const fetchETA = async () => {
-            setIsLoading(true);
             try {
                 const response = await fetch(
                     `http://router.project-osrm.org/route/v1/driving/${source.longitude},${source.latitude};${destination.longitude},${destination.latitude}?overview=false`
@@ -22,10 +35,8 @@ const ETA = () => {
                 setEta(calculatedEta);
                 setIsLoading(false);
                 
-
             } catch (error) {
                 console.log("Error calculating ETA: ", error);
-                setIsLoading(false);
             }
         }
 
@@ -59,11 +70,15 @@ const ETA = () => {
                     </div>
 
                     {isLoading ? (
-                        <div className="h-8 flex items-center justify-center">
-                            <div className="relative w-8 h-8">
-                                <div className="absolute inset-0 border-2 border-emerald-100 rounded-full"></div>
-                                <div className="absolute inset-0 border-2 border-emerald-500 rounded-full animate-spin border-t-transparent"></div>
-                            </div>
+                        <div className="h-8 flex items-center">
+                            <p className="text-lg font-medium text-gray-600 flex items-end">
+                                Calculating
+                                <p>
+                                    <span className="text-3xl font-bold leading-none text-gray-500 ml-2">.</span>
+                                    <span className="text-3xl font-bold leading-none text-gray-500">.</span>
+                                    <span className={`text-3xl font-bold leading-none text-gray-500 ${showLastDot ? 'opacity-100' : 'opacity-0'}`}>.</span>
+                                </p>
+                            </p>
                         </div>
                     ) : (
                         <div className="flex items-baseline space-x-2">

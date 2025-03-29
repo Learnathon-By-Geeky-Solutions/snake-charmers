@@ -6,6 +6,7 @@ import { getCoordinates } from "../Geolocation/Geolocation";
 import { setRiderWaitingStatus } from "../../store/slices/rider-waiting-status-slice";
 import OngoingTrip from '../OngoingTrip/OngoingTrip'
 import RideRequest from "./RideRequest.jsx/RideRequest";
+import { setUser } from "../../store/slices/user-slice";
 
 const RiderDashboard = () => {
   
@@ -33,6 +34,7 @@ const RiderDashboard = () => {
       try {
         const { latitude, longitude } = await getCoordinates();
         console.log(latitude, longitude);
+        dispatch(setUser({latitude, longitude}));
         setCoords({latitude, longitude});
 
       } catch (error) {

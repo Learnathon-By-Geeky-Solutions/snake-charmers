@@ -12,11 +12,15 @@ const AlignDriverInfo = ({ driver_name, driver_mobile, req_id, fare, driver_id, 
   const {id, name, mobile, latitude, longitude} = useSelector(state => state.user);
   const dispatch = useDispatch();
 
+
+  console.log(latitude, longitude);
+
   const handleAccept = ()=> {
     
     dispatch(clearDriverResponses());
     dispatch(setIsOnATrip({isOnATrip: true}));
     dispatch(setOngoingTripDetails({
+      driver_id,
       driver_name: name,
       driver_mobile: mobile,
       pickup_location,

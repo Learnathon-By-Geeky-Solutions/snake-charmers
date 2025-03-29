@@ -7,7 +7,7 @@ import { setRiderWaitingStatus } from "../../store/slices/rider-waiting-status-s
 import { setOngoingTripDetails } from "../../store/slices/ongoing-trip-details-slice";
 import { setIsOnATrip } from "../../store/slices/running-trip-indicator-slice";
 import { changeCheckoutStatus } from "../../store/slices/checkout-status-slice";
-import { setDriverLocation } from "../../store/slices/driver-location-slice";
+import { setDriverLocation, unsetDriverLocation } from "../../store/slices/driver-location-slice";
 
 const ConnectToserver = async(id, role) => {
     try{
@@ -77,6 +77,7 @@ function HandleIncomingMessage(message /*,dispatch*/) {
         store.dispatch(setRiderWaitingStatus({isWaiting: false}))
     }
     if(name == "trip-confirmed"){
+        console.log("trip confirmed", message.data);
         store.dispatch(setOngoingTripDetails(message.data));
         store.dispatch(setIsOnATrip({isOnATrip:true}));
         store.dispatch(clearTripReq());
@@ -84,9 +85,10 @@ function HandleIncomingMessage(message /*,dispatch*/) {
     }
     if(name == "trip-ended"){
         store.dispatch(setIsOnATrip({isOnATrip:false}));
+        store.dispatch(unsetDriverLocation());
     }
     if(name == "driver-location"){
-        store.disconnect(setDriverLocation(message.data));
+        store.dispatch(setDriverLocation(message.data));
     }
 }
 
