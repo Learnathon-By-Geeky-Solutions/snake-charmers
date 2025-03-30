@@ -13,7 +13,7 @@ const AlignDriverInfo = ({ driver_name, driver_mobile, req_id, fare, driver_id, 
   const dispatch = useDispatch();
 
 
-  console.log(latitude, longitude);
+  // console.log(latitude, longitude);
 
   const handleAccept = ()=> {
     
@@ -48,7 +48,7 @@ const AlignDriverInfo = ({ driver_name, driver_mobile, req_id, fare, driver_id, 
     });
   }
   return (
-    <div className="bg-white rounded-xl p-4 shadow-md border border-gray-100 hover:shadow-lg transition-all duration-300">
+    <div className="bg-white rounded-xl p-4 shadow-md border border-gray-300 hover:shadow-lg transition-all duration-300">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="bg-indigo-100 p-2 rounded-full">
@@ -56,13 +56,13 @@ const AlignDriverInfo = ({ driver_name, driver_mobile, req_id, fare, driver_id, 
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <p className="font-semibold text-gray-800">{name}</p>
+              <p className="font-semibold text-gray-800">{driver_name}</p>
               <div className="flex items-center bg-green-100 px-2 py-0.5 rounded text-xs text-green-700">
                 <FaStar className="text-yellow-500 mr-1" /> 4.8
               </div>
             </div>
             <div className="flex items-center text-gray-600 text-sm mt-1">
-              <FaPhone className="text-xs mr-1" /> {mobile}
+              <FaPhone className="text-xs mr-1" /> {driver_mobile}
             </div>
           </div>
         </div>
@@ -78,7 +78,7 @@ const AlignDriverInfo = ({ driver_name, driver_mobile, req_id, fare, driver_id, 
           onClick={handleAccept}
         >
           
-          Accept Ride
+          Accept
         </button>
       </div>
     </div>

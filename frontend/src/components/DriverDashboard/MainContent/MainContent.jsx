@@ -4,8 +4,10 @@ import PropTypes from 'prop-types';
 
 const MainContent = ({isAvailable, isCheckedOut, toggleAvailability, totalIncomingRequests}) => {
     return (
-      <div className="min-h-screen bg-gray-100 flex flex-col ml-20 mr-20 justify-center items-center">
+      <div className="min-h-screen bg-white flex flex-col ml-20 mr-20 justify-center items-center">
+
         <div className="flex-grow flex w-[70%]">
+
           {/* Left Panel - Map */}
           <MapComponent
             isCheckedOut={isCheckedOut}

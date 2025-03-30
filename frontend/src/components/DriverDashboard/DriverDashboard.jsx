@@ -41,7 +41,7 @@ const DriverDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col">
+    <div className="bg-white min-h-screen bg-gray-100 flex flex-col">
       {/* Header - Sleek design with status indicator */}
       <StatusBar
         isAvailable={isAvailable}

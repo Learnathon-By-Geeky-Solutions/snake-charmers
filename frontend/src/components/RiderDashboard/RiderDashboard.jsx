@@ -7,6 +7,7 @@ import { setRiderWaitingStatus } from "../../store/slices/rider-waiting-status-s
 import OngoingTrip from '../OngoingTrip/OngoingTrip'
 import RideRequest from "./RideRequest.jsx/RideRequest";
 import { setUser } from "../../store/slices/user-slice";
+import {FaMapMarkerAlt} from "react-icons/fa";
 
 const RiderDashboard = () => {
   
@@ -91,13 +92,14 @@ const RiderDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center p-8">
+    <div className="min-h-screen  flex flex-col items-center p-8">
       
       {/* Container for Form, Image, and Map */}
       {isOnATrip ? 
         <OngoingTrip/> 
         :
-        <div className="flex flex-col items-center w-full max-w-4xl space-y-20">
+        <div className="flex flex-col mt-20 items-center w-full max-w-4xl space-y-20">
+          {/* Upper Section (Form + Image) */}
           <RideRequest
             isRequested={isRequested}
             pickupLocation={pickupLocation}
@@ -111,16 +113,22 @@ const RiderDashboard = () => {
             fare={fare}
             setFare={setFare}
           />
-          {/* Upper Section (Form + Image) */}
 
-          {/* Google Map (Aligned with Image & Form) */}
-          <GoogleMap 
-            pickupLocation={pickupLocation}  
-            dropoffLocation={dropoffLocation}
-          />
-        </div>
-      }
-    </div>
+          {/* Lower section -> Map Component */}
+          <div className="w-full flex flex-col items-center">
+            <h1 className="text-3xl font-bold text-gray-800 mb-12 flex items-center px-6 py-3 rounded-lg">
+              <span className="bg-red-500 p-2 rounded-full mr-3 shadow-sm">
+                <FaMapMarkerAlt className="text-white text-lg" />
+              </span>
+              <span className="tracking-wide">Your Location</span>
+            </h1>
+            <GoogleMap 
+              pickupLocation={pickupLocation}  
+              dropoffLocation={dropoffLocation}
+            />
+          </div>
+      </div>}
+  </div>
   );
 };
 

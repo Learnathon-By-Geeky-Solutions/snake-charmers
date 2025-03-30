@@ -3,11 +3,22 @@ import PropTypes from 'prop-types';
 import AlignDriverInfo from "../AlignDriverInfo/AlignDriverInfo";
 import { useDispatch, useSelector } from "react-redux";
 import { SendMessage } from "../../controllers/websocket/handler";
-import { FaTaxi, FaPlus, FaMinus, FaPaperPlane, FaLocationArrow, FaRegClock } from "react-icons/fa";
-import { PuffLoaderComponent } from "../PuffLoader/PuffLoader";
 import { clearDriverResponses } from "../../store/slices/driver-response-slice";
+import { FaPlus, FaMinus, FaPaperPlane, FaLocationArrow, FaRegClock } from "react-icons/fa";
 
-export const DriverResponse = ({pickup_location, destination, fare}) => {
+// Separated loading component for cleaner organization
+const LoadingIndicator = ({ text }) => (
+  <div className="flex flex-col items-center justify-center h-full">
+    <div className="relative w-20 h-20">
+      <div className="absolute top-0 left-0 w-full h-full border-4 border-purple-200 rounded-full"></div>
+      <div className="absolute top-0 left-0 w-full h-full border-4 border-t-purple-600 rounded-full animate-spin"></div>
+    </div>
+    <p className="mt-4 text-purple-800 text-center font-medium">{text}</p>
+    <p className="text-sm text-purple-600 mt-2">This usually takes less than a minute</p>
+  </div>
+);
+
+export const DriverResponse = ({ pickup_location, destination, fare }) => {
   const drivers = useSelector(state => state.driverResponses);
   const dispatch = useDispatch();
   // State for current fare amount
@@ -60,127 +71,158 @@ export const DriverResponse = ({pickup_location, destination, fare}) => {
   };
 
   return (
-    <div className="w-full max-w-lg bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-200">
-      {/* Header section */}
-      <div className="w-full bg-gradient-to-r from-indigo-600 to-purple-700 text-white p-5 shadow-lg">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="bg-white/20 p-2 rounded-lg">
-              <FaTaxi className="text-2xl" />
-            </div>
+    <div className="w-full h-[58vh] max-w-8xl flex bg-white rounded-xl shadow-lg overflow-hidden">
+      {/* Combined header and driver responses container */}
+      <div className="flex flex-col w-[60%]">
+        {/* Header section */}
+        <div className="w-full bg-purple-600 text-white p-4">
+          {/* Destination info */}
+          <div className=" bg-white/10 p-3 rounded-lg flex items-center space-x-2">
+            <FaLocationArrow className="text-purple-200" />
             <div>
-              <p className="font-bold text-xl">Driver Responses</p>
-              <p className="text-indigo-200 text-sm mt-0.5">Choose your ride</p>
+              <p className="text-xs text-purple-100">Your destination</p>
+              <p className="text-sm font-medium">{destination || "Central Business District, Kolkata"}</p>
             </div>
-          </div>
-          
-          <div className="bg-white/10 rounded-lg px-3 py-1 flex items-center gap-2">
-            <FaRegClock className="text-indigo-200" />
-            <span className="text-white text-sm font-medium">5 mins away</span>
           </div>
         </div>
         
-        <div className="mt-4 bg-white/10 p-3 rounded-lg flex items-center gap-3">
-          <FaLocationArrow className="text-indigo-200" />
-          <div className="text-sm">
-            <p className="text-white/70">Your destination</p>
-            <p className="text-white font-medium">{destination || "Central Business District, Kolkata"}</p>
-          </div>
+        {/* Driver responses area with fixed height */}
+        <div className="w-full flex-grow h-64 overflow-y-auto bg-gray-50">
+          {drivers.length > 0 ? (
+            <div className="p-3 space-y-3">
+              {[...drivers]
+                .sort((a, b) => b.id - a.id)
+                .map((driver) => (
+                  <div key={driver.driver_id} className="transition-all duration-200 hover:translate-y-px">
+                    <AlignDriverInfo 
+                      driver_name={driver.name} 
+                      driver_mobile={driver.mobile} 
+                      req_id={driver.req_id}
+                      fare={driver.amount}
+                      driver_id={driver.driver_id}
+                      pickup_location={pickup_location}
+                      destination={destination}
+                    />
+                  </div>
+                ))}
+            </div>
+          ) : (
+            <LoadingIndicator text="Waiting for drivers to respond." />
+          )}
         </div>
-      </div>
-      
-      {/* Scrollable area for driver responses - fixed height with no internal scrolling when PuffLoader is shown */}
-      <div className="w-full h-80 overflow-y-auto bg-gradient-to-b from-indigo-100/60 to-purple-100/60">
-        {drivers.length > 0 ? (
-          <div className="p-2 space-y-4">
-            {[...drivers]
-              .sort((a, b) => b.id - a.id)
-              .map((driver) => (
-                <div key={driver.driver_id} className="w-full transform transition-all duration-300 hover:-translate-y-1">
-                  <AlignDriverInfo 
-                    driver_name={driver.name} 
-                    driver_mobile={driver.mobile} 
-                    req_id={driver.req_id}
-                    fare={driver.amount}
-                    driver_id={driver.driver_id}
-                    pickup_location={pickup_location}
-                    destination={destination}
-                  />
-                </div>
-              ))}
-          </div>
-        ) : (
-          <PuffLoaderComponent
-            text={"Fare sent. Waiting for drivers to respond."}
-          />
-        )}
       </div>
 
-      {/* Fixed Fare component at the bottom */}
-      <div className="w-full bg-gradient-to-b from-indigo-900 to-indigo-950 p-6 shadow-inner">
-        <div className="flex justify-between items-center mb-4">
-          <div>
-            <p className="text-indigo-300 text-sm font-medium">Your Fare</p>
-            <p className="text-white font-bold text-2xl mt-1">₹{currentFare === '' ? '0' : currentFare}</p>
+      {/* Fare input section - modernized container */}
+      <div className="w-[40%] bg-gradient-to-b from-purple-50 to-white border-l border-gray-100 flex flex-col">
+        {/* Fare header section */}
+        <div className="p-6 pb-4">
+          <div className="flex justify-between items-center mb-4">
+            <div>
+              <p className="text-gray-500 text-xs uppercase tracking-wider font-medium">Your Fare</p>
+              <div className="flex items-baseline">
+                <p className="text-gray-900 font-bold text-3xl">₹{currentFare === '' ? '0' : currentFare}</p>
+                <span className="ml-2 text-purple-500 text-sm font-medium">INR</span>
+              </div>
+            </div>
+            
+            <div className="bg-purple-100 px-3 py-2 rounded-full shadow-sm">
+              <div className="flex items-center">
+                <FaRegClock className="text-purple-500 mr-1 text-xs" />
+                <p className="text-purple-700 text-xs font-medium">~4.5 km</p>
+              </div>
+            </div>
           </div>
           
-          <div className="bg-indigo-800/50 px-3 py-1 rounded-full">
-            <p className="text-indigo-200 text-sm">~4.5 km</p>
+          {/* Fare input - modernized */}
+          <div className="mb-6">
+            <div className="flex items-center bg-white rounded-xl border-2 border-purple-200 focus-within:ring-4 focus-within:ring-purple-200 focus-within:border-purple-400 transition-all duration-200 shadow-sm">
+              <div className="bg-purple-100 px-4 py-3 rounded-l-xl border-r border-purple-200">
+                <span className="text-purple-700 font-bold text-lg">₹</span>
+              </div>
+              <input
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                value={currentFare}
+                onChange={handleFareInput}
+                onBlur={handleInputBlur}
+                className="bg-transparent text-gray-800 text-xl font-medium flex-1 p-3 outline-none w-full"
+                style={{ 
+                  MozAppearance: 'textfield',
+                  WebkitAppearance: 'none',
+                  margin: 0
+                }}
+                placeholder="Enter fare amount"
+              />
+            </div>
           </div>
-        </div>
-        
-        {/* Manual input fare */}
-        <div className="mb-5">
-          <div className="flex items-center bg-indigo-800/50 rounded-lg overflow-hidden border border-indigo-700/50 focus-within:ring-2 focus-within:ring-indigo-400 transition">
-            <span className="text-white font-bold text-lg pl-4">₹</span>
-            <input
-              type="text"
-              inputMode="numeric"
-              pattern="[0-9]*"
-              value={currentFare}
-              onChange={handleFareInput}
-              onBlur={handleInputBlur}
-              className="bg-indigo-800/50 text-white text-lg font-bold flex-1 p-3.5 outline-none appearance-none w-full"
-              style={{ 
-                MozAppearance: 'textfield',
-                WebkitAppearance: 'none',
-                margin: 0
-              }}
-            />
-          </div>
-        </div>
-        
-        {/* Fare adjustment buttons */}
-        <div className="flex justify-between items-center mb-5">
-          <button 
-            onClick={() => handleFareChange(-100)}
-            className="bg-indigo-700/80 text-white py-3 px-4 rounded-lg hover:bg-indigo-600 transition-colors font-medium w-32 flex items-center justify-center gap-2 shadow-md"
-            disabled={currentFare < 100}
-          >
-            <FaMinus className="text-xs" /> <span>₹100</span>
-          </button>
           
-          <button 
-            onClick={() => handleFareChange(100)}
-            className="bg-indigo-500 text-white py-3 px-4 rounded-lg hover:bg-indigo-400 transition-colors font-medium w-32 flex items-center justify-center gap-2 shadow-md"
-          >
-            <FaPlus className="text-xs" /> <span>₹100</span>
-          </button>
+          {/* Fare adjustment buttons - modernized */}
+          <div className="grid grid-cols-2 gap-3 mb-6">
+            <button 
+              onClick={() => handleFareChange(-100)}
+              className="bg-white text-gray-700 py-3 px-4 rounded-xl hover:bg-gray-100 transition-colors font-medium flex items-center justify-center gap-2 text-sm shadow-sm border border-gray-200"
+              disabled={currentFare < 100}
+            >
+              <div className="bg-gray-200 p-1 rounded-full">
+                <FaMinus className="text-xs text-gray-700" />
+              </div>
+              <span>₹100</span>
+            </button>
+            
+            <button 
+              onClick={() => handleFareChange(100)}
+              className="bg-white text-purple-700 py-3 px-4 rounded-xl hover:bg-purple-50 transition-colors font-medium flex items-center justify-center gap-2 text-sm shadow-sm border border-purple-200"
+            >
+              <div className="bg-purple-200 p-1 rounded-full">
+                <FaPlus className="text-xs text-purple-700" />
+              </div>
+              <span>₹100</span>
+            </button>
+          </div>
         </div>
         
-        {/* Send fare button */}
-        <div className="flex justify-center">
-          <button 
-            onClick={handleSendFare}
-            className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white py-4 px-6 rounded-lg hover:from-indigo-600 hover:to-purple-700 transition-all duration-300 font-semibold text-md w-full flex items-center justify-center gap-2 shadow-lg"
-          >
-            <FaPaperPlane /> Send Fare Offer
+        {/* Fare suggestion chips */}
+        <div className="px-6 mb-4">
+          <p className="text-xs text-gray-500 mb-2 font-medium">Suggested Fares</p>
+          <div className="flex flex-wrap gap-2">
+            {[250, 300, 350, 400].map(amount => (
+              <button 
+                key={amount}
+                onClick={() => setCurrentFare(amount)}
+                className={`px-3 py-1 rounded-full text-sm font-medium transition-all duration-200 ${
+                  currentFare === amount 
+                    ? 'bg-purple-600 text-white shadow-md' 
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                ₹{amount}
+              </button>
+            ))}
+          </div>
+        </div>
+        
+        {/* Send fare button - modernized */}
+        <div className="px-6 mt-auto pb-6">
+        <button 
+          onClick={handleSendFare}
+          disabled={drivers.length === 0}
+          className={`bg-purple-600 text-white py-4 px-4 rounded-xl transition-all duration-200 font-medium text-base w-full flex items-center justify-center gap-2 transform ${
+          drivers.length === 0 ? 
+            'opacity-50 cursor-not-allowed' 
+            : 
+            'hover:bg-purple-700 hover:shadow-xl hover:-translate-y-1 shadow-lg'
+          }`}
+        >
+            <FaPaperPlane className="text-sm" /> Send Fare
           </button>
+          <p className="text-xs text-center text-gray-500 mt-2">Drivers will be notified of your fare</p>
         </div>
       </div>
     </div>
   );
 };
+
 DriverResponse.propTypes = {
   pickup_location: PropTypes.string.isRequired,
   destination: PropTypes.string.isRequired,

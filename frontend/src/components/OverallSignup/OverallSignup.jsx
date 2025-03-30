@@ -32,38 +32,42 @@ const OverallSignup = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center -mt-6">
-      <div className="w-full max-w-lg bg-white shadow-2xl shadow-black rounded-lg p-7">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-gray-50 to-gray-100">
+      <div className="w-full max-w-lg bg-white shadow-lg rounded-xl p-8 border border-gray-100">
         {/* Role selection buttons */}
-        <div className="flex justify-center gap-4 mb-6">
+        <div className="flex justify-center gap-4 mb-8">
           <button
-            className={`px-4 py-2 rounded-lg ${
-              role === 'User' ? 'bg-blue-500 text-white' : 'bg-gray-200'
+            className={`px-6 py-2 rounded-full font-medium transition-all duration-300 ${
+              role === 'User' 
+                ? 'bg-blue-500 text-white shadow-md' 
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
             }`}
             onClick={() => setRole('User')}
           >
-            Sign Up as User
+            User
           </button>
           <button
-            className={`px-4 py-2 rounded-lg ${
-              role === 'Driver' ? 'bg-green-500 text-white' : 'bg-gray-200'
+            className={`px-6 py-2 rounded-full font-medium transition-all duration-300 ${
+              role === 'Driver' 
+                ? 'bg-green-500 text-white shadow-md' 
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
             }`}
             onClick={() => setRole('Driver')}
           >
-            Sign Up as Driver
+            Driver
           </button>
         </div>
 
-        <h2 className="text-2xl font-bold text-center text-gray-800 mb-4">
-          {role} Signup Here
+        <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
+          Create Your {role} Account
         </h2>
 
         {/* Form */}
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="space-y-5">
           {/* Name Field */}
-          <div className="mb-3 flex items-center">
-            <label className="w-32 text-gray-700 text-sm font-bold" htmlFor="name">
-              Name:
+          <div className="flex flex-col">
+            <label className="text-gray-700 text-sm font-medium mb-1" htmlFor="name">
+              Name
             </label>
             <input
               type="text"
@@ -71,14 +75,14 @@ const OverallSignup = () => {
               value={formData.name}
               onChange={handleChange}
               placeholder={`Enter your ${role.toLowerCase()} name`}
-              className="flex-1 px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-4 py-3 border border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
             />
           </div>
 
           {/* Email Field */}
-          <div className="mb-3 flex items-center">
-            <label className="w-32 text-gray-700 text-sm font-bold" htmlFor="email">
-              Email:
+          <div className="flex flex-col">
+            <label className="text-gray-700 text-sm font-medium mb-1" htmlFor="email">
+              Email
             </label>
             <input
               type="email"
@@ -86,14 +90,14 @@ const OverallSignup = () => {
               value={formData.email}
               onChange={handleChange}
               placeholder="Enter your email"
-              className="flex-1 px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-4 py-3 border border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
             />
           </div>
 
-          {/* mobile Number Field */}
-          <div className="mb-3 flex items-center">
-            <label className="w-32 text-gray-700 text-sm font-bold" htmlFor="mobile">
-              Mobile:
+          {/* Mobile Number Field */}
+          <div className="flex flex-col">
+            <label className="text-gray-700 text-sm font-medium mb-1" htmlFor="mobile">
+              Mobile
             </label>
             <input
               type="text"
@@ -101,14 +105,14 @@ const OverallSignup = () => {
               value={formData.mobile}
               onChange={handleChange}
               placeholder="Enter your mobile number"
-              className="flex-1 px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-4 py-3 border border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
             />
           </div>
 
           {/* Password Field */}
-          <div className="mb-3 flex items-center">
-            <label className="w-32 text-gray-700 text-sm font-bold" htmlFor="password">
-              Password:
+          <div className="flex flex-col">
+            <label className="text-gray-700 text-sm font-medium mb-1" htmlFor="password">
+              Password
             </label>
             <input
               type="password"
@@ -116,14 +120,14 @@ const OverallSignup = () => {
               value={formData.password}
               onChange={handleChange}
               placeholder="Enter your password"
-              className="flex-1 px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-4 py-3 border border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
             />
           </div>
 
           {/* Confirm Password Field */}
-          <div className="mb-4 flex items-center">
-            <label className="w-32 text-gray-700 text-sm font-bold" htmlFor="confirmPassword">
-              Confirm:
+          <div className="flex flex-col">
+            <label className="text-gray-700 text-sm font-medium mb-1" htmlFor="confirmPassword">
+              Confirm Password
             </label>
             <input
               type="password"
@@ -131,18 +135,20 @@ const OverallSignup = () => {
               value={formData.confirmPassword}
               onChange={handleChange}
               placeholder="Confirm your password"
-              className="flex-1 px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-4 py-3 border border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
             />
           </div>
 
           {/* Submit Button */}
           <button
             type="submit"
-            className={`w-full py-2 px-4 rounded-lg shadow-md ${
-              role === 'User' ? 'bg-blue-500 hover:bg-blue-600' : 'bg-green-500 hover:bg-green-600'
-            } text-white`}
+            className={`w-full py-3 px-4 rounded-lg shadow-md mt-6 font-medium text-white transition-all duration-300 ${
+              role === 'User' 
+                ? 'bg-blue-500 hover:bg-blue-600' 
+                : 'bg-green-500 hover:bg-green-600'
+            }`}
           >
-            Sign Up as {role}
+            Create Account
           </button>
         </form>
       </div>

@@ -9,7 +9,7 @@ const GoogleMap = () => {
       <div className="w-full flex justify-center">
         <iframe
           title="Google Map"
-          width="100%"
+          width="90%"
           height="620"
           className="rounded-lg shadow-2xl"
           src={mapsrc}
