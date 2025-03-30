@@ -61,10 +61,6 @@ class TripCreate(BaseModel):
             raise ValueError("Field cannot be an empty string")
         return value
 
-    # class Config:
-    #     """Config class for Pydantic."""
-    #     extra = "allow"
-
 
 class TripResponse(TripCreate):
     """Schema for trip response."""

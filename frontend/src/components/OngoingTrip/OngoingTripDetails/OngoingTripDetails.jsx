@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { Clock, User, Phone, DollarSign, MapPin, Navigation } from 'lucide-react';
+import { User, Phone, DollarSign, MapPin, Navigation } from 'lucide-react';
 
 const OngoingTripDetails = () => {
   const {

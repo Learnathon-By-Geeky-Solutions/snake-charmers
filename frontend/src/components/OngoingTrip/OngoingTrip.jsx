@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from "react-redux";
 import { setIsOnATrip } from "../../store/slices/running-trip-indicator-slice";
 import { SendMessage } from "../../controllers/websocket/handler";
@@ -13,10 +13,6 @@ const OngoingTrip = () => {
   const { trip_id, rider_id, pickup_location, destination, driver_id } = useSelector(state => state.ongoingTripDetails);
   const { role } = useSelector(state => state.user);
   const dispatch = useDispatch();
-
-
-  const [tripStatus, setTripStatus] = useState('Emergency Response');
-
 
   useEffect(() => {
     let timer;
@@ -46,7 +42,7 @@ const OngoingTrip = () => {
   };
 
   return (
-    <div className="flex justify-center pt-10">
+    <div className="flex justify-center mb-10 pt-10">
       <div className="w-full max-w-6xl">
         {/* Header */}
         <Header
@@ -63,7 +59,6 @@ const OngoingTrip = () => {
           <div className="space-y-6">
             {/* Status and Location Bar */}
             <LocationBar
-              tripStatus={tripStatus}
               pickup_location={pickup_location}
               destination={destination}
             />

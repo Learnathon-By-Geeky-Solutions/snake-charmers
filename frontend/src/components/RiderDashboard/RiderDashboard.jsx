@@ -100,7 +100,9 @@ const RiderDashboard = () => {
       
       {/* Container for Form, Image, and Map */}
       {isOnATrip ? 
-        <OngoingTrip/> 
+        <div className="mt-16 w-full">
+          <OngoingTrip/>
+        </div> 
         :
         <div className="flex flex-col mt-20 items-center w-full max-w-4xl space-y-20">
           {/* Upper Section (Form + Image) */}

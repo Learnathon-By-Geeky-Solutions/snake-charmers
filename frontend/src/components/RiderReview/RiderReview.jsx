@@ -13,10 +13,7 @@ const RiderReview = () => {
           
           {/* Left Side - Waiting Rider Review Component */}
           <WaitingRiderReview />
-          {/* <TripBooked></TripBooked>  when user will press search for ride he will redirect to the RideReview page with waitingriderReview loader*/}
-          {/* <TripConfirmed></TripConfirmed> */}
-          {/* this will be coniditional rendering */}
-
+  
           {/* Right Side - Driver Request Image */}
           <div className="flex justify-center">
             <img
