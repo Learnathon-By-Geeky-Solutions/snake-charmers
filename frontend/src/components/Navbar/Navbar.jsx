@@ -1,9 +1,10 @@
 import { useNavigate, Link, useLocation } from 'react-router-dom';
-import logo from '../../assets/images/Logo2.png';
+import logo from '../../assets/images/Logo1.png';
 import { useSelector, useDispatch } from 'react-redux';
 import { deleteUser } from '../../store/slices/user-slice';
 import { FaAmbulance, FaUser, FaBars, FaTimes } from 'react-icons/fa';
 import { useState, useEffect } from 'react';
+import { DisconnectFromServer } from '../../controllers/websocket/handler';
 
 function Navbar() {
   const dispatch = useDispatch();
@@ -33,6 +34,7 @@ function Navbar() {
   }, []);
 
   const handleLogout = () => {
+    DisconnectFromServer();
     dispatch(deleteUser());
     navigate('/');
   };
@@ -57,7 +59,7 @@ function Navbar() {
 
   // Get nav link classes based on active state
   const getNavLinkClasses = (path) => {
-    return `relative px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 
+    return `relative px-3 py-2 rounded-lg text-[16px] font-medium transition-all duration-200 
     ${isActive(path) 
       ? 'text-blue-600 bg-blue-50' 
       : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50/50'
@@ -76,15 +78,15 @@ function Navbar() {
   // Get login button classes based on active state
   const getLoginButtonClasses = () => {
     return isActive('/login')
-      ? "bg-blue-700 hover:bg-blue-800 text-white px-6 py-2 rounded-full text-sm font-medium transition-all duration-200 shadow-md transform hover:-translate-y-0.5"
-      : "bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full text-sm font-medium transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5";
+      ? "bg-blue-700 hover:bg-blue-800 text-white px-6 py-2 rounded-full text-[16px] font-medium transition-all duration-200 shadow-md transform hover:-translate-y-0.5"
+      : "bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full text-[16px] font-medium transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5";
   };
 
   // Get signup button classes based on active state
   const getSignupButtonClasses = () => {
     return isActive('/signup')
-      ? "bg-blue-700 hover:bg-blue-800 text-white px-6 py-2 rounded-full text-sm font-medium transition-all duration-200 shadow-md transform hover:-translate-y-0.5"
-      : "bg-white hover:bg-gray-50 border-2 border-blue-600 text-blue-600 px-6 py-2 rounded-full text-sm font-medium transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5";
+      ? "bg-blue-700 hover:bg-blue-800 text-white px-6 py-2 rounded-full text-[16px] font-medium transition-all duration-200 shadow-md transform hover:-translate-y-0.5"
+      : "bg-white hover:bg-gray-50 border-2 border-blue-600 text-blue-600 px-6 py-2 rounded-full text-[16px] font-medium transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5";
   };
 
   // Get mobile login button classes based on active state
@@ -110,18 +112,19 @@ function Navbar() {
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-18">
           {/* Logo and brand */}
           <div className="flex items-center">
             <Link to="/" className="flex items-center group">
-              <img 
-                src={logo} 
-                alt="Life Ride Logo" 
-                className="h-9 w-auto transition-transform duration-300 group-hover:scale-105"
-              />
-              <span className="ml-2 text-xl font-bold bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent">
+            <img 
+              src={logo} 
+              alt="Life Ride Logo"
+              className="h-20 w-38 transition-transform duration-300 group-hover:scale-105"
+            />
+
+              {/* <span className="ml-2 text-xl font-bold bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent">
                 LifeRide
-              </span>
+              </span> */}
             </Link>
           </div>
 
@@ -139,7 +142,7 @@ function Navbar() {
             
             {(!isLoggedIn || isDriver) && (
               <Link to="/available_ride" className={getNavLinkClasses('/available_ride')}>
-                Available Requests
+                Driver Dashboard
               </Link>
             )}
             
@@ -147,11 +150,11 @@ function Navbar() {
               <div className="flex items-center ml-6">
                 <div className="flex items-center mr-4 bg-gray-50 px-4 py-2 rounded-full border border-gray-200 shadow-sm">
                   <span className="mr-2">{getRoleIcon()}</span>
-                  <span className="text-gray-800 font-medium text-sm">{name}</span>
+                  <span className="text-gray-800 font-medium text-[16px]">{name}</span>
                 </div>
                 <button 
                   onClick={handleLogout}
-                  className="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-full text-sm font-medium transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
+                  className="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-full text-[16px] font-medium transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
                 >
                   Logout
                 </button>

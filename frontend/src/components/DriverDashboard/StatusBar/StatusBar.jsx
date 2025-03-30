@@ -3,9 +3,9 @@ import PropTypes from "prop-types";
 
 const StatusBar = ({ isAvailable, toggleAvailability }) => {
   return (
-    <div className="mt-20">
+    <div className="mt-28">
       <div className="w-[67%] mx-auto py-4 px-6">
-        <div className="bg-white rounded-xl shadow-md p-4 border border-gray-100 transition-all duration-300">
+        <div className="bg-purple-50 rounded-xl shadow-md p-4 border border-gray-100 transition-all duration-300">
           <div className="flex items-center justify-between">
             {/* Left side with icon and status */}
             <div className="flex items-center space-x-4">
