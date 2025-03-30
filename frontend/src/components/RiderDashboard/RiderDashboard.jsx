@@ -66,6 +66,10 @@ const RiderDashboard = () => {
   // Handle form submission
   const handleSearch = async () => {    
     
+    if(role !== "rider"){
+      alert("You are not authorized to perform this action.");
+      return;
+    }
     setIsRequested(true);
     dispatch(setRiderWaitingStatus({isWaiting: true}));
     setIsLoading(true);

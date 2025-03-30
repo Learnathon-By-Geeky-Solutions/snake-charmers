@@ -38,7 +38,9 @@
 </div>
 
 ## 🏥 About LifeRide
-
+  <div align="center">
+  <img src="public/images/Logo1.png" alt="LifeRide Banner" width="20%">
+</div>
 <table>
 <tr>
 <td>

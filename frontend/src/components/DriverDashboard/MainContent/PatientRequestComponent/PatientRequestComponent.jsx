@@ -10,7 +10,7 @@ const PatientRequestComponent = ({isAvailable, isCheckedOut, toggleAvailability,
           <FaUserMd className="text-blue-700 text-xl mr-2" />
           <h3 className="text-xl font-semibold text-gray-800">Patient Requests</h3>
         </div>
-        <div className="bg-white shadow-lg flex-grow">
+        <div className="bg-purple-50 shadow-lg flex-grow">
           {/* When offline, show offline message */}
           {!isAvailable && (
             <div className="flex flex-col items-center justify-center h-full p-5">

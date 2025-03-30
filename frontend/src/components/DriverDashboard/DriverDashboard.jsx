@@ -36,6 +36,10 @@ const DriverDashboard = () => {
   }, [isAvailable])
 
   const toggleAvailability = () => {
+    if(role !== "driver"){
+      alert("You are not authorized to perform this action.");
+      return;
+    }
     const newStatus = !isAvailable;
     setIsAvailable(newStatus);
   };
