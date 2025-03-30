@@ -12,9 +12,6 @@ const AlignDriverInfo = ({ driver_name, driver_mobile, req_id, fare, driver_id, 
   const {id, name, mobile, latitude, longitude} = useSelector(state => state.user);
   const dispatch = useDispatch();
 
-
-  // console.log(latitude, longitude);
-
   const handleAccept = ()=> {
     
     dispatch(clearDriverResponses());

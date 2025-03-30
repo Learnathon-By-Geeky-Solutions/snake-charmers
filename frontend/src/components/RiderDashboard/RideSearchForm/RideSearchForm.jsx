@@ -35,7 +35,9 @@ const RideSearchForm = ({
         {/* Emergency badge */}
         <div className="mb-6 flex justify-center">
           <span className="bg-red-100 text-red-600 px-4 py-1 rounded-full text-sm font-medium inline-flex items-center">
-            <span className="animate-pulse mr-2 h-2 w-2 rounded-full bg-red-500"></span>
+            <div className="flex items-center">
+              <span className="animate-pulse mr-2 h-2 w-2 rounded-full bg-red-500"></span>
+            </div>
             Emergency Medical Service
           </span>
         </div>
@@ -50,7 +52,7 @@ const RideSearchForm = ({
         <div className="space-y-4">
           {/* Pickup Location */}
           <div className="group">
-            <label className="block text-sm font-medium text-gray-700 mb-1 ml-1">Pickup Location</label>
+            <label htmlFor="Pickup-Location" className="block text-sm font-medium text-gray-700 mb-1 ml-1">Pickup Location</label>
             <div className="flex items-center space-x-3 border border-gray-200 p-4 rounded-xl bg-white shadow-sm hover:shadow-md focus-within:ring-2 focus-within:ring-red-400 focus-within:border-transparent transition-all duration-300">
               <FaMapMarkerAlt className="text-red-500 text-lg" />
               <input
@@ -65,7 +67,7 @@ const RideSearchForm = ({
           
           {/* Dropoff Location */}
           <div className="group">
-            <label className="block text-sm font-medium text-gray-700 mb-1 ml-1">Destination</label>
+            <label htmlFor="Destination" className="block text-sm font-medium text-gray-700 mb-1 ml-1">Destination</label>
             <div className="flex items-center space-x-3 border border-gray-200 p-4 rounded-xl bg-white shadow-sm hover:shadow-md focus-within:ring-2 focus-within:ring-red-400 focus-within:border-transparent transition-all duration-300">
               <FaMapMarkerAlt className="text-blue-600 text-lg" />
               <input
@@ -80,7 +82,7 @@ const RideSearchForm = ({
           
           {/* Fare Input */}
           <div className="group">
-            <label className="block text-sm font-medium text-gray-700 mb-1 ml-1">Budget Limit</label>
+            <label htmlFor="Budget" className="block text-sm font-medium text-gray-700 mb-1 ml-1">Budget Limit</label>
             <div className="flex items-center space-x-3 border border-gray-200 p-4 rounded-xl bg-white shadow-sm hover:shadow-md focus-within:ring-2 focus-within:ring-red-400 focus-within:border-transparent transition-all duration-300">
               <FaMoneyBillWave className="text-green-600 text-lg" />
               <input

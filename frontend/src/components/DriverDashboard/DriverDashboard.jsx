@@ -6,7 +6,6 @@ import {ConnectToserver, DisconnectFromServer, SendMessage } from "../../control
 import OngoingTrip from '../OngoingTrip/OngoingTrip'
 import MainContent from "./MainContent/MainContent";
 import StatusBar from "./StatusBar/StatusBar";
-import RouteMap from "../Map/RouteMap";
 
 const DriverDashboard = () => {
   const [isAvailable, setIsAvailable] = useState(false);

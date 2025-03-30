@@ -108,7 +108,7 @@ function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {features.map((feature, index) => (
               <div 
-                key={index} 
+                key={index + 1} 
                 className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow"
               >
                 <div className="mb-4">{feature.icon}</div>
@@ -126,7 +126,7 @@ function Home() {
           <h2 className="text-2xl md:text-3xl font-bold text-center mb-12">How It Works</h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {howItWorks.map((step, index) => (
-              <div key={index} className="text-center">
+              <div key={index + 1} className="text-center">
                 <div className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center mx-auto mb-4 text-xl font-bold">
                   {index + 1}
                 </div>
@@ -438,7 +438,7 @@ function Home() {
                 quote: "The real-time tracking was invaluable during my mother's emergency. We knew exactly when to expect the ambulance."
               }
             ].map((testimonial, index) => (
-              <div key={index} className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow">
+              <div key={index + 1} className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow">
                 <div className="flex items-center text-yellow-500 mb-4">
                   {'★'.repeat(5)}
                 </div>
