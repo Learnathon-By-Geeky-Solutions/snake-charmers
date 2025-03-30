@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 
 const PatientRequestComponent = ({isAvailable, isCheckedOut, toggleAvailability, totalIncomingRequests}) => {
     return (
-        <div className="w-[35%] mt-6 flex flex-col h-[70vh]">
+      <div className="w-[35%] mt-6 flex flex-col h-[70vh]">        
         <div className="flex items-center mb-4">
           <FaUserMd className="text-blue-700 text-xl mr-2" />
           <h3 className="text-xl font-semibold text-gray-800">Patient Requests</h3>
@@ -13,7 +13,7 @@ const PatientRequestComponent = ({isAvailable, isCheckedOut, toggleAvailability,
         <div className="bg-white shadow-lg flex-grow">
           {/* When offline, show offline message */}
           {!isAvailable && (
-            <div className="flex flex-col items-center justify-center h-full p-8">
+            <div className="flex flex-col items-center justify-center h-full p-5">
               <div className="bg-gray-100 rounded-full p-6 mb-6">
                 <FaToggleOff className="text-red-500 text-6xl" />
               </div>
