@@ -3,6 +3,8 @@ import RideSearchForm from "../RideSearchForm/RideSearchForm";
 import DriverResponse from "../../DriverResponse/DriverResponse";
 import PropTypes from 'prop-types';
 import { FaAmbulance } from "react-icons/fa";
+import RideRequestImg from '../../../assets/images/RideRequestImg.png';
+
 
 const RideRequest = ({
   isRequested, 
@@ -65,7 +67,7 @@ const RideRequest = ({
               </div>
               
               <img
-                src="/src/assets/images/driverPageRequest 1.png"
+                src={RideRequestImg}
                 alt="Emergency Medical Transport"
                 className="w-full h-auto max-h-64 object-contain rounded-lg mx-auto"
               />
