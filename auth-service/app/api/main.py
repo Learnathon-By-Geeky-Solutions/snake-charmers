@@ -2,7 +2,7 @@
 API routes for user authentication and signup.
 """
 
-from fastapi import APIRouter, Depends, HTTPException, Header
+from fastapi import Response, APIRouter, Depends, HTTPException, Header
 from sqlalchemy.orm import Session
 from typing import Optional
 from app.db import get_session
@@ -43,7 +43,11 @@ async def signup(user: SignupRequest, session: Session = Depends(get_session)):
     response_model=LoginResponse,
     status_code=200
 )
-async def login(credentials: LoginRequest, session: Session = Depends(get_session)):
+async def login(
+    credentials: LoginRequest, 
+    response: Response,
+    session: Session = Depends(get_session)
+):
     """
     Handles login for drivers or riders.
     Returns JWT token on successful authentication.
@@ -53,6 +57,7 @@ async def login(credentials: LoginRequest, session: Session = Depends(get_sessio
         credentials.phone_or_email,
         credentials.password,
         credentials.user_type,
+        response
     )
 
 
