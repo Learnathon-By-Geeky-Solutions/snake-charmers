@@ -16,6 +16,7 @@ const handleLogin = async (values, dispatch, navigate) => {
 
         if (statusCode == 200){
             console.log("Login successfull")
+            console.log(response);
             dispatch(setUser(response));
             
             if(response.role == 'rider'){

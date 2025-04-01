@@ -2,8 +2,8 @@
 Schema definitions for user authentication and validation.
 """
 
-import re  # ✅ Fixed Import Order
-from pydantic import BaseModel, EmailStr, field_validator  # ✅ Fixed Import Order
+import re
+from pydantic import BaseModel, EmailStr, field_validator
 
 
 # Request Models
@@ -81,9 +81,19 @@ class LoginResponse(BaseModel):
     role: str
     mobile: str
     email: str
+    access_token: str
+    token_type: str
+
 
 class ErrorResponse(BaseModel):
     """
     Response schema for errors.
     """
     detail: str
+
+
+class TokenData(BaseModel):
+    """
+    Schema for token data payload.
+    """
+    sub: str

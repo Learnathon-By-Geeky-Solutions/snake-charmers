@@ -2,19 +2,28 @@
 API routes for user authentication and signup.
 """
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Header
 from sqlalchemy.orm import Session
+from typing import Optional
 from app.db import get_session
-from app.services.main import create_user, authenticate_user
+from app.services.main import create_user, authenticate_user, get_current_user
 from app.schemas.main import (
     SignupRequest,
     SignupResponse,
     LoginRequest,
     LoginResponse,
-    ErrorResponse
+    ErrorResponse,
 )
+from app.schemas.main import TokenData
+
 
 router = APIRouter()
+
+credentials_exception = HTTPException(
+    status_code=401,
+    detail="Could not validate credentials",
+    headers={"WWW-Authenticate": "Bearer"},
+)
 
 
 @router.post(
@@ -37,6 +46,7 @@ async def signup(user: SignupRequest, session: Session = Depends(get_session)):
 async def login(credentials: LoginRequest, session: Session = Depends(get_session)):
     """
     Handles login for drivers or riders.
+    Returns JWT token on successful authentication.
     """
     return authenticate_user(
         session,
@@ -45,3 +55,18 @@ async def login(credentials: LoginRequest, session: Session = Depends(get_sessio
         credentials.user_type,
     )
 
+
+@router.get("/auth/validate-token")
+async def validate_token(current_user: TokenData = Depends(get_current_user)):
+    """
+    Validates a JWT token and returns user info.
+    This endpoint can be called by the WebSocket server to validate tokens.
+    """
+    return {
+        "valid": True,
+        "user_id": current_user.sub,
+        "name": current_user.name,
+        "role": current_user.role,
+        "email": current_user.email,
+        "mobile": current_user.mobile
+    }

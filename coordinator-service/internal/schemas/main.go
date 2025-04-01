@@ -1,5 +1,10 @@
 package Schemas
 
+import (
+	"github.com/golang-jwt/jwt/v5"
+)
+
+
 // TripRequest represents a trip request from a rider
 type TripRequest struct {
 	tripBase     `mapstructure:",squash"`
@@ -85,4 +90,15 @@ type ClientInfo struct {
 type Event struct {
 	Name string         `json:"name" mapstructure:"name"`
 	Data map[string]any `json:"data" mapstructure:"data"`
+}
+
+type Claims struct {
+	Valid  bool   `json:"valid" mapstructure:"valid"`
+	UserID int    `json:"user_id" mapstructure:"user_id"`
+	Name   string `json:"name" mapstructure:"name"`
+	Role   string `json:"role" mapstructure:"role"`
+	Email  string `json:"email" mapstructure:"email"`
+	Mobile string `json:"mobile" mapstructure:"mobile"`
+	jwt.RegisteredClaims // Embed the standard claims to get the required methods
+
 }
