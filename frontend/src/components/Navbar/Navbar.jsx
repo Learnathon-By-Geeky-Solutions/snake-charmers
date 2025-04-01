@@ -1,7 +1,6 @@
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import logo from '../../assets/images/Logo1.png';
 import { useSelector, useDispatch } from 'react-redux';
-import { deleteUser } from '../../store/slices/user-slice';
 import { FaAmbulance, FaUser, FaBars, FaTimes } from 'react-icons/fa';
 import { useState, useEffect } from 'react';
 import { DisconnectFromServer } from '../../controllers/websocket/handler';
