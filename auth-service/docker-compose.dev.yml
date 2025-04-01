@@ -9,6 +9,7 @@ services:
       - "7000:8000"
     environment:
       DATABASE_URL: ${DATABASE_URL}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
     volumes:
       - .:/auth-service
       - /auth-service/app/models
@@ -26,6 +27,7 @@ services:
       RIDER_PASSWORD_2: ${RIDER_PASSWORD_2}
       DRIVER_PASSWORD_1: ${DRIVER_PASSWORD_1}
       DRIVER_PASSWORD_2: ${DRIVER_PASSWORD_2}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
 
     volumes:
       - /auth-service/app/models

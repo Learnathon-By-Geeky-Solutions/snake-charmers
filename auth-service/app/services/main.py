@@ -2,13 +2,19 @@
 This module handles user authentication and registration for drivers and riders.
 """
 
+from fastapi.security import OAuth2PasswordBearer
+from fastapi import Depends
+from jose import JWTError
+from datetime import timedelta
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 from fastapi import HTTPException
 from app.models.main import Driver, Rider
-from app.utils.security import hash_password, verify_password
+from app.utils.security import hash_password, verify_password, create_access_token, verify_token
+from app.schemas.main import TokenData
 
-INTERNAL_SERVER_ERROR = HTTPException(status_code=500, detail="Internal server error")
+# OAuth2 scheme for token authentication
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
 def is_email_or_mobile_taken(session: Session, email: str, mobile: str):
     """
@@ -84,7 +90,7 @@ def create_user(session: Session, user_data: dict):
         session.refresh(new_user)
         return {
             "success": True,
-            "message": f"{user_data["user_type"]} {new_user.name} registered successfully",
+            "message": f"{user_data['user_type']} {new_user.name} registered successfully",
         }
 
     except Exception as exc:
@@ -101,6 +107,7 @@ def authenticate_user(
 ):
     """
     Authenticates a driver or rider using phone or email.
+    Returns user data with JWT token.
     """
     user = None
 
@@ -129,21 +136,61 @@ def authenticate_user(
         if not user or not verify_password(password, user.password):
             raise HTTPException(status_code=401, detail="Invalid credentials")
 
+        # Create token data
+        user_id = user.driver_id if user_type == "driver" else user.rider_id
+        token_data = {
+            "sub": str(user_id),
+            "email": user.email,
+            "mobile": user.mobile,
+            "name": user.name,
+            "role": user_type
+        }
+        
+        # Generate JWT token
+        access_token = create_access_token(
+            data=token_data,
+            expires_delta=timedelta(minutes=60)  # Token valid for 1 hour
+        )
+
         return {
             "success": True,
             "name": user.name,
-            "id": (
-                user.driver_id
-                if user_type == "driver"
-                else user.rider_id
-            ),
+            "id": user_id,
             "role": user_type,
             "mobile": user.mobile,
             "email": user.email,
+            "access_token": access_token,
+            "token_type": "bearer"
         }
 
     except Exception as exc:
         print(exc)
         session.rollback()
-        raise 
+        raise
 
+
+async def get_current_user(token: str = Depends(oauth2_scheme)):
+    """
+    Get current user from JWT token.
+    """
+    try:
+        # Verify the token
+        payload = verify_token(token)
+        user_id = payload.get("sub")
+        if user_id is None:
+            raise credentials_exception
+            
+        # Create token data
+        token_data = TokenData(
+            sub=payload.get("sub"),
+            email=payload.get("email"),
+            mobile=payload.get("mobile"),
+            name=payload.get("name"),
+            role=payload.get("role")
+        )
+        
+        return token_data
+
+    except JWTError as exc:
+        print(exc)
+        raise credentials_exception
