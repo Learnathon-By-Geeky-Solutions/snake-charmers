@@ -3,7 +3,6 @@ package Server
 import (
 	"fmt"
 	"log"
-	"strings"
 	"net/http"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/gorilla/websocket"
@@ -16,22 +15,17 @@ const jwtSecret = "d7450020550cd26bbf20fdeab58eb1f2e3d9c268cd84e22e2a76d969d29e2
 
 // Extract JWT token from the Authorization header or query parameter
 func extractToken(r *http.Request) (string, error) {
-	// First try to get the token from the Authorization header
-	authHeader := r.Header.Get("Authorization")
-	if authHeader != "" {
-		parts := strings.Split(authHeader, " ")
-		if len(parts) == 2 && strings.ToLower(parts[0]) == "bearer" {
-			return parts[1], nil
+	// Extract token from HTTP-only cookie
+	cookie, err := r.Cookie("auth_token")
+	if err != nil {
+		if err == http.ErrNoCookie {
+			return "", fmt.Errorf("auth_token cookie not found")
 		}
+		return "", fmt.Errorf("error retrieving cookie: %w", err)
 	}
 	
-	// If not in header, try to get it from the query parameters
-	token := r.URL.Query().Get("token")
-	if token != "" {
-		return token, nil
-	}
-	
-	return "", fmt.Errorf("token not found in Authorization header or query parameters")
+	// Return the token value from the cookie
+	return cookie.Value, nil
 }
 
 // Validate the JWT token

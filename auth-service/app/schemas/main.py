@@ -81,9 +81,6 @@ class LoginResponse(BaseModel):
     role: str
     mobile: str
     email: str
-    access_token: str
-    token_type: str
-
 
 class ErrorResponse(BaseModel):
     """

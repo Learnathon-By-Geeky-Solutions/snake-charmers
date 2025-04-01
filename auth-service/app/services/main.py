@@ -3,7 +3,7 @@ This module handles user authentication and registration for drivers and riders.
 """
 
 from fastapi.security import OAuth2PasswordBearer
-from fastapi import Depends
+from fastapi import Depends, Response
 from jose import JWTError
 from datetime import timedelta
 from sqlalchemy.orm import Session
@@ -104,10 +104,11 @@ def authenticate_user(
     phone_or_email: str,
     password: str,
     user_type: str,
+    response: Response,  # Add FastAPI Response parameter
 ):
     """
     Authenticates a driver or rider using phone or email.
-    Returns user data with JWT token.
+    Sets JWT token as HTTP-only cookie and returns user data.
     """
     user = None
 
@@ -149,18 +150,28 @@ def authenticate_user(
         # Generate JWT token
         access_token = create_access_token(
             data=token_data,
-            expires_delta=timedelta(minutes=60)  # Token valid for 1 hour
+            expires_delta=timedelta(minutes=7200)  # Token valid for 5 days
         )
 
+        # Set JWT as HTTP-only cookie
+        response.set_cookie(
+            key="auth_token",
+            value=access_token,
+            httponly=True,
+            secure=False,  # Only send over HTTPS
+            samesite="Lax",  # Protect against CSRF
+            max_age=432000,  # 5 days
+            path="/"  # Cookie available for all paths
+        )
+
+        # Return user data without including the token
         return {
             "success": True,
             "name": user.name,
             "id": user_id,
             "role": user_type,
             "mobile": user.mobile,
-            "email": user.email,
-            "access_token": access_token,
-            "token_type": "bearer"
+            "email": user.email
         }
 
     except Exception as exc:
