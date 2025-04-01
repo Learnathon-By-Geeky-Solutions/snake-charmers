@@ -8,6 +8,7 @@ import OngoingTrip from '../OngoingTrip/OngoingTrip'
 import RideRequest from "./RideRequest.jsx/RideRequest";
 import { setUser } from "../../store/slices/user-slice";
 import {FaMapMarkerAlt} from "react-icons/fa";
+import WebSocketController from "../../controllers/websocket/ConnectionManger";
 
 const RiderDashboard = () => {
   
@@ -42,15 +43,16 @@ const RiderDashboard = () => {
         console.error("Error getting coordinates:", error);
       }
     };
+    console.log(id);
     if(id !== 0) {
       fetchCoordinates();
-      ConnectToserver(id, role);
+      if(!WebSocketController.isConnected()) ConnectToserver(id, role);
     }
     // Cleanup function to disconnect when component unmounts
     return () => {
       DisconnectFromServer();
     };
-  }, []);
+  }, [id]);
 
 
 

@@ -3,7 +3,7 @@ This module handles user authentication and registration for drivers and riders.
 """
 
 from fastapi.security import OAuth2PasswordBearer
-from fastapi import Depends, Response
+from fastapi import Depends, Response, Request
 from jose import JWTError
 from datetime import timedelta
 from sqlalchemy.orm import Session
@@ -15,6 +15,27 @@ from app.schemas.main import TokenData
 
 # OAuth2 scheme for token authentication
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
+
+credentials_exception = HTTPException(
+    status_code=401,
+    detail="Could not validate credentials",
+    headers={"WWW-Authenticate": "Bearer"},
+)
+
+
+
+def get_token_from_cookie(request: Request) -> str:
+    """
+    Get JWT token from cookies only.
+    """
+    # Check for token in cookies
+    token = request.cookies.get("auth_token")
+    if token:
+        return token
+    
+    # No token found
+    raise credentials_exception
+
 
 def is_email_or_mobile_taken(session: Session, email: str, mobile: str):
     """
@@ -164,7 +185,6 @@ def authenticate_user(
             path="/"  # Cookie available for all paths
         )
 
-        # Return user data without including the token
         return {
             "success": True,
             "name": user.name,
@@ -180,7 +200,7 @@ def authenticate_user(
         raise
 
 
-async def get_current_user(token: str = Depends(oauth2_scheme)):
+def get_current_user(token: str = Depends(get_token_from_cookie)):
     """
     Get current user from JWT token.
     """
@@ -203,5 +223,5 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         return token_data
 
     except JWTError as exc:
-        print(exc)
+        print(f"JWT Error: {exc}")
         raise credentials_exception

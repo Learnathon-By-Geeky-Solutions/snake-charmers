@@ -23,7 +23,6 @@ def create_access_token(data: Dict[str, Any], expires_delta: Optional[timedelta]
     """
     Create a JWT access token.
     """
-    print("here ", SECRET_KEY)
     to_encode = data.copy()
     
     # Set expiration time
