@@ -19,12 +19,6 @@ from app.schemas.main import TokenData
 
 router = APIRouter()
 
-credentials_exception = HTTPException(
-    status_code=401,
-    detail="Could not validate credentials",
-    headers={"WWW-Authenticate": "Bearer"},
-)
-
 
 @router.post(
     "/auth/signup",
@@ -69,9 +63,26 @@ async def validate_token(current_user: TokenData = Depends(get_current_user)):
     """
     return {
         "valid": True,
-        "user_id": current_user.sub,
+        "id": int(current_user.sub),
         "name": current_user.name,
         "role": current_user.role,
         "email": current_user.email,
         "mobile": current_user.mobile
     }
+
+
+@router.delete("/auth/logout")
+async def logout(response: Response):
+    """
+    Logout endpoint that clears the authentication cookie.
+    """
+    # Create a response that clears the access_token cookie
+    response.delete_cookie(
+        key="auth_token",
+        path="/",  # Make sure this matches the path used when setting the cookie
+        secure=False,  # Set to True if using HTTPS
+        httponly=True,  # Keep httpOnly for security
+        samesite="lax"  # Or "strict" depending on your CORS requirements
+    )
+    
+    return {"message": "Successfully logged out"}

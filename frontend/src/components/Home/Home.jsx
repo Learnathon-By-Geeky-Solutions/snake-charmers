@@ -2,10 +2,11 @@ import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import ambulanceImage from '../../assets/images/ambulance_image_final_1.png';
 import { FaAmbulance, FaClock, FaUserMd, FaMapMarkedAlt, FaDollarSign, FaUsers, FaRoute, FaMobile } from 'react-icons/fa';
+import { useSelector } from 'react-redux';
 
 function Home() {
   const [isVisible, setIsVisible] = useState(false);
-  
+  const {role} = useSelector(state => state.user);
   useEffect(() => {
     setIsVisible(true);
   }, []);
@@ -70,18 +71,20 @@ function Home() {
                 Ambulance, ensuring faster response times and life-saving 
                 assistance when it matters most.
               </p>
-              <div className="flex flex-wrap gap-4 mt-8">
-                <Link to="/signup">
-                  <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium transition-colors shadow-md">
-                    Sign Up
-                  </button>
-                </Link>
-                <Link to="/login">
-                  <button className="bg-white hover:bg-gray-100 text-blue-600 border-2 border-blue-600 px-8 py-3 rounded-lg font-medium transition-colors shadow-md">
-                    Log In
-                  </button>
-                </Link>
-              </div>
+              {role === '' && 
+                (<div className="flex flex-wrap gap-4 mt-8">
+                  <Link to="/signup">
+                    <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium transition-colors shadow-md">
+                      Sign Up
+                    </button>
+                  </Link>
+                  <Link to="/login">
+                    <button className="bg-white hover:bg-gray-100 text-blue-600 border-2 border-blue-600 px-8 py-3 rounded-lg font-medium transition-colors shadow-md">
+                      Log In
+                    </button>
+                  </Link>
+                </div>)
+              }
             </div>
 
             {/* Right side: Image with animation */}

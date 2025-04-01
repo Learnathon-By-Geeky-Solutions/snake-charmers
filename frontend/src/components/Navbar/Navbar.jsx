@@ -5,6 +5,8 @@ import { deleteUser } from '../../store/slices/user-slice';
 import { FaAmbulance, FaUser, FaBars, FaTimes } from 'react-icons/fa';
 import { useState, useEffect } from 'react';
 import { DisconnectFromServer } from '../../controllers/websocket/handler';
+import validateToken from '../../controllers/TokenValidator';
+import Logout from '../../controllers/Logout';
 
 function Navbar() {
   const dispatch = useDispatch();
@@ -19,6 +21,10 @@ function Navbar() {
   const isRider = role === 'rider';
   const isHomePage = location.pathname === '/';
   
+  useEffect(()=>{
+    validateToken(navigate, location, dispatch, role);
+  }, [location]);
+
   // Handle scroll effect for navbar
   useEffect(() => {
     const handleScroll = () => {
@@ -35,8 +41,7 @@ function Navbar() {
 
   const handleLogout = () => {
     DisconnectFromServer();
-    dispatch(deleteUser());
-    navigate('/');
+    Logout(dispatch, navigate);
   };
 
   const getRoleIcon = () => {

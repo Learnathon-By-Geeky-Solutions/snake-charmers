@@ -94,3 +94,7 @@ class TokenData(BaseModel):
     Schema for token data payload.
     """
     sub: str
+    email: str
+    mobile: str
+    role: str
+    name: str

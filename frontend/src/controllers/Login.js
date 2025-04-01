@@ -15,10 +15,8 @@ const handleLogin = async (values, dispatch, navigate) => {
         response = await response.json();
 
         if (statusCode == 200){
-            console.log("Login successfull")
-            console.log(response);
+
             dispatch(setUser(response));
-            
             if(response.role == 'rider'){
                 navigate('/ride_request');
             }else{
@@ -26,16 +24,14 @@ const handleLogin = async (values, dispatch, navigate) => {
             }    
         }
         else if (statusCode == 401) {
-            console.log("Invalid Credentials")
-            // showError(response.)
+            alert("Invalid Credentials")
         }
         else if(statusCode == 500){
-            console.log("Sorry, we're experiencing a technical issue on our server. Please try again later.")
+            alert("Sorry, we're experiencing a technical issue on our server. Please try again later.")
         }
     }
     catch (err) {
-        console.log('Error: ', err);
-        // showError('An error occured. Please try again.')
+        alert('Error: ', err);
     }
 };
 

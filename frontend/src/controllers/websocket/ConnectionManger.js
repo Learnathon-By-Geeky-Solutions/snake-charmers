@@ -2,8 +2,7 @@
 const WebSocketController = (function() {
   // Private variables with proper naming
   let socket = null;
-  let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0MjkiLCJlbWFpbCI6InJlemFAZ21haWwuY29tIiwibW9iaWxlIjoiMDE3NjMzMDAzNjQiLCJuYW1lIjoicmV6YSIsInJvbGUiOiJkcml2ZXIiLCJleHAiOjE3NDM0ODI2MzZ9.db5JRVzNLIdtR4jDa0liZoIyhHwzGq9liyEsPkFuGzA";
-  const SERVER_URL = `ws://localhost:8080/ws?token=${encodeURIComponent(token)}`; // Fixed the quote issue in the URL
+  const SERVER_URL = `ws://localhost:8080/ws`; // Fixed the quote issue in the URL
   
   // Enhanced logging with consistent error handling
   function log(message, type, logFunction) {

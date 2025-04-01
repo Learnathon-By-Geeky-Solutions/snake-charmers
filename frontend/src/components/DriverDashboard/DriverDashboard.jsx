@@ -25,10 +25,16 @@ const DriverDashboard = () => {
   });
 
   useEffect(()=>{
+    return () => {
+      DisconnectFromServer();
+    };
+  }, []);
+
+  useEffect(()=>{
     if(!isAvailable){
       console.log("dispatching");
       dispatch(unsetLocationUpdateState());
-      DisconnectFromServer()
+      DisconnectFromServer();
     } else if (id != 0) {
         ConnectToserver(id, role);
     }
