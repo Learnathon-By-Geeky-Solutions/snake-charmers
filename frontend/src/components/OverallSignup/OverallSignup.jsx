@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import {useNavigate} from 'react-router-dom';
 import handleSignUp from '../../controllers/Signup';
 
 const OverallSignup = () => {
@@ -10,6 +11,7 @@ const OverallSignup = () => {
     password: '',
     confirmPassword: '',
   });
+  const navigate = useNavigate();
 
   // Handle input change
   const handleChange = (e) => {
@@ -28,7 +30,7 @@ const OverallSignup = () => {
     handleSignUp({
       ...formData,
       user_type: (role === 'User' ? 'rider' : 'driver'),
-    })
+    }, navigate)
   };
 
   return (

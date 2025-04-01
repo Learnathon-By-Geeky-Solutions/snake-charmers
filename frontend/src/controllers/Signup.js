@@ -1,4 +1,4 @@
-const handleSignUp = async (values) => {
+const handleSignUp = async (values, navigate) => {
     try {
         let response = await fetch('http://localhost:7000/api/auth/signup',
             {
@@ -13,22 +13,21 @@ const handleSignUp = async (values) => {
         response = await response.json();
         
         if (statusCode == 201){
-            console.log("SignUp successfull")
+            alert("SignUp successfull");
+            navigate('/login');
         }
         else if(statusCode == 422){
-            console.log(response.detail[0].msg)
+            alert(response.detail[0].msg)
         }
         else if (statusCode == 409) {
-            console.log("Email or Phone already taken")
-            // showError(response.)
+            alert("Email or Phone already taken")
         }
         else if(statusCode == 500){
-            console.log("Sorry, we're experiencing a technical issue on our server. Please try again later.")
+            alert("Sorry, we're experiencing a technical issue on our server. Please try again later.")
         }
     }
     catch (err) {
-        console.log('Error: ', err);
-        // showError('An error occured. Please try again.')
+        alert('Error: ', err);
     }
 };
 
