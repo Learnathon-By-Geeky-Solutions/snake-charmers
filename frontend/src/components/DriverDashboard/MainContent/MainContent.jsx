@@ -4,10 +4,9 @@ import PropTypes from 'prop-types';
 
 const MainContent = ({isAvailable, isCheckedOut, toggleAvailability, totalIncomingRequests}) => {
     return (
-      <div className="min-h-screen bg-white flex flex-col ml-20 mr-20 justify-center items-center">
-
-        <div className="flex-grow flex w-[70%]">
-
+      <div className="mb-8 bg-white flex flex-col justify-center items-center">
+        {/* Using the same width classes as StatusBar */}
+        <div className="flex-grow flex flex-col lg:flex-row w-[95%] sm:w-[90%] md:w-[85%] lg:w-[80%] xl:w-[67%] gap-4">
           {/* Left Panel - Map */}
           <MapComponent
             isCheckedOut={isCheckedOut}
