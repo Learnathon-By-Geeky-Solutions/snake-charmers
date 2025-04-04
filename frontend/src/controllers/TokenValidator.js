@@ -29,7 +29,7 @@ async function validateToken(navigate, location, dispatch, role) {
 
     } catch (error) {
         console.log(error);
-        alert("An error ocurred. Please try again later");
+        alert("Error connecting to the server. Please try again later");
     }
 }
 
