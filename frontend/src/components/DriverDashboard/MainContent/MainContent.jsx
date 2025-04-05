@@ -11,7 +11,6 @@ const MainContent = ({isAvailable, isCheckedOut, toggleAvailability, totalIncomi
           <MapComponent
             isCheckedOut={isCheckedOut}
           />
-
           {/* Right Panel - Patient Requests Handler */}
           <PatientRequestComponent
             isAvailable={isAvailable}

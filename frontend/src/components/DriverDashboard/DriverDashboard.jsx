@@ -60,9 +60,11 @@ const DriverDashboard = () => {
      
       {/* Main Content - Full height with sidebar layout */}
       {isOnATrip ? 
-        <OngoingTrip /> 
+        <div className="md:mt-16 w-full">
+          <OngoingTrip/>
+        </div> 
         : 
-        <MainContent 
+        <MainContent
           isAvailable={isAvailable} 
           totalIncomingRequests={totalIncomingRequests} 
           isCheckedOut={isCheckedOut}

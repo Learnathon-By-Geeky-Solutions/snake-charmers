@@ -1,9 +1,11 @@
-import GoogleMap from "../../../Map/Map";
 import { FaMapMarkedAlt } from "react-icons/fa";
 import RouteMap from "../../../Map/RouteMap";
 import PropTypes from "prop-types";
+import LocationPointerMap from "../../../Map/LocationPointMap";
+import { useSelector } from "react-redux";
 
 const MapComponent = ({isCheckedOut}) => {
+    const { latitude, longitude } = useSelector(state => state.user);
     return (
         <div className="w-full lg:w-[65%] mt-4 sm:mt-6 flex flex-col h-[40vh] sm:h-[50vh] lg:h-[70vh]">
             <div className="flex items-center mb-2 sm:mb-4">
@@ -14,7 +16,10 @@ const MapComponent = ({isCheckedOut}) => {
                 {isCheckedOut ?
                     <RouteMap/> 
                     : 
-                    <GoogleMap />
+                     <LocationPointerMap
+                        latitude={latitude}
+                        longitude={longitude}
+                    />
                 }
             </div>
         </div>

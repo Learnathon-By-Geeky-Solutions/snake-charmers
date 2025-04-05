@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import GoogleMap from "../Map/Map";
 import { ConnectToserver, SendMessage, DisconnectFromServer } from "../../controllers/websocket/handler";
 import { getCoordinates } from "../Geolocation/Geolocation";
 import { setRiderWaitingStatus } from "../../store/slices/rider-waiting-status-slice";
@@ -9,6 +8,7 @@ import RideRequest from "./RideRequest.jsx/RideRequest";
 import { setUser } from "../../store/slices/user-slice";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import WebSocketController from "../../controllers/websocket/ConnectionManger";
+import LocationPointerMap from "../Map/LocationPointMap";
 
 const RiderDashboard = () => {
   
@@ -35,7 +35,6 @@ const RiderDashboard = () => {
     const fetchCoordinates = async () => {
       try {
         const { latitude, longitude } = await getCoordinates();
-        console.log(latitude, longitude);
         dispatch(setUser({latitude, longitude}));
         setCoords({latitude, longitude});
 
@@ -126,10 +125,14 @@ const RiderDashboard = () => {
               </span>
               <span className="tracking-wide">Your Location</span>
             </h1>
-            <GoogleMap 
-              pickupLocation={pickupLocation}  
-              dropoffLocation={dropoffLocation}
-            />
+            <div className="w-full lg:w-[65%] mt-4 sm:mt-6 flex flex-col h-[40vh] sm:h-[50vh] lg:h-[70vh]">
+                <div className="bg-white shadow-lg overflow-hidden flex-grow border border-gray-200 rounded-md">
+                  <LocationPointerMap
+                    latitude={coords.latitude}
+                    longitude={coords.longitude}
+                  />
+                </div>
+            </div>
           </div>
         </div>
       }
