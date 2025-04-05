@@ -15,8 +15,6 @@ const LocationPointerMap = ({
   const mapRef = useRef(null);
   const markerRef = useRef(null);
 
-  console.log("coords ", latitude, longitude);
-
   useEffect(() => {
     // Create map only if it doesn't exist
     if (!mapRef.current) {
