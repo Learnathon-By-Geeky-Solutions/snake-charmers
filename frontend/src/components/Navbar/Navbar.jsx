@@ -125,10 +125,6 @@ function Navbar() {
               alt="Life Ride Logo"
               className="h-20 w-38 transition-transform duration-300 group-hover:scale-105"
             />
-
-              {/* <span className="ml-2 text-xl font-bold bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent">
-                LifeRide
-              </span> */}
             </Link>
           </div>
 

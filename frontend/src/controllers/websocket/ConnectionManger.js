@@ -104,6 +104,7 @@ const WebSocketController = (function() {
                 try {
                   parsedMessage = JSON.parse(event.data);
                 } catch (e) {
+                  console.log(e);
                   // Not valid JSON, use as is
                 }
               }

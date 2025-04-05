@@ -4,7 +4,7 @@ import { ConnectToserver, SendMessage, DisconnectFromServer } from "../../contro
 import { getCoordinates } from "../Geolocation/Geolocation";
 import { setRiderWaitingStatus } from "../../store/slices/rider-waiting-status-slice";
 import OngoingTrip from '../OngoingTrip/OngoingTrip'
-import RideRequest from "./RideRequest.jsx/RideRequest";
+import RideRequest from "./RideRequest/RideRequest";
 import { setUser } from "../../store/slices/user-slice";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import WebSocketController from "../../controllers/websocket/ConnectionManger";

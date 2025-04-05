@@ -20,6 +20,7 @@ async function Logout(dispatch, navigate) {
             alert("Error occured. Please try again");
         }
     } catch (error) {
+        console.log(error);
         alert("An unknown error occured. Please try again");
     }
 }
