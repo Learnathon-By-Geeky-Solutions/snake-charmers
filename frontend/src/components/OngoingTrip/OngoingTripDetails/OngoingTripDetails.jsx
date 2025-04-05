@@ -14,7 +14,7 @@ const OngoingTripDetails = () => {
   } = useSelector(state => state.ongoingTripDetails);
   
   const {role} = useSelector(state => state.user);
-
+  
   return (
     <div className="space-y-5">
       {/* Passenger/Driver Details Card */}

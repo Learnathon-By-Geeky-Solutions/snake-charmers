@@ -10,13 +10,14 @@ const GoogleMap = () => {
         <iframe
           title="Google Map"
           width="90%"
-          height="620"
-          className="rounded-lg shadow-2xl"
+          height="350"
+          className="rounded-lg shadow-xl md:shadow-2xl md:h-450 lg:h-620"
           src={mapsrc}
           allowFullScreen=""
           loading="lazy"
+          style={{ height: 'clamp(350px, 50vh, 620px)' }}
         ></iframe>
       </div> 
     );
 }
-export default GoogleMap
+export default GoogleMap;
