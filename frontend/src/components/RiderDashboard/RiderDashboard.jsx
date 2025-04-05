@@ -7,7 +7,7 @@ import { setRiderWaitingStatus } from "../../store/slices/rider-waiting-status-s
 import OngoingTrip from '../OngoingTrip/OngoingTrip'
 import RideRequest from "./RideRequest.jsx/RideRequest";
 import { setUser } from "../../store/slices/user-slice";
-import {FaMapMarkerAlt} from "react-icons/fa";
+import { FaMapMarkerAlt } from "react-icons/fa";
 import WebSocketController from "../../controllers/websocket/ConnectionManger";
 
 const RiderDashboard = () => {
@@ -54,8 +54,6 @@ const RiderDashboard = () => {
     };
   }, [id]);
 
-
-
   // Check if all fields have valid values
   const isFormValid = 
     pickupLocation.trim() !== "" && 
@@ -63,7 +61,6 @@ const RiderDashboard = () => {
     fare !== "" && 
     !isNaN(parseInt(fare)) && 
     parseInt(fare) > 0;
-
 
   // Handle form submission
   const handleSearch = async () => {    
@@ -98,15 +95,14 @@ const RiderDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen  flex flex-col items-center p-8">
-      
+    <div className="min-h-screen flex flex-col items-center p-4 md:p-8">
       {/* Container for Form, Image, and Map */}
       {isOnATrip ? 
-        <div className="mt-16 w-full">
+        <div className="mt-4 md:mt-16 w-full">
           <OngoingTrip/>
         </div> 
         :
-        <div className="flex flex-col mt-20 items-center w-full max-w-4xl space-y-20">
+        <div className="flex flex-col mt-4 md:mt-20 items-center w-full max-w-4xl space-y-8 md:space-y-20">
           {/* Upper Section (Form + Image) */}
           <RideRequest
             isRequested={isRequested}
@@ -124,9 +120,9 @@ const RiderDashboard = () => {
 
           {/* Lower section -> Map Component */}
           <div className="w-full flex flex-col items-center">
-            <h1 className="text-3xl font-bold text-gray-800 mb-12 flex items-center px-6 py-3 rounded-lg">
-              <span className="bg-red-500 p-2 rounded-full mr-3 shadow-sm">
-                <FaMapMarkerAlt className="text-white text-lg" />
+            <h1 className="text-xl md:text-3xl font-bold text-gray-800 mb-6 md:mb-12 flex items-center px-4 py-2 md:px-6 md:py-3 rounded-lg">
+              <span className="bg-red-500 p-1 md:p-2 rounded-full mr-2 md:mr-3 shadow-sm">
+                <FaMapMarkerAlt className="text-white text-sm md:text-lg" />
               </span>
               <span className="tracking-wide">Your Location</span>
             </h1>
@@ -135,8 +131,9 @@ const RiderDashboard = () => {
               dropoffLocation={dropoffLocation}
             />
           </div>
-      </div>}
-  </div>
+        </div>
+      }
+    </div>
   );
 };
 
