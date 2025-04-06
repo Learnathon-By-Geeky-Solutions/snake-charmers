@@ -33,6 +33,7 @@ jobs:
           RIDER_PASSWORD_2: ${{ secrets.RIDER_PASSWORD_2 }}
           DRIVER_PASSWORD_1: ${{ secrets.DRIVER_PASSWORD_1 }}
           DRIVER_PASSWORD_2: ${{ secrets.DRIVER_PASSWORD_2 }}
+          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
         run: |
           SERVICES=("auth-service" "location-service" "trip-service")
           
