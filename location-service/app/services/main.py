@@ -32,23 +32,33 @@ def get_driver_location(
 
 
 def add_driver_location(
-        session: Session,
-        driver_id: int,
-        latitude: float,
-        longitude: float
+    session: Session,
+    driver_id: int,
+    latitude: float,
+    longitude: float
 ):
     """
-    Add a new driver's location to the database.
+    Add a new driver's location to the database after checking if the driver exists.
     """
     point = f'POINT({longitude} {latitude})'
-    # Create new driver location
-    driver_location = DriverLocation(
-        driver_id=driver_id,
-        latitude=latitude,
-        longitude=longitude,
-        location=ST_GeomFromText(point, 4326)
-    )
     try:
+        # Check if driver location already exists
+        existing_driver_location = session.query(DriverLocation).filter(
+            DriverLocation.driver_id == driver_id
+        ).first()
+        if existing_driver_location:
+            raise HTTPException(
+            status_code=409,
+            detail="Driver location already exists"
+            )
+
+        # Create new driver location
+        driver_location = DriverLocation(
+            driver_id=driver_id,
+            latitude=latitude,
+            longitude=longitude,
+            location=ST_GeomFromText(point, 4326)
+        )
         session.add(driver_location)
         session.commit()
         return {"success": True}
@@ -56,7 +66,7 @@ def add_driver_location(
     except Exception as exc:
         print(exc)
         session.rollback()
-        raise 
+        raise
 
 def update_driver_location(
         session: Session,
