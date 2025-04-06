@@ -1,6 +1,5 @@
 import os
 from sqlmodel import create_engine, Session
-# from app.core.config import settings
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
