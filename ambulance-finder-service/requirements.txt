@@ -41,3 +41,5 @@ watchfiles==1.0.4
 websockets==14.2
 pytest==8.3.4
 pytest-cov==6.0.0
+passlib==1.7.4
+bcrypt==3.2.2

@@ -35,6 +35,10 @@ def populate_test_data(session):
     drivers = [
         Driver(driver_id=1, name="Test Driver 1", mobile="01733333333", email="driver1@gmail.com", password=hash_password(os.getenv("DRIVER_PASSWORD_1"))),
         Driver(driver_id=2, name="Test Driver 2", mobile="01744444444", email="driver2@gmail.com", password=hash_password(os.getenv("DRIVER_PASSWORD_2"))),
+        Driver(driver_id=3, name="John Doe", mobile="01761234567", email="driver3@gmail.com", password=hash_password(os.getenv("DRIVER_PASSWORD_3"))),
+        Driver(driver_id=4, name="Jane Smith", mobile="01761234566", email="driver4@gmail.com", password=hash_password(os.getenv("DRIVER_PASSWORD_4"))),
+        Driver(driver_id=5, name="Alex Brown", mobile="01761234565", email="driver5@gmail.com", password=hash_password(os.getenv("DRIVER_PASSWORD_5"))),
+        Driver(driver_id=6, name="Sarah Wilson", mobile="01761234564", email="driver6@gmail.com", password=hash_password(os.getenv("DRIVER_PASSWORD_6"))),
     ]
 
     session.add_all(riders + drivers)
