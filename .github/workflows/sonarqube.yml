@@ -39,7 +39,7 @@ jobs:
           DRIVER_PASSWORD_6: ${{ secrets.DRIVER_PASSWORD_6 }}
           JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
         run: |
-          SERVICES=("auth-service" "location-service" "trip-service")
+          SERVICES=("auth-service" "location-service" "trip-service" "ambulance-finder-service")
           
           for SERVICE in "${SERVICES[@]}"; do
             echo "Running tests for $SERVICE"
