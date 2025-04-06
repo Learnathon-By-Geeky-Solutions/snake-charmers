@@ -8,7 +8,6 @@ engine = create_engine(
     pool_pre_ping=True
 )
 
-
 def get_session():
     """
     Dependency function to get a new database session.
