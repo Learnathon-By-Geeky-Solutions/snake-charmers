@@ -35,7 +35,21 @@
     <img src="https://img.shields.io/github/license/Learnathon-By-Geeky-Solutions/snake-charmers" alt="License">
     <img src="https://img.shields.io/github/issues/Learnathon-By-Geeky-Solutions/snake-charmers" alt="Issues">
   </div>
+
+  <div align="center">
+
+  ### SonarCloud Analysis
+
+  [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Learnathon-By-Geeky-Solutions_snake-charmers&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Learnathon-By-Geeky-Solutions_snake-charmers)
+  [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=Learnathon-By-Geeky-Solutions_snake-charmers&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=Learnathon-By-Geeky-Solutions_snake-charmers)
+  [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=Learnathon-By-Geeky-Solutions_snake-charmers&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=Learnathon-By-Geeky-Solutions_snake-charmers)
+  [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=Learnathon-By-Geeky-Solutions_snake-charmers&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=Learnathon-By-Geeky-Solutions_snake-charmers)
+  [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=Learnathon-By-Geeky-Solutions_snake-charmers&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=Learnathon-By-Geeky-Solutions_snake-charmers)
+  [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Learnathon-By-Geeky-Solutions_snake-charmers&metric=coverage)](https://sonarcloud.io/summary/new_code?id=Learnathon-By-Geeky-Solutions_snake-charmers)
+
+  </div>
 </div>
+
 
 ## 🏥 About LifeRide
   <div align="center">
@@ -93,11 +107,13 @@
 ## 📋 Table of Contents
 - [Team](#-team)
 - [Project Overview](#-project-overview)
+- [Live Demo](#-live-demo)
 - [Key Features](#-key-features)
 - [System Architecture](#-system-architecture)
 - [Database Design](#-database-design)
 - [API Documentation](#-api-documentation)
 - [Tech Stack](#-tech-stack)
+- [Development Logs](#-development-logs)
 - [Getting Started](#-getting-started)
 - [Development Guidelines](#-development-guidelines)
 - [Testing](#-testing)
@@ -126,6 +142,14 @@ LifeRide is a comprehensive web-based platform designed to revolutionize emergen
 - Provide transparent pricing and ETA information
 - Create a reliable platform for medical transport
 - Enable real-time tracking and communication
+
+## 🌐 Live Demo
+
+Experience LifeRide in action by visiting our live demo:
+
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit%20Now-blue?style=for-the-badge)](https://liferide.netlify.app/)
+
+Explore the platform's features and see how it simplifies emergency medical transportation in real-time.
 
 ## ✨ Key Features
 
@@ -215,6 +239,12 @@ We maintain comprehensive API documentation to facilitate integration and develo
 - **Docker**: Containerization for consistent development and deployment
 - **CI/CD**: Automated testing and deployment pipelines
 
+## 🛠️ Development Logs
+
+Stay updated with our progress and insights by visiting our development logs:
+
+[![DevLogs](https://img.shields.io/badge/DevLogs-Read%20Now-blue?style=for-the-badge)](https://learnathon-by-geeky-solutions.github.io/snake-charmers/)
+
 ## 🏁 Getting Started
 
 Follow these steps to set up the development environment:
@@ -260,7 +290,6 @@ docker compose -f docker-compose.dev.yml up --build auth-service-test
 ```
 
 ## 📚 Resources
-- [Development Logs](https://learnathon-by-geeky-solutions.github.io/snake-charmers/)
 - [Detailed Project Documentation](docs/)
 - [Development Environment Setup](docs/setup.md)
 - [Contributing Guidelines](CONTRIBUTING.md)
