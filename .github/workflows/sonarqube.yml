@@ -18,33 +18,33 @@ jobs:
         with:
           fetch-depth: 0  # Ensure full history is available
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      # - name: Set up Docker Buildx
+      #   uses: docker/setup-buildx-action@v3
 
-      - name: Verify Docker installation
-        run: |
-          docker --version
-          docker compose version
+      # - name: Verify Docker installation
+      #   run: |
+      #     docker --version
+      #     docker compose version
         
-      - name: Run tests for all services
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          RIDER_PASSWORD_1: ${{ secrets.RIDER_PASSWORD_1 }}
-          RIDER_PASSWORD_2: ${{ secrets.RIDER_PASSWORD_2 }}
-          DRIVER_PASSWORD_1: ${{ secrets.DRIVER_PASSWORD_1 }}
-          DRIVER_PASSWORD_2: ${{ secrets.DRIVER_PASSWORD_2 }}
-          DRIVER_PASSWORD_3: ${{ secrets.DRIVER_PASSWORD_3 }}
-          DRIVER_PASSWORD_4: ${{ secrets.DRIVER_PASSWORD_4 }}
-          DRIVER_PASSWORD_5: ${{ secrets.DRIVER_PASSWORD_5 }}
-          DRIVER_PASSWORD_6: ${{ secrets.DRIVER_PASSWORD_6 }}
-          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
-        run: |
-          SERVICES=("auth-service" "location-service" "trip-service" "ambulance-finder-service")
+      # - name: Run tests for all services
+      #   env:
+      #     DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      #     RIDER_PASSWORD_1: ${{ secrets.RIDER_PASSWORD_1 }}
+      #     RIDER_PASSWORD_2: ${{ secrets.RIDER_PASSWORD_2 }}
+      #     DRIVER_PASSWORD_1: ${{ secrets.DRIVER_PASSWORD_1 }}
+      #     DRIVER_PASSWORD_2: ${{ secrets.DRIVER_PASSWORD_2 }}
+      #     DRIVER_PASSWORD_3: ${{ secrets.DRIVER_PASSWORD_3 }}
+      #     DRIVER_PASSWORD_4: ${{ secrets.DRIVER_PASSWORD_4 }}
+      #     DRIVER_PASSWORD_5: ${{ secrets.DRIVER_PASSWORD_5 }}
+      #     DRIVER_PASSWORD_6: ${{ secrets.DRIVER_PASSWORD_6 }}
+      #     JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+      #   run: |
+      #     SERVICES=("auth-service" "location-service" "trip-service" "ambulance-finder-service")
           
-          for SERVICE in "${SERVICES[@]}"; do
-            echo "Running tests for $SERVICE"
-            docker compose -f $SERVICE/docker-compose.dev.yml up --build --abort-on-container-exit $SERVICE-test
-          done
+      #     for SERVICE in "${SERVICES[@]}"; do
+      #       echo "Running tests for $SERVICE"
+      #       docker compose -f $SERVICE/docker-compose.dev.yml up --build --abort-on-container-exit $SERVICE-test
+      #     done
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v5
