@@ -36,6 +36,53 @@ const getCoordinates = () => {
 };
 
 /**
+ * Prepares the location update message based on store state
+ * @param {string} id - Driver ID
+ * @param {Object} coords - Coordinates object with latitude and longitude
+ * @returns {Object} Formatted message object
+ */
+const prepareLocationMessage = (id, coords) => {
+  const isAdded = store.getState().locationUpdateState.isAdded;
+  return {
+    name: isAdded ? "update-location" : "add-location",
+    data: {
+      driver_id: id,
+      latitude: coords.latitude,
+      longitude: coords.longitude
+    }
+  };
+};
+
+/**
+ * Handles the location update callback
+ * @param {Function} onLocationUpdate - Callback function to handle location updates
+ * @param {string} id - Driver ID
+ * @param {Object} coords - Coordinates object
+ * @param {Function} dispatch - Redux dispatch function
+ */
+const handleLocationCallback = (onLocationUpdate, id, coords, dispatch) => {
+  if (!onLocationUpdate || typeof onLocationUpdate !== 'function') {
+    return;
+  }
+
+  const message = prepareLocationMessage(id, coords);
+  const isAdded = store.getState().locationUpdateState.isAdded;
+  
+  if (isAdded) {
+    onLocationUpdate(message);
+    return;
+  }
+  
+  // Wait for the connection to be established first
+  setTimeout(async () => {
+    const ok = await onLocationUpdate(message);
+    if (ok === true) {
+      dispatch(setLocationUpdateState());
+    }
+  }, 2000);
+};
+
+/**
  * React hook for location tracking with flexible configuration
  * 
  * @param {Object} options - Configuration options
@@ -56,6 +103,7 @@ const useLocation = ({
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
+  
   // Get current location and handle the result
   const updateLocation = async () => {
     setLoading(true);
@@ -67,30 +115,9 @@ const useLocation = ({
       dispatch(setUser({latitude: coords.latitude, longitude: coords.longitude}));
       setLoading(false);
 
-      // If a callback was provided, call it with the new coordinates
-      if (onLocationUpdate && typeof onLocationUpdate === 'function') {
-
-        const isAdded = store.getState().locationUpdateState.isAdded;
-        let msg = {
-          name: (isAdded === true ? "update-location" : "add-location"),
-          data: {
-            driver_id: id,
-            latitude: coords.latitude,
-            longitude: coords.longitude
-          }
-        }
-        
-        if(isAdded) onLocationUpdate(msg);
-        else{
-          // wait for the connection to  be established firsst
-          setTimeout(async () => {
-            let ok = await onLocationUpdate(msg);
-            if (ok === true) {
-              dispatch(setLocationUpdateState());
-            }
-          }, 2000);
-        }
-      }
+      // Handle location update callback if provided
+      handleLocationCallback(onLocationUpdate, id, coords, dispatch);
+      
       return coords;
     } catch (err) {
       setError(err.message);
@@ -99,6 +126,7 @@ const useLocation = ({
     }
   };
 
+  // Setup and teardown effect for tracking
   useEffect(() => {
     // For one-time fetching (rider) or immediate fetching when driver becomes available
     if (isActive) {

@@ -82,7 +82,7 @@ const TripDetails = ({ req_id, pickup_location, destination, latitude, longitude
             </span>
           </div>
           <div className="bg-blue-50 text-blue-600 font-medium px-3 py-1 rounded-full text-sm">
-            ₹{fare}
+            ৳{fare}
           </div>
         </div>
         

@@ -15,55 +15,40 @@ const RouteMap = ({ zoom = 13, height = '690px' }) => {
   const driverLocation = useSelector(state => state.driverLocation);
   const ongoingTripDetails = useSelector(state => state.ongoingTripDetails);
   const userData = useSelector(state => state.user);
-  const tripCheckout  = useSelector(state => state.tripCheckout)
-  const {isOnATrip} = useSelector(state => state.isOnATrip);
+  const tripCheckout = useSelector(state => state.tripCheckout);
+  const { isOnATrip } = useSelector(state => state.isOnATrip);
 
-  // console.log(ongoingTripDetails);
-  // Memoized source and destination calculations
-  const { source, destination } = useMemo(() => {
-    let sourceCoords;
+  // Extract coordinate determination logic
+  const getSourceCoordinates = useCallback(() => {
     if (role === "driver") {
-      sourceCoords = [userData.latitude, userData.longitude];
-    } else {
-      sourceCoords = [driverLocation.latitude, driverLocation.longitude];
+      return [userData.latitude, userData.longitude];
     }
-    
-    let destCoords;
+    return [driverLocation.latitude, driverLocation.longitude];
+  }, [role, userData, driverLocation]);
+
+  const getDestinationCoordinates = useCallback(() => {
     if (role === "driver") {
-      
-      if(isOnATrip){
-        destCoords = [ongoingTripDetails.latitude, ongoingTripDetails.longitude];
-      }else{
-        destCoords = [tripCheckout.latitude, tripCheckout.longitude];
+      if (isOnATrip) {
+        return [ongoingTripDetails.latitude, ongoingTripDetails.longitude];
       }
-    } else {
-      destCoords = [userData.latitude, userData.longitude];
+      return [tripCheckout.latitude, tripCheckout.longitude];
     }
-  
-    return {
-      source: sourceCoords,
-      destination: destCoords
-    };
-  }, [role, isOnATrip, userData, driverLocation, ongoingTripDetails, tripCheckout]);
+    return [userData.latitude, userData.longitude];
+  }, [role, isOnATrip, ongoingTripDetails, tripCheckout, userData]);
 
-  // Method to update route and markers
-  const updateRoute = useCallback(() => {
+  // Memoized source and destination calculations
+  const { source, destination } = useMemo(() => ({
+    source: getSourceCoordinates(),
+    destination: getDestinationCoordinates()
+  }), [getSourceCoordinates, getDestinationCoordinates]);
+
+  // Create and add markers to map
+  const createMarkers = useCallback(() => {
     // Remove existing markers
     markersRef.current.forEach(marker => {
       if (mapRef.current) marker.remove();
     });
     markersRef.current = [];
-
-    // Remove existing route control
-    if (routeControlRef.current && mapRef.current) {
-      mapRef.current.removeControl(routeControlRef.current);
-    }
-
-    // Validate coordinates
-    if (!source[0] || !source[1] || !destination[0] || !destination[1]) {
-      console.error('Invalid coordinates');
-      return;
-    }
 
     // Create custom markers with distinct styles
     const sourceMarker = L.circleMarker(source, {
@@ -72,8 +57,7 @@ const RouteMap = ({ zoom = 13, height = '690px' }) => {
       color: '#2E7D32', // Darker green border
       fillOpacity: 0.7,
       weight: 3
-    })
-    .addTo(mapRef.current);
+    }).addTo(mapRef.current);
 
     const destinationMarker = L.circleMarker(destination, {
       radius: 17,
@@ -81,24 +65,30 @@ const RouteMap = ({ zoom = 13, height = '690px' }) => {
       color: '#B71C1C', // Darker red border
       fillOpacity: 0.7,
       weight: 3
-    })
-    .addTo(mapRef.current);
+    }).addTo(mapRef.current);
 
     markersRef.current = [sourceMarker, destinationMarker];
+  }, [source, destination]);
 
-    // Create new route control
+  // Create and add routing control
+  const createRouteControl = useCallback(() => {
+    // Remove existing route control
+    if (routeControlRef.current && mapRef.current) {
+      mapRef.current.removeControl(routeControlRef.current);
+    }
+
     routeControlRef.current = L.Routing.control({
       waypoints: [
-        L.latLng(source[0], source[1]), 
+        L.latLng(source[0], source[1]),
         L.latLng(destination[0], destination[1])
       ],
       routeWhileDragging: true,
       createMarker: () => null, // Prevent default markers
       lineOptions: {
-        styles: [{ 
+        styles: [{
           color: '#1E88E5', // Material Blue
-          opacity: 0.9, 
-          weight: 8 
+          opacity: 0.9,
+          weight: 8
         }]
       },
       // Hide routing details
@@ -109,60 +99,79 @@ const RouteMap = ({ zoom = 13, height = '690px' }) => {
         style: { display: 'none' }
       }
     }).addTo(mapRef.current);
+  }, [source, destination]);
 
-    // Fit bounds to show entire route
+  // Fit map bounds to show entire route
+  const fitMapBounds = useCallback(() => {
     const bounds = L.latLngBounds([source, destination]);
-    mapRef.current.fitBounds(bounds, { 
+    mapRef.current.fitBounds(bounds, {
       padding: [50, 50],
-      maxZoom: zoom 
+      maxZoom: zoom
     });
   }, [source, destination, zoom]);
 
-  // Initialize map on first render
-  useEffect(() => {
-    // Create map only if it doesn't exist
-    if (!mapRef.current) {
-      mapRef.current = L.map('route-map').setView(source, zoom);
-      
-      // Add tile layer
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      }).addTo(mapRef.current);
-
-      // Add custom CSS for tooltips
-      const style = document.createElement('style');
-      style.innerHTML = `
-        .map-tooltip {
-          background: rgba(255,255,255,0.8);
-          border: 2px solid #333;
-          border-radius: 4px;
-          padding: 5px 10px;
-          font-weight: bold;
-        }
-      `;
-      document.head.appendChild(style);
+  // Method to update route and markers
+  const updateRoute = useCallback(() => {
+    // Validate coordinates
+    if (!source[0] || !source[1] || !destination[0] || !destination[1]) {
+      console.error('Invalid coordinates');
+      return;
     }
 
-    // Update route
+    createMarkers();
+    createRouteControl();
+    fitMapBounds();
+  }, [source, destination, createMarkers, createRouteControl, fitMapBounds]);
+
+  // Initialize map on first render
+  const initializeMap = useCallback(() => {
+    if (mapRef.current) return;
+
+    mapRef.current = L.map('route-map').setView(source, zoom);
+    
+    // Add tile layer
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    }).addTo(mapRef.current);
+
+    // Add custom CSS for tooltips
+    const style = document.createElement('style');
+    style.innerHTML = `
+      .map-tooltip {
+        background: rgba(255,255,255,0.8);
+        border: 2px solid #333;
+        border-radius: 4px;
+        padding: 5px 10px;
+        font-weight: bold;
+      }
+    `;
+    document.head.appendChild(style);
+  }, [source, zoom]);
+
+  // Cleanup resources
+  const cleanupMap = useCallback(() => {
+    if (!mapRef.current) return;
+    
+    // Remove markers
+    markersRef.current.forEach(marker => marker.remove());
+    
+    // Remove route control
+    if (routeControlRef.current) {
+      mapRef.current.removeControl(routeControlRef.current);
+    }
+    
+    // Remove map
+    mapRef.current.remove();
+    mapRef.current = null;
+  }, []);
+
+  // Initialize map on first render
+  useEffect(() => {
+    initializeMap();
     updateRoute();
 
-    // Cleanup function
-    return () => {
-      if (mapRef.current) {
-        // Remove markers
-        markersRef.current.forEach(marker => marker.remove());
-        
-        // Remove route control
-        if (routeControlRef.current) {
-          mapRef.current.removeControl(routeControlRef.current);
-        }
-        
-        // Remove map
-        mapRef.current.remove();
-        mapRef.current = null;
-      }
-    };
-  }, [source, destination, zoom, updateRoute]);
+    return cleanupMap;
+  }, [initializeMap, updateRoute, cleanupMap]);
 
   return (
     <div>

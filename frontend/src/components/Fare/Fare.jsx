@@ -15,7 +15,7 @@ const Fare = ({ currentFare, onFareChange }) => {
   return (
     <div className="bg-gray-800 text-white p-3 text-center w-full">
       <p className="font-bold text-green-400">Raise Fare</p>
-      <p className="text-sm font-semibold my-1">Current Fare: ₹{currentFare}</p>
+      <p className="text-sm font-semibold my-1">Current Fare: ৳{currentFare}</p>
       <div className="flex justify-between mt-2">
         <button 
           onClick={handleDecrease} 

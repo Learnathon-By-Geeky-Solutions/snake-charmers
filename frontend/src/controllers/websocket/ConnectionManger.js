@@ -1,255 +1,308 @@
-// WebSocket Controller Module
+// WebSocketController Module
 const WebSocketController = (function() {
-  // Private variables with proper naming
+  // Private variables
   let socket = null;
-  const SERVER_URL = `ws://localhost:8080/ws`; // Fixed the quote issue in the URL
+  const SERVER_URL = `ws://localhost:8080/ws`;
   
-  // Enhanced logging with consistent error handling
-  function log(message, type, logFunction) {
-    if (typeof logFunction === 'function') {
+  // Connection states as constants
+  const CONNECTION_STATES = {
+    CONNECTING: 0,
+    OPEN: 1,
+    CLOSING: 2,
+    CLOSED: 3
+  };
+  
+  const STATE_NAMES = ['CONNECTING', 'OPEN', 'CLOSING', 'CLOSED'];
+  
+  // Logging module to encapsulate logging logic
+  const Logger = {
+    log(message, type, logFunction) {
+      if (typeof logFunction !== 'function') return;
+      
       try {
         logFunction(message, type);
       } catch (error) {
         console.error('Logging error:', error);
       }
     }
+  };
+  
+  // Callback handler module
+  const CallbackHandler = {
+    execute(callback, param, logFunction) {
+      if (typeof callback !== 'function') return;
+      
+      try {
+        callback(param);
+      } catch (error) {
+        Logger.log(`Error in callback handler: ${error.message}`, 'system', logFunction);
+      }
+    }
+  };
+  
+  // Message processor module
+  const MessageProcessor = {
+    parse(data) {
+      if (typeof data !== 'string') return data;
+      if (!data.startsWith('{') && !data.startsWith('[')) return data;
+      
+      try {
+        return JSON.parse(data);
+      } catch (e) {
+        console.log(e);
+        return data;
+      }
+    },
+    
+    stringify(message) {
+      if (typeof message !== 'object' || message === null) {
+        return message;
+      }
+      
+      try {
+        return JSON.stringify(message);
+      } catch (error) {
+        throw new Error(`Failed to stringify message: ${error.message}`);
+      }
+    }
+  };
+  
+  // Socket event handlers object
+  const createSocketHandlers = (options, connectionTimeout, resolve, reject) => {
+    const logFunction = options.logFunction || console.log;
+    
+    return {
+      handleOpen() {
+        clearTimeout(connectionTimeout);
+        Logger.log(`Connected to ${SERVER_URL}`, 'system', logFunction);
+        
+        CallbackHandler.execute(options.onOpen, null, logFunction);
+        
+        if (options.sendInitialMessage && options.initialMessage) {
+          sendMessage(options.initialMessage, { logFunction });
+        }
+        
+        resolve(true);
+      },
+      
+      handleClose(event) {
+        clearTimeout(connectionTimeout);
+        Logger.log(`Disconnected from server. Code: ${event.code}, Reason: ${event.reason || 'No reason provided'}`, 'system', logFunction);
+        
+        CallbackHandler.execute(options.onClose, event, logFunction);
+        
+        socket = null;
+        
+        const isAbnormalClosure = !event.wasClean && (event.code !== 1000 && event.code !== 1001);
+        if (isAbnormalClosure) {
+          reject(new Error(`Connection failed: ${event.reason || 'Unknown reason'}`));
+        }
+      },
+      
+      handleError(error) {
+        clearTimeout(connectionTimeout);
+        const errorMessage = error.message || 'Unknown error';
+        Logger.log(`WebSocket error: ${errorMessage}`, 'system', logFunction);
+        
+        CallbackHandler.execute(options.onError, error, logFunction);
+      },
+      
+      handleMessage(event) {
+        if (typeof options.onMessage !== 'function') return;
+        
+        try {
+          const parsedMessage = MessageProcessor.parse(event.data);
+          Logger.log(`Received: ${event.data}`, 'received', logFunction);
+          options.onMessage(parsedMessage);
+        } catch (error) {
+          Logger.log(`Error processing message: ${error.message}`, 'system', logFunction);
+        }
+      }
+    };
+  };
+  
+  // Setup socket with handlers
+  function setupSocket(options, resolve, reject) {
+    const logFunction = options.logFunction || console.log;
+    
+    try {
+      const connectionTimeout = setTimeout(() => {
+        if (socket && socket.readyState !== CONNECTION_STATES.OPEN) {
+          socket.close();
+          reject(new Error('Connection timeout'));
+        }
+      }, options.timeout || 10000);
+      
+      socket = new WebSocket(SERVER_URL);
+      
+      const handlers = createSocketHandlers(options, connectionTimeout, resolve, reject);
+      
+      socket.onopen = handlers.handleOpen;
+      socket.onclose = handlers.handleClose;
+      socket.onerror = handlers.handleError;
+      socket.onmessage = handlers.handleMessage;
+      
+    } catch (error) {
+      Logger.log(`Failed to connect: ${error.message}`, 'system', logFunction);
+      reject(error);
+    }
   }
   
-  // Improved connection management with proper Promise handling
+  // Send logic with exponential backoff
+  function createSendFunction(message, options) {
+    const logFunction = options.logFunction || console.log;
+    const maxRetries = options.maxRetries || 0;
+    let retryCount = 0;
+    
+    return function attemptSend() {
+      // Check socket readiness
+      if (!isConnectionReady()) {
+        return handleSendRetry(retryCount, maxRetries, message, options, attemptSend);
+      }
+      
+      // Perform send
+      try {
+        const messageToSend = MessageProcessor.stringify(message);
+        
+        socket.send(messageToSend);
+        Logger.log(`Sent: ${messageToSend}`, 'sent', logFunction);
+        
+        CallbackHandler.execute(options.onSend, message, logFunction);
+        
+        return Promise.resolve(true);
+      } catch (error) {
+        Logger.log(`Failed to send message: ${error.message}`, 'system', logFunction);
+        return Promise.reject(error);
+      }
+    };
+  }
+  
+  // Helper for connection check before sending
+  function isConnectionReady() {
+    return socket && socket.readyState === CONNECTION_STATES.OPEN;
+  }
+  
+  // Helper for send retry logic
+  function handleSendRetry(retryCount, maxRetries, message, options, attemptSendFn) {
+    const logFunction = options.logFunction || console.log;
+    
+    if (retryCount < maxRetries) {
+      const newRetryCount = retryCount + 1;
+      Logger.log(`Connection not ready, retrying (${newRetryCount}/${maxRetries})...`, 'system', logFunction);
+      
+      const backoffTime = Math.min(1000 * Math.pow(2, newRetryCount), 30000);
+      
+      // Schedule retry with backoff
+      return new Promise(resolve => {
+        setTimeout(() => {
+          resolve(createSendFunction(message, { 
+            ...options, 
+            maxRetries,
+            retryCount: newRetryCount 
+          })());
+        }, backoffTime);
+      });
+    }
+    
+    Logger.log('Not connected or not ready', 'system', logFunction);
+    return Promise.resolve(false);
+  }
+  
+  // Main connect function
   function connect(options = {}) {
     const logFunction = options.logFunction || console.log;
     
-    // Return early if already connected
-    if (socket && (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING)) {
-      log('Connection already established or in progress', 'system', logFunction);
+    if (isConnectionActive()) {
+      Logger.log('Connection already established or in progress', 'system', logFunction);
       return Promise.resolve(false);
     }
     
     return new Promise((resolve, reject) => {
-      try {
-        // Set connection timeout
-        const connectionTimeout = setTimeout(() => {
-          if (socket && socket.readyState !== WebSocket.OPEN) {
-            socket.close();
-            reject(new Error('Connection timeout'));
-          }
-        }, options.timeout || 10000);
-        
-        socket = new WebSocket(SERVER_URL);
-        
-        socket.onopen = () => {
-          clearTimeout(connectionTimeout);
-          log(`Connected to ${SERVER_URL}`, 'system', logFunction);
-          
-          if (typeof options.onOpen === 'function') {
-            try {
-              options.onOpen();
-            } catch (error) {
-              log(`Error in onOpen handler: ${error.message}`, 'system', logFunction);
-            }
-          }
-          
-          // Send initial message if specified
-          if (options.sendInitialMessage && options.initialMessage) {
-            sendMessage(options.initialMessage, { logFunction });
-          }
-          
-          resolve(true);
-        };
-        
-        socket.onclose = (event) => {
-          clearTimeout(connectionTimeout);
-          log(`Disconnected from server. Code: ${event.code}, Reason: ${event.reason || 'No reason provided'}`, 'system', logFunction);
-          
-          if (typeof options.onClose === 'function') {
-            try {
-              options.onClose(event);
-            } catch (error) {
-              log(`Error in onClose handler: ${error.message}`, 'system', logFunction);
-            }
-          }
-          
-          socket = null;
-          
-          // Only reject if this is an unexpected closure and connection was never established
-          if (!event.wasClean && (event.code !== 1000 && event.code !== 1001)) {
-            reject(new Error(`Connection failed: ${event.reason || 'Unknown reason'}`));
-          }
-        };
-        
-        socket.onerror = (error) => {
-          clearTimeout(connectionTimeout);
-          const errorMessage = error.message || 'Unknown error';
-          log(`WebSocket error: ${errorMessage}`, 'system', logFunction);
-          
-          if (typeof options.onError === 'function') {
-            try {
-              options.onError(error);
-            } catch (handlerError) {
-              log(`Error in onError handler: ${handlerError.message}`, 'system', logFunction);
-            }
-          }
-          
-          // Don't reject here as the onclose handler will be called next
-        };
-        
-        socket.onmessage = (event) => {
-          if (typeof options.onMessage === 'function') {
-            try {
-              let parsedMessage = event.data;
-              
-              // Try to parse JSON if it looks like JSON
-              if (typeof event.data === 'string' && 
-                  (event.data.startsWith('{') || event.data.startsWith('['))) {
-                try {
-                  parsedMessage = JSON.parse(event.data);
-                } catch (e) {
-                  console.log(e);
-                  // Not valid JSON, use as is
-                }
-              }
-              
-              log(`Received: ${event.data}`, 'received', logFunction);
-              options.onMessage(parsedMessage /*, options.dispatch*/);
-            } catch (error) {
-              log(`Error processing message: ${error.message}`, 'system', logFunction);
-            }
-          }
-        };
-        
-      } catch (error) {
-        log(`Failed to connect: ${error.message}`, 'system', logFunction);
-        reject(error);
-      }
+      setupSocket(options, resolve, reject);
     });
   }
   
-  // Enhanced disconnect with proper Promise handling
+  // Disconnect function
   function disconnect(options = {}) {
     const logFunction = options.logFunction || console.log;
     
     if (!socket) {
-      log('Not connected, nothing to disconnect', 'system', logFunction);
+      Logger.log('Not connected, nothing to disconnect', 'system', logFunction);
       return Promise.resolve(false);
     }
     
     return new Promise((resolve) => {
       try {
-        const code = options.code || 1000; // Normal closure
+        const code = options.code || 1000;
         const reason = options.reason || 'Client initiated disconnect';
+        const timeout = options.timeout || 5000;
         
-        // Set a timeout to force resolution in case onclose doesn't fire
+        // Set up cleanup timeout
         const closeTimeout = setTimeout(() => {
-          log('Forced disconnect resolution after timeout', 'system', logFunction);
+          Logger.log('Forced disconnect resolution after timeout', 'system', logFunction);
           socket = null;
           resolve(true);
-        }, options.timeout || 5000);
+        }, timeout);
         
-        // Create a one-time onclose handler
+        // Define clean close handler
         const onCloseHandler = (event) => {
           clearTimeout(closeTimeout);
-          if (typeof options.onClose === 'function') {
-            try {
-              options.onClose(event);
-            } catch (error) {
-              log(`Error in onClose handler: ${error.message}`, 'system', logFunction);
-            }
-          }
+          CallbackHandler.execute(options.onClose, event, logFunction);
           resolve(true);
         };
         
-        // Replace existing onclose with our handler
         socket.onclose = onCloseHandler;
-        
         socket.close(code, reason);
       } catch (error) {
-        log(`Failed to disconnect: ${error.message}`, 'system', logFunction);
-        socket = null; // Ensure we clear the socket reference
+        Logger.log(`Failed to disconnect: ${error.message}`, 'system', logFunction);
+        socket = null;
         resolve(false);
       }
     });
   }
   
-  // Enhanced message sending with retry capability
-  function sendMessage(message, options = {}) {
-    const logFunction = options.logFunction || console.log;
-    const maxRetries = options.maxRetries || 0;
-    let retryCount = 0;
-    
-    function attemptSend() {
-      if (!socket || socket.readyState !== WebSocket.OPEN) {
-        if (retryCount < maxRetries) {
-          retryCount++;
-          log(`Connection not ready, retrying (${retryCount}/${maxRetries})...`, 'system', logFunction);
-          
-          // Exponential backoff
-          setTimeout(attemptSend, Math.min(1000 * Math.pow(2, retryCount), 30000));
-          return Promise.resolve(false);
-        }
-        
-        log('Not connected or not ready', 'system', logFunction);
-        return Promise.resolve(false);
-      }
-      
-      try {
-        let messageToSend = message;
-        
-        // If message is an object, stringify it
-        if (typeof message === 'object' && message !== null) {
-          try {
-            messageToSend = JSON.stringify(message);
-          } catch (error) {
-            log(`Failed to stringify message: ${error.message}`, 'system', logFunction);
-            return Promise.reject(error);
-          }
-        }
-        
-        socket.send(messageToSend);
-        log(`Sent: ${messageToSend}`, 'sent', logFunction);
-        
-        if (typeof options.onSend === 'function') {
-          try {
-            options.onSend(message);
-          } catch (error) {
-            log(`Error in onSend handler: ${error.message}`, 'system', logFunction);
-          }
-        }
-        
-        return Promise.resolve(true);
-      } catch (error) {
-        log(`Failed to send message: ${error.message}`, 'system', logFunction);
-        return Promise.reject(error);
-      }
-    }
-    
-    return attemptSend();
+  // Helper for connection status check
+  function isConnectionActive() {
+    return socket && (
+      socket.readyState === CONNECTION_STATES.OPEN || 
+      socket.readyState === CONNECTION_STATES.CONNECTING
+    );
   }
   
-  // Enhanced connection status check
+  // Message sending entry point
+  function sendMessage(message, options = {}) {
+    const sendFn = createSendFunction(message, options);
+    return sendFn();
+  }
+  
+  // Connection status check
   function isConnected() {
-    return socket !== null && socket.readyState === WebSocket.OPEN;
+    return socket !== null && socket.readyState === CONNECTION_STATES.OPEN;
   }
   
   // Get connection state details
   function getConnectionState() {
     if (!socket) {
-      return { connected: false, state: 'CLOSED', stateCode: WebSocket.CLOSED };
+      return { 
+        connected: false, 
+        state: STATE_NAMES[CONNECTION_STATES.CLOSED], 
+        stateCode: CONNECTION_STATES.CLOSED 
+      };
     }
     
-    const states = ['CONNECTING', 'OPEN', 'CLOSING', 'CLOSED'];
     return {
-      connected: socket.readyState === WebSocket.OPEN,
-      state: states[socket.readyState] || 'UNKNOWN',
+      connected: socket.readyState === CONNECTION_STATES.OPEN,
+      state: STATE_NAMES[socket.readyState] || 'UNKNOWN',
       stateCode: socket.readyState
     };
   }
   
-  // Get socket instance (for advanced usage) with safety check
+  // Get socket instance
   function getSocket() {
     return socket;
   }
   
-  // Return public API
+  // Public API
   return {
     connect,
     disconnect,

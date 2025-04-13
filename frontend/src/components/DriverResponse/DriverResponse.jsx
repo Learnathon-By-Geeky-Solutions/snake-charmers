@@ -109,8 +109,8 @@ export const DriverResponse = ({ pickup_location, destination, fare }) => {
             <div>
               <p className="text-gray-500 text-xs uppercase tracking-wider font-medium">Your Fare</p>
               <div className="flex items-baseline">
-                <p className="text-gray-900 font-bold text-2xl md:text-3xl">₹{currentFare === '' ? '0' : currentFare}</p>
-                <span className="ml-2 text-purple-500 text-xs md:text-sm font-medium">INR</span>
+                <p className="text-gray-900 font-bold text-2xl md:text-3xl">৳{currentFare === '' ? '0' : currentFare}</p>
+                <span className="ml-2 text-purple-500 text-xs md:text-sm font-medium">TK</span>
               </div>
             </div>
             
@@ -126,7 +126,7 @@ export const DriverResponse = ({ pickup_location, destination, fare }) => {
           <div className="mb-4 md:mb-6">
             <div className="flex items-center bg-white rounded-xl border-2 border-purple-200 focus-within:ring-4 focus-within:ring-purple-200 focus-within:border-purple-400 transition-all duration-200 shadow-sm">
               <div className="bg-purple-100 px-3 md:px-4 py-2 md:py-3 rounded-l-xl border-r border-purple-200">
-                <span className="text-purple-700 font-bold text-base md:text-lg">₹</span>
+                <span className="text-purple-700 font-bold text-base md:text-lg">৳</span>
               </div>
               <input
                 type="text"
@@ -156,7 +156,7 @@ export const DriverResponse = ({ pickup_location, destination, fare }) => {
               <div className="bg-gray-200 p-1 rounded-full">
                 <FaMinus className="text-xs text-gray-700" />
               </div>
-              <span>₹100</span>
+              <span>৳100</span>
             </button>
             
             <button 
@@ -166,7 +166,7 @@ export const DriverResponse = ({ pickup_location, destination, fare }) => {
               <div className="bg-purple-200 p-1 rounded-full">
                 <FaPlus className="text-xs text-purple-700" />
               </div>
-              <span>₹100</span>
+              <span>৳100</span>
             </button>
           </div>
         </div>
@@ -185,7 +185,7 @@ export const DriverResponse = ({ pickup_location, destination, fare }) => {
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
-                ₹{amount}
+                ৳{amount}
               </button>
             ))}
           </div>

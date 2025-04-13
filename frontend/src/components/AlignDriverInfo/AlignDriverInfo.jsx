@@ -64,7 +64,7 @@ const AlignDriverInfo = ({ driver_name, driver_mobile, req_id, fare, driver_id, 
           </div>
         </div>
         <div className="text-right">
-          <p className="font-bold text-indigo-600 text-base md:text-lg">₹{fare}</p>
+          <p className="font-bold text-indigo-600 text-base md:text-lg">৳{fare}</p>
           <p className="text-xs text-gray-500">Fixed price</p>
         </div>
       </div>
