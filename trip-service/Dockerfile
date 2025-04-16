@@ -1,5 +1,5 @@
 # Build Stage
-FROM python:3.13.2-alpine AS build
+FROM python:3.13.3-alpine AS build
 
 # Install build dependencies
 RUN apk update && apk add --no-cache bash build-base libffi-dev
@@ -18,7 +18,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 
 # Base Runtime Stage
-FROM python:3.13.2-alpine AS base
+FROM python:3.13.3-alpine AS base
 # Create a non-root user
 
 RUN adduser -D myuser
