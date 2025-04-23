@@ -36,5 +36,5 @@ services:
       - /trip-service/tests
       - ./:/trip-service 
     command: >
-      sh -c "pytest -v --cov=app --cov-report=xml:coverage.xml tests/unittest &&
+      sh -c "pytest -v --cov=app --cov-report=xml:coverage.xml tests &&
            sed -i 's|/trip-service/app|trip-service/app|g' coverage.xml"

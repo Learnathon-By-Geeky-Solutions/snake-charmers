@@ -36,5 +36,5 @@ services:
       - /ambulance-finder-service/tests
       - ./:/ambulance-finder-service 
     command: >
-      sh -c "pytest -v --cov=app --cov-report=xml:coverage.xml tests/unittest &&
+      sh -c "pytest -v --cov=app --cov-report=xml:coverage.xml tests &&
            sed -i 's|/ambulance-finder-service/app|ambulance-finder-service/app|g' coverage.xml"

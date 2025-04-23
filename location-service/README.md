@@ -5,29 +5,23 @@ This is a FastAPI project structured for modular development. Below are the deta
 ## Project Structure
 
 ```
-my-fastapi-project
+location-service
 ├── app
 │   ├── main.py                # Entry point of the FastAPI application
 │   ├── api                    # Directory for API routes
 │   │   ├── __init__.py
-│   │   └── endpoints          # Directory for endpoint definitions
-│   │       └── example.py
-│   ├── core                   # Core application settings
-│   │   ├── __init__.py
-│   │   └── config.py
-│   ├── models                 # Database models
-│   │   └── __init__.py
+│   │   └── main.py            # Directory for endpoint definitions
+│   │   
 │   ├── schemas                # Pydantic schemas for data validation
 │   │   └── __init__.py
-│   └── services               # Business logic and services
-│       └── __init__.py
+|   |
+│   ├── services               # Business logic and services
+│   |    └── __init__.py
+|   ├── db.py
+├── tests/                     # Contains test files
+├── Dockerfile                  
+├── docker-compose.dev.yml
 ├── requirements.txt           # Project dependencies
-├── alembic.ini                # Alembic configuration for migrations
-├── alembic                    # Directory for Alembic migrations
-│   ├── env.py
-│   ├── script.py.mako
-│   └── versions
-│       └── README
 ├── .env                       # Environment variables
 └── README.md                  # Project documentation
 ```
@@ -60,7 +54,7 @@ To run the FastAPI application using Docker, execute the following command:
 docker compose -f docker-compose.dev.yml up --build -d
 ```
 
-Visit `http://127.0.0.1:8000/docs` to access the interactive API documentation.
+Visit `http://127.0.0.1:9000/docs` to access the interactive API documentation.
 
 ## Environment Variables
 

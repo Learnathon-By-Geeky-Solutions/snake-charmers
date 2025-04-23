@@ -38,5 +38,5 @@ services:
       - /auth-service/tests
       - ./:/auth-service 
     command: >
-      sh -c "pytest -v --cov=app --cov-report=xml:coverage.xml tests/unittest &&
+      sh -c "pytest -v --cov=app --cov-report=xml:coverage.xml tests &&
            sed -i 's|/auth-service/app|auth-service/app|g' coverage.xml"
