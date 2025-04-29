@@ -19,19 +19,19 @@ services:
     restart: unless-stopped
 
   # Production service
-  # coordinator-service-prod:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #     target: prod
-  #   container_name: coordinator-service-prod
-  #   ports:
-  #     - "8080:8080"
-  #   environment:
-  #     - TRIP_SERVICE_URL=${TRIP_SERVICE_URL}
-  #     - AMBULANCE_FINDER_URL=${AMBULANCE_FINDER_URL}
-  #     - LOCATION_SERVICE_URL=${LOCATION_SERVICE_URL}
-  #     - JWT_SECRET_KEY=${JWT_SECRET_KEY}
-  #   restart: always
+  coordinator-service-prod:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: prod
+    container_name: coordinator-service-prod
+    ports:
+      - "8080:8080"
+    environment:
+      - TRIP_SERVICE_URL=${TRIP_SERVICE_URL}
+      - AMBULANCE_FINDER_URL=${AMBULANCE_FINDER_URL}
+      - LOCATION_SERVICE_URL=${LOCATION_SERVICE_URL}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+    restart: always
   
  

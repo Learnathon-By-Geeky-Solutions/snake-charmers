@@ -1,9 +1,11 @@
-name: Deploy Coordinator Service
+name: Deploy Ambulance Finder Service
 
 on:
   push:
     branches:
-      - deploy/location-service 
+    #   - deploy/ambulance-finder-service
+     - deploy/location-service
+
 
 jobs:
   deploy:
@@ -25,20 +27,20 @@ jobs:
       - name: Build and Push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./coordinator-service
-          file: ./coordinator-service/Dockerfile
+          context: .
+          file: ./ambulance-finder-service/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/coordinator-service:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/ambulance-finder-service:latest
           target: prod
 
       - name: Deploy to Render
         env:
-          COORDINATOR_SERVICE_DEPLOY_HOOK_BASE: ${{ secrets.COORDINATOR_SERVICE_DEPLOY_HOOK }}
+          AMBULANCE_SERVICE_DEPLOY_HOOK_BASE: ${{ secrets.AMBULANCE_SERVICE_DEPLOY_HOOK }}
         run: |
         
-          IMAGE_URL="docker.io%2Fimdadrakib%2Fcoordinator-service:latest"
+          IMAGE_URL="docker.io%2Fimdadrakib%2Fambulance-finder-service:latest"
 
-          DEPLOY_URL="${COORDINATOR_SERVICE_DEPLOY_HOOK_BASE}&imgURL=${IMAGE_URL}"
+          DEPLOY_URL="${AMBULANCE_SERVICE_DEPLOY_HOOK_BASE}&imgURL=${IMAGE_URL}"
 
           curl -X POST "${DEPLOY_URL}"
 

@@ -17,4 +17,4 @@ app.include_router(location_router, prefix="/api", tags=["Location Service"])
 
 @app.get("/api", tags=["Root"])
 def read_root():
-    return {"message": "Welcome to the location-service"}
+    return {"ok"}

@@ -7,4 +7,4 @@ app.include_router(finder_router)
 
 @app.get("/")
 def read_root():
-    return {"Welcome to the Ambulance Finder Service!"}
+    return {"ok"}

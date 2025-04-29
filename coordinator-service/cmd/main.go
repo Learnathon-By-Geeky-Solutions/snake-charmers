@@ -6,24 +6,21 @@ import (
 	"net/http"
 	"coordinator-service/pkg"
 	"coordinator-service/internal/server"
-	"github.com/joho/godotenv"
 )
-func loadEnv() {
-	err := godotenv.Load("../.env")
-	if err != nil {
-		fmt.Print(err)
-		log.Println("Error loading .env file")
-	}
+
+func healthCheckHandler(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("OK"))
 }
 
 func main() {
-	// loadEnv()
+	
 	port := ":" + pkg.Config.Port
 
 	// Initialize WebSocket server
 	http.HandleFunc("/ws", Server.HandleConnections)
-	// Start broadcaster
-	// go server.HandleMessages()
+
+	http.HandleFunc("/healthz", healthCheckHandler)
 
 	fmt.Println("WebSocket Server started on port", port)
 	log.Fatal(http.ListenAndServe(port, nil))

@@ -7,4 +7,4 @@ app.include_router(trip_router)
 
 @app.get("/")
 def read_root():
-    return {"message": " Welcome to trip-service!"}
+    return {"ok"}

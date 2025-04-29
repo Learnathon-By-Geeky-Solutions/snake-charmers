@@ -11,19 +11,22 @@ import (
 )
 
 
-// extractToken extracts the JWT token from the HTTP-only cookie
+// extractToken extracts the JWT token from either the HTTP-only cookie or query parameter
 func extractToken(r *http.Request) (string, error) {
-	// Extract token from HTTP-only cookie
+	// First try to extract from cookie
 	cookie, err := r.Cookie("auth_token")
-	if err != nil {
-		if err == http.ErrNoCookie {
-			return "", fmt.Errorf("auth_token cookie not found")
-		}
-		return "", fmt.Errorf("error retrieving cookie: %w", err)
+	if err == nil {
+		return cookie.Value, nil
 	}
 	
-	// Return the token value from the cookie
-	return cookie.Value, nil
+	// If cookie not found, check for token in query parameters
+	token := r.URL.Query().Get("token")
+	if token != "" {
+		return token, nil
+	}
+	
+	// If we've gotten this far, no token was found
+	return "", fmt.Errorf("auth_token not found in cookie or query parameters")
 }
 
 // validateToken validates the JWT token and returns the claims
