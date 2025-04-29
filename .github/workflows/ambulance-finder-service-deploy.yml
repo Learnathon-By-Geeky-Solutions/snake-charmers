@@ -3,8 +3,7 @@ name: Deploy Ambulance Finder Service
 on:
   push:
     branches:
-    #   - deploy/ambulance-finder-service
-     - deploy/location-service
+      - deploy/ambulance-finder-service
 
 
 jobs:
