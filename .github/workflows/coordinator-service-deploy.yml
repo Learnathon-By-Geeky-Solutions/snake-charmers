@@ -3,7 +3,7 @@ name: Deploy Coordinator Service
 on:
   push:
     branches:
-      - deploy/location-service 
+      - deploy/coordinator-service
 
 jobs:
   deploy:
