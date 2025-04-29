@@ -17,7 +17,7 @@ func loadEnv() {
 }
 
 func main() {
-	loadEnv()
+	// loadEnv()
 	port := ":" + pkg.Config.Port
 
 	// Initialize WebSocket server

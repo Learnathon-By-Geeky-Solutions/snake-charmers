@@ -1,3 +1,0 @@
-access given for all origin.
-add an event addressing the drivers confirmation from drivers end
-Edge case: when a client disconnects from the middle of the trip request, what should be done ?

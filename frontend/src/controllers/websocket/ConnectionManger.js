@@ -2,7 +2,7 @@
 const WebSocketController = (function() {
   // Private variables
   let socket = null;
-  const SERVER_URL = `ws://localhost:8080/ws`;
+  const SERVER_URL = `wss://coordinator-service-latest.onrender.com/ws`;
   
   // Connection states as constants
   const CONNECTION_STATES = {

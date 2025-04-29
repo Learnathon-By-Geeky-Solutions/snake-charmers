@@ -39,7 +39,6 @@ COPY ./models ./app/models
 FROM base AS dev
 # USER myuser
 EXPOSE 8000
-# CMD ["python", "-m", "app.main"]
 
 
 
@@ -51,5 +50,3 @@ COPY ./ambulance-finder-service/tests ./tests
 COPY ./conftest.py ./tests
 
 ENV PYTHONPATH=.
-
-# USER myuser

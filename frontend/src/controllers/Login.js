@@ -2,7 +2,7 @@ import { setUser } from "../store/slices/user-slice";
 
 const handleLogin = async (values, dispatch, navigate) => {
     try {
-        let response = await fetch('http://localhost:7000/api/auth/login',
+        let response = await fetch('https://auth-service-latest-qbm2.onrender.com/api/auth/login',
             {
                 method: 'POST',
                 headers: {

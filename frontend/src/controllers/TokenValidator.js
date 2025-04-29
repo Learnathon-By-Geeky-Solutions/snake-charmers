@@ -7,7 +7,7 @@ async function validateToken(navigate, location, dispatch, role) {
         return;        
     }
     try {
-        let response = await fetch('http://localhost:7000/api/auth/validate-token', {
+        let response = await fetch('https://auth-service-latest-qbm2.onrender.com/api/auth/validate-token', {
             method: 'GET',
             credentials: 'include', // Ensures cookies are sent with the request
         });

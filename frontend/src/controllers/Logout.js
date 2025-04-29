@@ -4,7 +4,7 @@ import { DisconnectFromServer } from "./websocket/handler";
 async function Logout(dispatch, navigate) {
     console.log('calling logout');
     try {
-        const response = await fetch('http://localhost:7000/api/auth/logout', {
+        const response = await fetch('https://auth-service-latest-qbm2.onrender.com/api/auth/logout', {
             method: 'DELETE',
             credentials: 'include' // Important to include cookies
         });

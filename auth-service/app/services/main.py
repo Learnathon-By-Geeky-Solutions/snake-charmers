@@ -206,8 +206,8 @@ def set_auth_cookie(response: Response, user, user_type: str):
         key="auth_token",
         value=access_token,
         httponly=True,
-        secure=False,
-        samesite="Lax",
+        secure=True,
+        samesite="None",
         max_age=432000,
         path="/"
     )
