@@ -3,8 +3,7 @@ name: Deploy Auth Service
 on:
   push:
     branches:
-      # - deploy/auth-service
-      - deploy/location-service
+      - deploy/auth-service
 
 
 jobs:
