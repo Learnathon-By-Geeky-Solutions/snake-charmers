@@ -3,8 +3,7 @@ name: Deploy Trip Service
 on:
   push:
     branches:
-    #   - deploy/trip-service
-    - deploy/location-service
+      - deploy/trip-service
 
 
 jobs:
