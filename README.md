@@ -28,6 +28,8 @@
     <a href="https://github.com/Learnathon-By-Geeky-Solutions/snake-charmers/issues">Report Bug</a>
     ·
     <a href="https://github.com/Learnathon-By-Geeky-Solutions/snake-charmers/issues">Request Feature</a>
+    ·
+    <a href="https://learnathon-by-geeky-solutions.github.io/snake-charmers/">Devlogs</a>
   </p>
   
   <div align="center">
@@ -149,6 +151,12 @@ Experience LifeRide in action by visiting our live demo:
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit%20Now-blue?style=for-the-badge)](https://liferide.netlify.app/)
 
+### Login Credentials
+| Role | Email | Password |
+|------|------|--------|
+| **Driver** | reza123@gmail.com | 123456 |
+| **User** | imdadraqib@gmail.com | 123456 |
+
 Explore the platform's features and see how it simplifies emergency medical transportation in real-time.
 
 ## ✨ Key Features
@@ -214,6 +222,13 @@ Our platform uses a microservices architecture with the following key components
 The ER diagram illustrates our relational database structure, showing the relationships between users, drivers, trips, and other key entities.
 
 ![ER Diagram](public/images/ER_Diagram.png)
+
+
+## Deployment
+
+All of our services are deployed on Render. We maintained standard CI/CD flow for deployment
+
+![CI/CD](public/images/CI-CD.png)
 
 ## 📘 API Documentation
 
